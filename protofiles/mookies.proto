@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+message Menu {
+  message Item {
+    string name = 1;
+    int32 id = 2;
+    float price = 3;
+    string category = 4;
+  }
+  repeated Item items = 1;
+}
+
+
+
+service MenuService{
+  // Unary
+  rpc GetMenu(google.protobuf.Empty) returns (Menu) {};
+}
+
