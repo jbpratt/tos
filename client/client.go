@@ -5,15 +5,18 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"nucular"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	mookiespb "github.com/jbpratt78/mookies/protofiles"
+	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"google.golang.org/grpc"
 )
 
 var (
 	addr = flag.String("addr", ":50051", "address to dial")
 )
+
+var Wnd nucular.MasterWindow
 
 func main() {
 	cc, err := grpc.Dial(*addr, grpc.WithInsecure())
@@ -25,6 +28,9 @@ func main() {
 
 	defer cc.Close()
 	doMenuRequest(c)
+
+	Wnd = nucular.NewMasterWindow(0, "Mookies", layout)
+	Wnd.Main()
 }
 
 func doMenuRequest(c mookiespb.MenuServiceClient) {
@@ -36,4 +42,15 @@ func doMenuRequest(c mookiespb.MenuServiceClient) {
 		log.Fatalf("Error while calling GetMenu RPC: %v\n", err)
 	}
 	log.Printf("Response from GetMenu: %v\n", res.GetItems())
+}
+
+func layout(w *nucular.Window) {
+	menuBar(w)
+}
+
+func menuBar(w *nucular.Window) {
+	w.MenubarBegin()
+	w.Row(25).Static(45, 45, 70, 70, 70)
+
+	w.MenubarEnd()
 }
