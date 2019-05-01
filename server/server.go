@@ -31,7 +31,7 @@ func (*server) GetMenu(ctx context.Context, empty *empty.Empty) (*mookiespb.Menu
 			{Name: "Large Cheeseburger", Id: 7, Price: 555, Category: "Sandwich"},
 			{Name: "Cheeseburger", Id: 8, Price: 425, Category: "Sandwich"},
 			{Name: "Large Hamburger", Id: 9, Price: 495, Category: "Sandwich"},
-			{Name: "Large Hamburger", Id: 10 Price: 495, Category: "Sandwich"},
+			{Name: "Large Hamburger", Id: 10, Price: 495, Category: "Sandwich"},
 		},
 	}
 	return res, nil
