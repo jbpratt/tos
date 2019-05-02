@@ -21,7 +21,7 @@ type server struct{}
 func (*server) GetMenu(ctx context.Context, empty *empty.Empty) (*mookiespb.Menu, error) {
 	fmt.Println("Menu function was invoked")
 	res := &mookiespb.Menu{
-		Items: []*mookiespb.Menu_Item{
+		Items: []*mookiespb.Item{
 			{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Category: "Sandwich"},
 			{Name: "Regular Smoked Pulled Pork", Id: 2, Price: 395, Category: "Sandwich"},
 			{Name: "Large Smoked Chicken Breast", Id: 3, Price: 495, Category: "Sandwich"},
@@ -37,6 +37,15 @@ func (*server) GetMenu(ctx context.Context, empty *empty.Empty) (*mookiespb.Menu
 	return res, nil
 }
 
+func (*server) SubmitOrder(ctx context.Context,
+	req *mookiespb.SubmitOrderRequest) (*mookiespb.SubmitOrderResponse, error) {
+	fmt.Printf("SubmitOrder function was invoked with %v", req)
+	res := &mookiespb.SubmitOrderResponse{
+		Result: "Order was received.",
+	}
+	return res, nil
+}
+
 func main() {
 	flag.Parse()
 	lis, err := net.Listen("tcp", *listen)
@@ -47,6 +56,7 @@ func main() {
 
 	s := grpc.NewServer()
 	mookiespb.RegisterMenuServiceServer(s, &server{})
+	mookiespb.RegisterOrderServiceServer(s, &server{})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}

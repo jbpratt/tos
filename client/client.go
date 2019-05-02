@@ -25,13 +25,14 @@ func main() {
 	c := mookiespb.NewMenuServiceClient(cc)
 
 	defer cc.Close()
-	doMenuRequest(c)
+	DoMenuRequest(c)
 
-	wnd := nucular.NewMasterWindow(0, "Mookies", nestedMenu)
-	wnd.Main()
+	//wnd := nucular.NewMasterWindow(0, "Mookies", nestedMenu)
+	//wnd.Main()
 }
 
-func doMenuRequest(c mookiespb.MenuServiceClient) {
+// DoMenuRequest dials the grpc server and requests a slice of pb.Items
+func DoMenuRequest(c mookiespb.MenuServiceClient) {
 	fmt.Println("Starting to request menu...")
 	req := &empty.Empty{}
 
