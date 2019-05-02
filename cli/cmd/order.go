@@ -15,9 +15,14 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"log"
 
+	"github.com/golang/protobuf/ptypes"
+	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc"
 )
 
 // orderCmd represents the order command
@@ -26,11 +31,44 @@ var orderCmd = &cobra.Command{
 	Short: "Place an order",
 	Long:  `Place an order`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("order called")
+		cc, err := grpc.Dial(Address, grpc.WithInsecure())
+		if err != nil {
+			log.Fatalf("Failed to dial: %v", err)
+		}
+
+		//menuClient := mookiespb.NewMenuServiceClient(cc)
+		orderClient := mookiespb.NewOrderServiceClient(cc)
+
+		defer cc.Close()
+		res, err := doSubmitOrderRequest(orderClient)
+		if err != nil {
+			log.Fatalf("Failed to submit order: %v", err)
+		}
+		fmt.Println(res)
 	},
+}
+
+func doSubmitOrderRequest(c mookiespb.OrderServiceClient) (string, error) {
+	fmt.Println("Starting order request")
+	req := &mookiespb.SubmitOrderRequest{
+		Order: &mookiespb.Order{
+			Id:   1,
+			Name: "Majora",
+			Items: []*mookiespb.Item{
+				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Category: "Sandwich"},
+			},
+			Total:       495,
+			TimeOrdered: ptypes.TimestampNow(),
+		},
+	}
+
+	res, err := c.SubmitOrder(context.Background(), req)
+	if err != nil {
+		return "", err
+	}
+	return res.GetResult(), nil
 }
 
 func init() {
 	rootCmd.AddCommand(orderCmd)
-
 }

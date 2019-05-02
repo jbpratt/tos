@@ -39,11 +39,26 @@ func (*server) GetMenu(ctx context.Context, empty *empty.Empty) (*mookiespb.Menu
 
 func (*server) SubmitOrder(ctx context.Context,
 	req *mookiespb.SubmitOrderRequest) (*mookiespb.SubmitOrderResponse, error) {
-	fmt.Printf("SubmitOrder function was invoked with %v", req)
+
+	fmt.Printf("SubmitOrder function was invoked with %v\n", req)
+	// req.Order needs to get sent over a channel to SubscribeToOrders
 	res := &mookiespb.SubmitOrderResponse{
 		Result: "Order was received.",
 	}
 	return res, nil
+}
+
+func (*server) SubscribeToOrders(req *mookiespb.ProcessOrderRequest,
+	stream mookiespb.OrderService_SubscribeToOrdersServer) error {
+
+	fmt.Printf("SubscribeToOrders function was invoked with %v\n", req)
+
+	// client subscribes to receive orders
+	// loop and on each receive of SubmitOrder, need to
+	// call stream.Send(order)
+
+	return nil
+
 }
 
 func main() {

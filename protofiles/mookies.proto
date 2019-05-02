@@ -19,7 +19,8 @@ message Order {
   string name = 2;
   repeated Item items = 3;
   float total = 4;
-  google.protobuf.Timestamp time_ordered = 5;
+  bool status = 5;
+  google.protobuf.Timestamp time_ordered = 6;
 } 
   
 message SubmitOrderRequest {
@@ -30,6 +31,10 @@ message SubmitOrderResponse {
   string result = 1;
 }
 
+message SubscribeToOrderRequest {
+  string request = 1;
+}
+
 service MenuService{
   // Unary get menu
   rpc GetMenu(google.protobuf.Empty) returns (Menu) {};
@@ -38,5 +43,11 @@ service MenuService{
 service OrderService {
   // Unary 
   rpc SubmitOrder(SubmitOrderRequest) returns (SubmitOrderResponse) {};
+
+  // validate order can be unary
+
+  // completeorder can be unary
+
+  rpc SubscribeToOrders(SubscribeToOrderRequest) returns (stream Order) {};
 }
 

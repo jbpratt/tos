@@ -25,8 +25,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-var Address string
-
 // menuCmd represents the menu command
 var menuCmd = &cobra.Command{
 	Use:   "menu",
@@ -74,5 +72,4 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// menuCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	menuCmd.Flags().StringVarP(&Address, "address", "a", ":50051", "GRPC Server address to dial")
 }
