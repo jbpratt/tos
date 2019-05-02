@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/aarzilli/nucular"
 	"github.com/golang/protobuf/ptypes/empty"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"google.golang.org/grpc"
@@ -26,6 +27,8 @@ func main() {
 	defer cc.Close()
 	doMenuRequest(c)
 
+	wnd := nucular.NewMasterWindow(0, "Mookies", nestedMenu)
+	wnd.Main()
 }
 
 func doMenuRequest(c mookiespb.MenuServiceClient) {
@@ -37,4 +40,9 @@ func doMenuRequest(c mookiespb.MenuServiceClient) {
 		log.Fatalf("Error while calling GetMenu RPC: %v\n", err)
 	}
 	log.Printf("Response from GetMenu: %v\n", res.GetItems())
+}
+
+func nestedMenu(w *nucular.Window) {
+	w.Row(20).Static(180)
+	w.Label("Test", "CC")
 }
