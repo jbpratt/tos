@@ -44,8 +44,10 @@ var menuCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Failed to get menu: %v", err)
 		}
-		fmt.Println(items)
 
+		for _, i := range items {
+			fmt.Printf("Item: %v\n", i)
+		}
 	},
 }
 

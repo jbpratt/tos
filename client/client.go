@@ -8,6 +8,7 @@ import (
 
 	"github.com/aarzilli/nucular"
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/golang/protobuf/ptypes/timestamp"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"google.golang.org/grpc"
 )
@@ -22,17 +23,18 @@ func main() {
 		log.Fatalf("Failed to dial: %v", err)
 	}
 
-	c := mookiespb.NewMenuServiceClient(cc)
+	//menuClient := mookiespb.NewMenuServiceClient(cc)
+	orderClient := mookiespb.NewOrderServiceClient(cc)
 
 	defer cc.Close()
-	DoMenuRequest(c)
+	//doMenuRequest(menuClient)
+	doSubmitOrderRequest(orderClient)
 
 	//wnd := nucular.NewMasterWindow(0, "Mookies", nestedMenu)
 	//wnd.Main()
 }
 
-// DoMenuRequest dials the grpc server and requests a slice of pb.Items
-func DoMenuRequest(c mookiespb.MenuServiceClient) {
+func doMenuRequest(c mookiespb.MenuServiceClient) {
 	fmt.Println("Starting to request menu...")
 	req := &empty.Empty{}
 
@@ -41,6 +43,27 @@ func DoMenuRequest(c mookiespb.MenuServiceClient) {
 		log.Fatalf("Error while calling GetMenu RPC: %v\n", err)
 	}
 	log.Printf("Response from GetMenu: %v\n", res.GetItems())
+}
+
+func doSubmitOrderRequest(c mookiespb.OrderServiceClient) {
+	fmt.Println("Starting order request")
+	req := &mookiespb.SubmitOrderRequest{
+		Order: &mookiespb.Order{
+			Id:   1,
+			Name: "Majora",
+			Items: []*mookiespb.Item{
+				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Category: "Sandwich"},
+			},
+			Total:       495,
+			TimeOrdered: &timestamp.Timestamp{},
+		},
+	}
+
+	res, err := c.SubmitOrder(context.Background(), req)
+	if err != nil {
+		log.Fatalf("Error while submitting order RPC: %v\n", err)
+	}
+	log.Printf("Response from SubmitOrder: %v\n", res.GetResult())
 }
 
 func nestedMenu(w *nucular.Window) {
