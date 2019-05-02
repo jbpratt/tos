@@ -1,8 +1,6 @@
 # Mookies' BBQ TOS
-<p align="center">
-  <img style="float: right;" src="assets/logo.png" alt="Mookies logo" />
-</p>
-
+<img src="assets/logo.png" height="350" alt="logo">
+ 
 ## Goal
 Implement a ticket order system in Go
 
