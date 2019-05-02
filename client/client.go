@@ -7,8 +7,8 @@ import (
 	"log"
 
 	"github.com/aarzilli/nucular"
+	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/golang/protobuf/ptypes/timestamp"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"google.golang.org/grpc"
 )
@@ -55,7 +55,7 @@ func doSubmitOrderRequest(c mookiespb.OrderServiceClient) {
 				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Category: "Sandwich"},
 			},
 			Total:       495,
-			TimeOrdered: &timestamp.Timestamp{},
+			TimeOrdered: ptypes.TimestampNow(),
 		},
 	}
 
