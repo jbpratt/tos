@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
@@ -13,7 +14,8 @@ import (
 )
 
 var (
-	listen = flag.String("listen", ":50051", "listen address")
+	listen  = flag.String("listen", ":50051", "listen address")
+	reqChan = make(chan *mookiespb.Order)
 )
 
 type server struct{}
@@ -41,24 +43,25 @@ func (*server) SubmitOrder(ctx context.Context,
 	req *mookiespb.SubmitOrderRequest) (*mookiespb.SubmitOrderResponse, error) {
 
 	fmt.Printf("SubmitOrder function was invoked with %v\n", req)
-	// req.Order needs to get sent over a channel to SubscribeToOrders
 	res := &mookiespb.SubmitOrderResponse{
 		Result: "Order was received.",
 	}
+	reqChan <- req.Order
 	return res, nil
 }
 
-func (*server) SubscribeToOrders(req *mookiespb.ProcessOrderRequest,
+func (*server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
 	stream mookiespb.OrderService_SubscribeToOrdersServer) error {
 
 	fmt.Printf("SubscribeToOrders function was invoked with %v\n", req)
-
-	// client subscribes to receive orders
-	// loop and on each receive of SubmitOrder, need to
-	// call stream.Send(order)
-
-	return nil
-
+	for {
+		res := <-reqChan
+		err := stream.Send(res)
+		if err != nil {
+			return err
+		}
+		time.Sleep(time.Millisecond * 1000)
+	}
 }
 
 func main() {

@@ -48,6 +48,7 @@ service OrderService {
 
   // completeorder can be unary
 
+  // server streaming
   rpc SubscribeToOrders(SubscribeToOrderRequest) returns (stream Order) {};
 }
 
