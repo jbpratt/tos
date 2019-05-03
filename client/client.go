@@ -68,6 +68,9 @@ type layout struct {
 	groupSelectedItem *mookiespb.Item
 	GroupSelected []bool
 
+	// order list
+	orderContents []*mookiespb.Item
+
 	// Vertical Split
 	A, B, C    int
 	HA, HB, HC int
@@ -249,16 +252,10 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 	if sw := w.GroupBegin("Group", groupFlags); sw != nil {
 		sw.Row(18).Static(od.GroupWidth)
 		items := menu.GetItems()
-		for i, item := range items {
-			sel := item.GetName()
-			if sw.SelectableLabel(sel, "LC", &od.GroupSelected[i]) {
-				if od.groupCurrent >= 0 {
-					od.GroupSelected[od.groupCurrent] = false
-				}
+		for _, item := range items {
+			if sw.Button(label.T(item.GetName()), false) {
+				od.orderContents = append(od.orderContents, item)
 				od.groupSelectedItem = item
-				od.groupCurrent = i
-				price := item.GetPrice()
-				fmt.Printf("%v\n", price)
 			}
 		}
 		sw.GroupEnd()
@@ -270,7 +267,7 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 
 	// creates a second group and puts it in the second column
 	if sw := w.GroupBegin("asdasd", groupFlags); sw != nil {
-		if od.groupCurrent != -1 {
+		if od.groupSelectedItem != nil {
 			sw.Row(20).Dynamic(2)
 			sw.Label("category: ", "RC")
 			sw.Label(od.groupSelectedItem.GetCategory(), "LC")
@@ -279,10 +276,33 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 			sw.Label(od.groupSelectedItem.GetName(), "LC")
 			sw.Row(20).Dynamic(2)
 			sw.Label("price: ", "RC")
-			sw.Label(fmt.Sprintf("$ %.2f", od.groupSelectedItem.GetPrice()), "LC")
+			sw.Label(fmt.Sprintf("$ %.2f", od.groupSelectedItem.GetPrice()/100), "LC")
 			sw.Row(20).Dynamic(2)
 			sw.Label("ID: ", "RC")
 			sw.Label(fmt.Sprintf("%d", od.groupSelectedItem.GetId()), "LC")
+		}
+
+		sw.Row(10).Dynamic(1)
+		sw.Spacing(1)
+
+		if len(od.orderContents) > 0 {
+			var sum float32
+			for i, item := range od.orderContents {
+				sum += item.GetPrice()/100
+				sw.Row(20).Ratio(0.7,0.2,0.1)
+				sw.Label(fmt.Sprintf("%v", item.GetName()), "LC")
+				sw.Label(fmt.Sprintf("$ %.2f", item.GetPrice()/100), "RC")
+				if sw.Button(label.T("X"), false) {
+					od.orderContents = append(od.orderContents[:i], od.orderContents[i+1:]...)
+				}
+			}
+
+			sw.Row(10).Dynamic(1)
+			sw.Spacing(1)
+
+			sw.Row(20).Dynamic(2)
+			sw.Label("Sum:", "LC")
+			sw.Label(fmt.Sprintf("$ %.2f", sum), "RC")
 		}
 		sw.GroupEnd()
 	}
