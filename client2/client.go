@@ -7,7 +7,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/aarzilli/nucular"
+	"github.com/golang/protobuf/ptypes"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"google.golang.org/grpc"
 )
@@ -25,10 +25,50 @@ func main() {
 	orderClient := mookiespb.NewOrderServiceClient(cc)
 
 	defer cc.Close()
-	subscribeToOrders(orderClient)
+	//subscribeToOrders(orderClient)
+	//err = completeOrder(orderClient)
+	err = requestOrders(orderClient)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
-func subscribeToOrders(c mookiespb.OrderServiceClient) {
+func completeOrder(c mookiespb.OrderServiceClient) error {
+	fmt.Println("Starting complete order request...")
+	// take this order req in as param
+	req := &mookiespb.Order{
+		Id:     1,
+		Name:   "Majora",
+		Status: false,
+		Items: []*mookiespb.Item{
+			{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Category: "Sandwich"},
+		},
+		Total:       495,
+		TimeOrdered: ptypes.TimestampNow(),
+	}
+	res, err := c.CompleteOrder(context.Background(), req)
+	if err != nil {
+		return err
+	}
+	log.Printf("Response from CompleteOrder: %v\n", res.GetResult())
+	return nil
+}
+
+func requestOrders(c mookiespb.OrderServiceClient) error {
+	req := &mookiespb.OrdersRequest{
+		Request: "send me memes",
+	}
+
+	res, err := c.Orders(context.Background(), req)
+	if err != nil {
+		return err
+	}
+	log.Printf("Response from Orders: %v\n", res.GetOrders())
+
+	return nil
+}
+
+func subscribeToOrders(c mookiespb.OrderServiceClient) error {
 
 	fmt.Println("Subscribing to orders...")
 	req := &mookiespb.SubscribeToOrderRequest{
@@ -37,7 +77,7 @@ func subscribeToOrders(c mookiespb.OrderServiceClient) {
 
 	stream, err := c.SubscribeToOrders(context.Background(), req)
 	if err != nil {
-		log.Fatalf("Error while subscribing to orders RPC: %v", err)
+		return err
 	}
 	for {
 		order, err := stream.Recv()
@@ -47,14 +87,9 @@ func subscribeToOrders(c mookiespb.OrderServiceClient) {
 			break
 		}
 		if err != nil {
-			log.Fatalf("Error while reading from stream: %v", err)
+			return nil
 		}
-		log.Printf("Received order: %v", order)
+		log.Printf("Received order: %v\n", order)
 	}
-
-}
-
-func nestedMenu(w *nucular.Window) {
-	w.Row(20).Static(180)
-	w.Label("Test", "CC")
+	return nil
 }

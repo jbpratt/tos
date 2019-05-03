@@ -18,6 +18,8 @@ var (
 	reqChan = make(chan *mookiespb.Order)
 )
 
+var Orders []*mookiespb.Order
+
 type server struct{}
 
 func (*server) GetMenu(ctx context.Context, empty *empty.Empty) (*mookiespb.Menu, error) {
@@ -43,6 +45,7 @@ func (*server) SubmitOrder(ctx context.Context,
 	req *mookiespb.SubmitOrderRequest) (*mookiespb.SubmitOrderResponse, error) {
 
 	fmt.Printf("SubmitOrder function was invoked with %v\n", req)
+	Orders = append(Orders, req.GetOrder())
 	res := &mookiespb.SubmitOrderResponse{
 		Result: "Order was received.",
 	}
@@ -62,6 +65,29 @@ func (*server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
 		}
 		time.Sleep(time.Millisecond * 1000)
 	}
+}
+
+func (*server) CompleteOrder(ctx context.Context,
+	req *mookiespb.Order) (*mookiespb.CompleteOrderResponse, error) {
+
+	req.Status = true
+
+	fmt.Printf("CompleteOrder function was invoked with %v\n", req)
+	res := &mookiespb.CompleteOrderResponse{
+		Result: "Order marked as complete",
+	}
+	return res, nil
+}
+
+func (*server) Orders(ctx context.Context,
+	req *mookiespb.OrdersRequest) (*mookiespb.OrdersResponse, error) {
+
+	fmt.Printf("Orders function was invoked with %v\n", req)
+	res := &mookiespb.OrdersResponse{
+		Orders: Orders,
+	}
+
+	return res, nil
 }
 
 func main() {

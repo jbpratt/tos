@@ -35,6 +35,18 @@ message SubscribeToOrderRequest {
   string request = 1;
 }
 
+message CompleteOrderResponse {
+  string result = 1;
+}
+
+message OrdersRequest {
+  string request = 1;
+}
+
+message OrdersResponse {
+  repeated Order orders = 1;
+}
+
 service MenuService{
   // Unary get menu
   rpc GetMenu(google.protobuf.Empty) returns (Menu) {};
@@ -46,9 +58,13 @@ service OrderService {
 
   // validate order can be unary
 
-  // completeorder can be unary
+  // completeorder unary
+  rpc CompleteOrder(Order) returns (CompleteOrderResponse) {};
 
   // server streaming
   rpc SubscribeToOrders(SubscribeToOrderRequest) returns (stream Order) {};
+
+  // all orders
+  rpc Orders(OrdersRequest) returns (OrdersResponse) {};
 }
 

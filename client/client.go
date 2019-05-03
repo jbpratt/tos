@@ -64,9 +64,9 @@ type layout struct {
 	GroupBorder             bool
 	GroupNoScrollbar        bool
 	GroupWidth, GroupHeight int
-	groupCurrent int
-	groupSelectedItem *mookiespb.Item
-	GroupSelected []bool
+	groupCurrent            int
+	groupSelectedItem       *mookiespb.Item
+	GroupSelected           []bool
 
 	// Vertical Split
 	A, B, C    int
@@ -224,22 +224,22 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 	w.Row(30).Dynamic(1)
 	// puts this text in the column with alignment x:center - y:center
 	w.Label("AYAYA", "CC")
-	// creates a row of height 20 with 2 columns with dybnamic width 
-	w.Row(30).Ratio(0.4,0.2,0.4)
+	// creates a row of height 20 with 2 columns with dybnamic width
+	w.Row(30).Ratio(0.4, 0.2, 0.4)
 	w.Spacing(1)
 	if w.Button(label.T("update menu"), false) {
 		updateMenu()
 	}
 	w.Spacing(1)
-	
+
 	// creates a row of height 20 with 1 column
 	w.Row(20).Dynamic(1)
 	// puts this text in the column with alignment x:left - y:center
 	w.Label("Menu:", "LC")
-	
+
 	// creates a row of height 0 (Dynamic sizing) with 2 columns
 	w.Row(0).Dynamic(2)
-	
+
 	// create flags for the group we're about to create, turn off horizontal scrollbar and turn on borders
 	groupFlags := nucular.WindowFlags(0)
 	groupFlags |= nucular.WindowBorder
