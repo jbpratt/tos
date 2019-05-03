@@ -68,8 +68,8 @@ type layout struct {
 	groupSelectedItem       *mookiespb.Item
 	GroupSelected           []bool
 
-	// order list
-	orderContents []*mookiespb.Item
+	// current order
+	order *mookiespb.Order
 
 	// Vertical Split
 	A, B, C    int
@@ -140,11 +140,19 @@ func newLayout() (od *layout) {
 	od.GroupWidth = 0
 	od.GroupHeight = 0
 
+	od.order = &mookiespb.Order{}
+
 	return od
 }
 
 var menu *mookiespb.Menu
-var client mookiespb.MenuServiceClient
+
+type Client struct {
+	MenuClient  mookiespb.MenuServiceClient
+	OrderClient mookiespb.OrderServiceClient
+}
+
+var client Client
 
 func main() {
 	cc, err := grpc.Dial(*addr, grpc.WithInsecure())
@@ -152,9 +160,9 @@ func main() {
 		log.Fatalf("Failed to dial: %v", err)
 	}
 	defer cc.Close()
-	//orderClient := mookiespb.NewOrderServiceClient(cc)
-	client = mookiespb.NewMenuServiceClient(cc)
-	updateMenu()
+	client.MenuClient = mookiespb.NewMenuServiceClient(cc)
+	client.OrderClient = mookiespb.NewOrderServiceClient(cc)
+	menu, _ = doMenuRequest(client.MenuClient)
 
 	//items := menu.GetItems()
 	//doSubmitOrderRequest(orderClient)
@@ -162,10 +170,6 @@ func main() {
 	l := newLayout()
 	wnd := nucular.NewMasterWindow(0, "Mookies", l.basicDemo)
 	wnd.Main()
-}
-
-func updateMenu() {
-	menu, _ = doMenuRequest(client)
 }
 
 func doMenuRequest(c mookiespb.MenuServiceClient) (*mookiespb.Menu, error) {
@@ -180,7 +184,10 @@ func doMenuRequest(c mookiespb.MenuServiceClient) (*mookiespb.Menu, error) {
 	return res, nil
 }
 
-func doSubmitOrderRequest(c mookiespb.OrderServiceClient) {
+// pass in order as arg
+func doSubmitOrderRequest(
+	c mookiespb.OrderServiceClient, order *mookiespb.Order) {
+
 	fmt.Println("Starting order request")
 	req := &mookiespb.SubmitOrderRequest{
 		Order: &mookiespb.Order{
@@ -230,8 +237,9 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 	// creates a row of height 20 with 2 columns with dybnamic width
 	w.Row(30).Ratio(0.4, 0.2, 0.4)
 	w.Spacing(1)
-	if w.Button(label.T("update menu"), false) {
-		updateMenu()
+	if w.Button(label.T("Send Order"), false) {
+		doSubmitOrderRequest(client.OrderClient, od.order)
+		od.order.Reset()
 	}
 	w.Spacing(1)
 
@@ -241,7 +249,7 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 	w.Label("Menu:", "LC")
 
 	// creates a row of height 0 (Dynamic sizing) with 2 columns
-	w.Row(0).Dynamic(2)
+	w.Row(0).Ratio(0.3, 0.7)
 
 	// create flags for the group we're about to create, turn off horizontal scrollbar and turn on borders
 	groupFlags := nucular.WindowFlags(0)
@@ -254,7 +262,7 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 		items := menu.GetItems()
 		for _, item := range items {
 			if sw.Button(label.T(item.GetName()), false) {
-				od.orderContents = append(od.orderContents, item)
+				od.order.Items = append(od.order.Items, item)
 				od.groupSelectedItem = item
 			}
 		}
@@ -285,15 +293,15 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 		sw.Row(10).Dynamic(1)
 		sw.Spacing(1)
 
-		if len(od.orderContents) > 0 {
+		if len(od.order.Items) > 0 {
 			var sum float32
-			for i, item := range od.orderContents {
-				sum += item.GetPrice()/100
-				sw.Row(20).Ratio(0.7,0.2,0.1)
+			for i, item := range od.order.Items {
+				sum += item.GetPrice() / 100
+				sw.Row(20).Ratio(0.7, 0.2, 0.1)
 				sw.Label(fmt.Sprintf("%v", item.GetName()), "LC")
 				sw.Label(fmt.Sprintf("$ %.2f", item.GetPrice()/100), "RC")
 				if sw.Button(label.T("X"), false) {
-					od.orderContents = append(od.orderContents[:i], od.orderContents[i+1:]...)
+					od.order.Items = append(od.order.Items[:i], od.order.Items[i+1:]...)
 				}
 			}
 

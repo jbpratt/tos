@@ -25,9 +25,9 @@ func main() {
 	orderClient := mookiespb.NewOrderServiceClient(cc)
 
 	defer cc.Close()
-	//subscribeToOrders(orderClient)
+	err = subscribeToOrders(orderClient)
 	//err = completeOrder(orderClient)
-	err = requestOrders(orderClient)
+	//err = requestOrders(orderClient)
 	if err != nil {
 		log.Fatal(err)
 	}
