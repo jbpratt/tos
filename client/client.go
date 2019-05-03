@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"image"
 	"log"
-	"time"
 
 	"github.com/aarzilli/nucular"
 	"github.com/aarzilli/nucular/label"
@@ -65,7 +64,8 @@ type layout struct {
 	GroupBorder             bool
 	GroupNoScrollbar        bool
 	GroupWidth, GroupHeight int
-
+	groupCurrent int
+	groupSelectedItem *mookiespb.Item
 	GroupSelected []bool
 
 	// Vertical Split
@@ -110,7 +110,9 @@ func newLayout() (od *layout) {
 	od.GroupBorder = true
 	od.GroupNoScrollbar = false
 
-	od.GroupSelected = make([]bool, 16)
+	// TODO this need to change dynamically
+	od.GroupSelected = make([]bool, 10000)
+	od.groupCurrent = -1
 
 	od.A = 100
 	od.B = 100
@@ -132,23 +134,26 @@ func newLayout() (od *layout) {
 	od.RangeInt = 2048
 	od.RangeIntMax = 4096
 
-	od.GroupWidth = 320
-	od.GroupHeight = 200
+	od.GroupWidth = 0
+	od.GroupHeight = 0
 
 	return od
 }
+
+var menu *mookiespb.Menu
+var client mookiespb.MenuServiceClient
 
 func main() {
 	cc, err := grpc.Dial(*addr, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
 	}
-
-	menuClient := mookiespb.NewMenuServiceClient(cc)
-	//orderClient := mookiespb.NewOrderServiceClient(cc)
-
 	defer cc.Close()
-	doMenuRequest(menuClient)
+	//orderClient := mookiespb.NewOrderServiceClient(cc)
+	client = mookiespb.NewMenuServiceClient(cc)
+	updateMenu()
+
+	//items := menu.GetItems()
 	//doSubmitOrderRequest(orderClient)
 
 	l := newLayout()
@@ -156,15 +161,20 @@ func main() {
 	wnd.Main()
 }
 
-func doMenuRequest(c mookiespb.MenuServiceClient) {
+func updateMenu() {
+	menu, _ = doMenuRequest(client)
+}
+
+func doMenuRequest(c mookiespb.MenuServiceClient) (*mookiespb.Menu, error) {
 	fmt.Println("Starting to request menu...")
 	req := &empty.Empty{}
 
 	res, err := c.GetMenu(context.Background(), req)
 	if err != nil {
-		log.Fatalf("Error while calling GetMenu RPC: %v\n", err)
+		return nil, err
 	}
 	log.Printf("Response from GetMenu: %v\n", res.GetItems())
+	return res, nil
 }
 
 func doSubmitOrderRequest(c mookiespb.OrderServiceClient) {
@@ -189,9 +199,6 @@ func doSubmitOrderRequest(c mookiespb.OrderServiceClient) {
 }
 
 func (l *layout) basicDemo(w *nucular.Window) {
-	if l.ShowMenu {
-		l.overviewMenubar(w)
-	}
 	l.overviewLayout(w)
 
 	//if l.Debug {
@@ -212,120 +219,71 @@ func errorPopup(w *nucular.Window) {
 	}
 }
 
-func (l *layout) overviewMenubar(w *nucular.Window) {
-	w.Row(30).Dynamic(1)
-	w.Label(time.Now().Format("15:04:05"), "RT")
-
-	w.MenubarBegin()
-	w.Row(25).Dynamic(1)
-	if w := w.Menu(label.TA("MENU", "LC"), 120, nil); w != nil {
-		w.Row(25).Dynamic(2)
-		if w.MenuItem(label.TA("Hide", "LC")) {
-			l.ShowMenu = false
-		}
-
-		perf := w.Master().GetPerf()
-		w.CheckboxText("Show perf", &perf)
-		w.Master().SetPerf(perf)
-	}
-	if w := w.Menu(label.TA("THEME", "CC"), 180, nil); w != nil {
-		w.Row(25).Dynamic(1)
-		newtheme := l.Theme
-		if w.OptionText("Default Theme", newtheme == nstyle.DefaultTheme) {
-			newtheme = nstyle.DefaultTheme
-		}
-		if w.OptionText("White Theme", newtheme == nstyle.WhiteTheme) {
-			newtheme = nstyle.WhiteTheme
-		}
-		if w.OptionText("Red Theme", newtheme == nstyle.RedTheme) {
-			newtheme = nstyle.RedTheme
-		}
-		if w.OptionText("Dark Theme", newtheme == nstyle.DarkTheme) {
-			newtheme = nstyle.DarkTheme
-		}
-		if newtheme != l.Theme {
-			l.Theme = newtheme
-			w.Master().SetStyle(nstyle.FromTheme(l.Theme, w.Master().Style().Scaling))
-			w.Close()
-		}
-	}
-	w.MenubarEnd()
-}
-
 func (od *layout) overviewLayout(w *nucular.Window) {
+	// creates a row of height 20 with 1 column
+	w.Row(30).Dynamic(1)
+	// puts this text in the column with alignment x:center - y:center
+	w.Label("AYAYA", "CC")
+	// creates a row of height 20 with 2 columns with dybnamic width 
+	w.Row(30).Ratio(0.4,0.2,0.4)
+	w.Spacing(1)
+	if w.Button(label.T("update menu"), false) {
+		updateMenu()
+	}
+	w.Spacing(1)
+	
+	// creates a row of height 20 with 1 column
 	w.Row(20).Dynamic(1)
-	if w.TreePush(nucular.TreeNode, "Widget", false) {
-		btn := func() {
-			w.Button(label.T("button"), false)
+	// puts this text in the column with alignment x:left - y:center
+	w.Label("Menu:", "LC")
+	
+	// creates a row of height 0 (Dynamic sizing) with 2 columns
+	w.Row(0).Dynamic(2)
+	
+	// create flags for the group we're about to create, turn off horizontal scrollbar and turn on borders
+	groupFlags := nucular.WindowFlags(0)
+	groupFlags |= nucular.WindowBorder
+	groupFlags |= nucular.WindowNoHScrollbar
+
+	// creates a group and puts it in the first column
+	if sw := w.GroupBegin("Group", groupFlags); sw != nil {
+		sw.Row(18).Static(od.GroupWidth)
+		items := menu.GetItems()
+		for i, item := range items {
+			sel := item.GetName()
+			if sw.SelectableLabel(sel, "LC", &od.GroupSelected[i]) {
+				if od.groupCurrent >= 0 {
+					od.GroupSelected[od.groupCurrent] = false
+				}
+				od.groupSelectedItem = item
+				od.groupCurrent = i
+				price := item.GetPrice()
+				fmt.Printf("%v\n", price)
+			}
 		}
-
-		w.Row(30).Dynamic(1)
-		w.Label("Dynamic fixed column layout with generated position and size (LayoutRowDynamic):", "LC")
-		w.Row(30).Dynamic(3)
-		btn()
-		btn()
-		btn()
-
-		w.Row(30).Dynamic(1)
-		w.Label("Dynamic array-based custom column layout with generated position and custom size (LayoutRowRatio):", "LC")
-		w.Row(30).Ratio(0.2, 0.6, 0.2)
-		btn()
-		btn()
-		btn()
-
-		w.Row(30).Dynamic(1)
-		w.Label("Static array-based custom column layout with dynamic space in the middle (LayoutRowStatic + LayoutResetStatic):", "LC")
-		w.Row(30).Static(100, 100)
-		btn()
-		btn()
-		w.LayoutResetStatic(0, 100, 100)
-		w.Spacing(1)
-		btn()
-		btn()
-
-		w.Row(30).Dynamic(1)
-		w.Label("Dynamic immediate mode custom column layout with generated position and custom size (LayoutRowRatio):", "LC")
-		w.Row(30).Ratio(0.2, 0.6, 0.2)
-		btn()
-		btn()
-		btn()
-
-		w.TreePop()
+		sw.GroupEnd()
 	}
 
-	w.Row(20).Dynamic(1)
-	if w.TreePush(nucular.TreeNode, "Group", false) {
-		groupFlags := nucular.WindowFlags(0)
-		if od.GroupBorder {
-			groupFlags |= nucular.WindowBorder
+	// create new flags, turn off horizontal scrollbar
+	groupFlags = nucular.WindowFlags(0)
+	groupFlags |= nucular.WindowNoHScrollbar
+
+	// creates a second group and puts it in the second column
+	if sw := w.GroupBegin("asdasd", groupFlags); sw != nil {
+		if od.groupCurrent != -1 {
+			sw.Row(20).Dynamic(2)
+			sw.Label("category: ", "RC")
+			sw.Label(od.groupSelectedItem.GetCategory(), "LC")
+			sw.Row(20).Dynamic(2)
+			sw.Label("name: ", "RC")
+			sw.Label(od.groupSelectedItem.GetName(), "LC")
+			sw.Row(20).Dynamic(2)
+			sw.Label("price: ", "RC")
+			sw.Label(fmt.Sprintf("$ %.2f", od.groupSelectedItem.GetPrice()), "LC")
+			sw.Row(20).Dynamic(2)
+			sw.Label("ID: ", "RC")
+			sw.Label(fmt.Sprintf("%d", od.groupSelectedItem.GetId()), "LC")
 		}
-		if od.GroupNoScrollbar {
-			groupFlags |= nucular.WindowNoScrollbar
-		}
-
-		groupFlags |= nucular.WindowNoHScrollbar
-
-		w.Row(30).Dynamic(3)
-		w.CheckboxText("Border", &od.GroupBorder)
-		w.CheckboxText("No Scrollbar", &od.GroupNoScrollbar)
-
-		w.Row(22).Static(50, 130, 130)
-		w.Label("size:", "LC")
-		w.PropertyInt("#Width:", 100, &od.GroupWidth, 500, 10, 10)
-		w.PropertyInt("#Height:", 100, &od.GroupHeight, 500, 10, 10)
-
-		w.Row(od.GroupHeight).Static(od.GroupWidth, od.GroupWidth)
-		if sw := w.GroupBegin("Group", groupFlags); sw != nil {
-			sw.Row(18).Static(100)
-			for i := range od.GroupSelected {
-				sel := "Unselected"
-				if od.GroupSelected[i] {
-					sel = "Selected"
-				}
-				sw.SelectableLabel(sel, "CC", &od.GroupSelected[i])
-			}
-			sw.GroupEnd()
-		}
-		w.TreePop()
+		sw.GroupEnd()
 	}
 }
