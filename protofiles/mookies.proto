@@ -7,11 +7,13 @@ message Item {
   string name = 1;
   int32 id = 2;
   float price = 3;
+  int32 categoryID = 4;
 }
 
 message Category {
   string name = 1;
-  repeated Item items = 2;
+  int32 id = 2;
+  repeated Item items = 3;
 }
 
 message Menu {  
