@@ -19,58 +19,46 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/golang/protobuf/ptypes"
+	"github.com/golang/protobuf/ptypes/empty"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
 
-var name string
-
-// orderCmd represents the order command
-var orderCmd = &cobra.Command{
-	Use:   "order",
-	Short: "Place an order",
-	Long:  `Place an order`,
+// activeCmd represents the active command
+var activeCmd = &cobra.Command{
+	Use:   "active",
+	Short: "A brief description of your command",
+	Long:  `A  quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cc, err := grpc.Dial(Address, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("Failed to dial: %v", err)
 		}
 
-		//menuClient := mookiespb.NewMenuServiceClient(cc)
 		orderClient := mookiespb.NewOrderServiceClient(cc)
 
 		defer cc.Close()
-		res, err := doSubmitOrderRequest(orderClient)
+		res, err := requestOrders(orderClient)
 		if err != nil {
 			log.Fatalf("Failed to submit order: %v", err)
 		}
 		fmt.Println(res)
+
 	},
 }
 
-func doSubmitOrderRequest(c mookiespb.OrderServiceClient) (string, error) {
-	go fmt.Println("Starting order request")
-	req := &mookiespb.SubmitOrderRequest{
-		Order: &mookiespb.Order{
-			Name: name,
-			Items: []*mookiespb.Item{
-				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495},
-			},
-			Total:       495,
-			TimeOrdered: ptypes.TimestampNow(),
-		},
+func requestOrders(c mookiespb.OrderServiceClient) ([]*mookiespb.Order, error) {
+	req := &empty.Empty{}
+
+	res, err := c.Orders(context.Background(), req)
+	if err != nil {
+		return nil, err
 	}
 
-	res, err := c.SubmitOrder(context.Background(), req)
-	if err != nil {
-		return "", err
-	}
-	return res.GetResult(), nil
+	return res.GetOrders(), nil
 }
 
 func init() {
-	rootCmd.AddCommand(orderCmd)
-	orderCmd.Flags().StringVarP(&name, "order name", "n", "Majora", "Name to place order under")
+	rootCmd.AddCommand(activeCmd)
 }

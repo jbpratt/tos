@@ -23,7 +23,12 @@ message Order {
   string name = 2;
   repeated Item items = 3;
   float total = 4;
-  bool status = 5;
+  enum Status {
+    ACTIVE = 0;
+    INACTIVE = 1;
+    COMPLETE = 2;
+  }
+  Status status = 5;
   google.protobuf.Timestamp time_ordered = 6;
 } 
   
@@ -37,6 +42,10 @@ message SubmitOrderResponse {
 
 message SubscribeToOrderRequest {
   string request = 1;
+}
+
+message CompleteOrderRequest {
+  int32 id = 1;
 }
 
 message CompleteOrderResponse {
@@ -63,12 +72,12 @@ service OrderService {
   // validate order can be unary
 
   // completeorder unary
-  rpc CompleteOrder(Order) returns (CompleteOrderResponse) {};
+  rpc CompleteOrder(CompleteOrderRequest) returns (CompleteOrderResponse) {};
 
   // server streaming
   rpc SubscribeToOrders(SubscribeToOrderRequest) returns (stream Order) {};
 
   // all orders
-  rpc Orders(OrdersRequest) returns (OrdersResponse) {};
+  rpc Orders(google.protobuf.Empty) returns (OrdersResponse) {};
 }
 

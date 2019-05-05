@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log"
 	"net"
 	"time"
@@ -23,7 +22,7 @@ var Orders []*mookiespb.Order
 type server struct{}
 
 func (*server) GetMenu(ctx context.Context, empty *empty.Empty) (*mookiespb.Menu, error) {
-	fmt.Println("Menu function was invoked")
+	log.Println("Menu function was invoked")
 	res := &mookiespb.Menu{
 		Categories: []*mookiespb.Category{
 			{
@@ -114,21 +113,26 @@ func (*server) GetMenu(ctx context.Context, empty *empty.Empty) (*mookiespb.Menu
 func (*server) SubmitOrder(ctx context.Context,
 	req *mookiespb.SubmitOrderRequest) (*mookiespb.SubmitOrderResponse, error) {
 
-	fmt.Printf("SubmitOrder function was invoked with %v\n", req)
-	Orders = append(Orders, req.GetOrder())
+	log.Println("An order was received")
+	o := req.GetOrder()
+	o.Id = int32(len(Orders) + 1)
+	o.Status = mookiespb.Order_ACTIVE
+	Orders = append(Orders, o)
 	res := &mookiespb.SubmitOrderResponse{
 		Result: "Order was received.",
 	}
-	reqChan <- req.Order
+	go func() { reqChan <- o }()
+
 	return res, nil
 }
 
 func (*server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
 	stream mookiespb.OrderService_SubscribeToOrdersServer) error {
 
-	fmt.Printf("SubscribeToOrders function was invoked with %v\n", req)
+	log.Printf("SubscribeToOrders function was invoked with %v\n", req)
 	for {
 		res := <-reqChan
+		log.Printf("Sending order to client: %v\n", res)
 		err := stream.Send(res)
 		if err != nil {
 			return err
@@ -138,11 +142,14 @@ func (*server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
 }
 
 func (*server) CompleteOrder(ctx context.Context,
-	req *mookiespb.Order) (*mookiespb.CompleteOrderResponse, error) {
+	req *mookiespb.CompleteOrderRequest) (*mookiespb.CompleteOrderResponse, error) {
 
-	req.Status = true
-
-	fmt.Printf("CompleteOrder function was invoked with %v\n", req)
+	log.Printf("CompleteOrder function was invoked with %v\n", req)
+	for _, o := range Orders {
+		if req.GetId() == o.GetId() {
+			o.Status = mookiespb.Order_COMPLETE
+		}
+	}
 	res := &mookiespb.CompleteOrderResponse{
 		Result: "Order marked as complete",
 	}
@@ -150,11 +157,19 @@ func (*server) CompleteOrder(ctx context.Context,
 }
 
 func (*server) Orders(ctx context.Context,
-	req *mookiespb.OrdersRequest) (*mookiespb.OrdersResponse, error) {
+	empty *empty.Empty) (*mookiespb.OrdersResponse, error) {
 
-	fmt.Printf("Orders function was invoked with %v\n", req)
+	log.Println("Orders function was invoked")
+	active := []*mookiespb.Order{}
+
+	for _, o := range Orders {
+		if o.GetStatus() == mookiespb.Order_ACTIVE {
+			active = append(active, o)
+		}
+	}
+
 	res := &mookiespb.OrdersResponse{
-		Orders: Orders,
+		Orders: active,
 	}
 
 	return res, nil

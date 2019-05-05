@@ -19,51 +19,43 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/golang/protobuf/ptypes"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
 
-var name string
+var orderID int
 
-// orderCmd represents the order command
-var orderCmd = &cobra.Command{
-	Use:   "order",
-	Short: "Place an order",
-	Long:  `Place an order`,
+// completeCmd represents the complete command
+var completeCmd = &cobra.Command{
+	Use:   "complete",
+	Short: "A brief description of your command",
+	Long:  "Complete an order by supplying the order ID",
 	Run: func(cmd *cobra.Command, args []string) {
+		if orderID == 0 {
+			log.Fatal("must supply an order ID")
+		}
 		cc, err := grpc.Dial(Address, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("Failed to dial: %v", err)
 		}
 
-		//menuClient := mookiespb.NewMenuServiceClient(cc)
 		orderClient := mookiespb.NewOrderServiceClient(cc)
 
 		defer cc.Close()
-		res, err := doSubmitOrderRequest(orderClient)
+		res, err := completeOrder(orderClient)
 		if err != nil {
-			log.Fatalf("Failed to submit order: %v", err)
+			log.Fatal(err)
 		}
 		fmt.Println(res)
 	},
 }
 
-func doSubmitOrderRequest(c mookiespb.OrderServiceClient) (string, error) {
-	go fmt.Println("Starting order request")
-	req := &mookiespb.SubmitOrderRequest{
-		Order: &mookiespb.Order{
-			Name: name,
-			Items: []*mookiespb.Item{
-				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495},
-			},
-			Total:       495,
-			TimeOrdered: ptypes.TimestampNow(),
-		},
+func completeOrder(c mookiespb.OrderServiceClient) (string, error) {
+	req := &mookiespb.CompleteOrderRequest{
+		Id: int32(orderID),
 	}
-
-	res, err := c.SubmitOrder(context.Background(), req)
+	res, err := c.CompleteOrder(context.Background(), req)
 	if err != nil {
 		return "", err
 	}
@@ -71,6 +63,6 @@ func doSubmitOrderRequest(c mookiespb.OrderServiceClient) (string, error) {
 }
 
 func init() {
-	rootCmd.AddCommand(orderCmd)
-	orderCmd.Flags().StringVarP(&name, "order name", "n", "Majora", "Name to place order under")
+	rootCmd.AddCommand(completeCmd)
+	completeCmd.Flags().IntVarP(&orderID, "order identifier", "o", 0, "ID of order to complete")
 }

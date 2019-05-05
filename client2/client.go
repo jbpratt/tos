@@ -7,7 +7,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/golang/protobuf/ptypes"
+	"github.com/golang/protobuf/ptypes/empty"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"google.golang.org/grpc"
 )
@@ -25,6 +25,10 @@ func main() {
 	orderClient := mookiespb.NewOrderServiceClient(cc)
 
 	defer cc.Close()
+	err = requestOrders(orderClient)
+	if err != nil {
+		log.Fatal(err)
+	}
 	err = subscribeToOrders(orderClient)
 	//err = completeOrder(orderClient)
 	//err = requestOrders(orderClient)
@@ -36,15 +40,8 @@ func main() {
 func completeOrder(c mookiespb.OrderServiceClient) error {
 	fmt.Println("Starting complete order request...")
 	// take this order req in as param
-	req := &mookiespb.Order{
-		Id:     1,
-		Name:   "Majora",
-		Status: false,
-		Items: []*mookiespb.Item{
-			{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Category: "Sandwich"},
-		},
-		Total:       495,
-		TimeOrdered: ptypes.TimestampNow(),
+	req := &mookiespb.CompleteOrderRequest{
+		Id: 1,
 	}
 	res, err := c.CompleteOrder(context.Background(), req)
 	if err != nil {
@@ -55,16 +52,13 @@ func completeOrder(c mookiespb.OrderServiceClient) error {
 }
 
 func requestOrders(c mookiespb.OrderServiceClient) error {
-	req := &mookiespb.OrdersRequest{
-		Request: "send me memes",
-	}
+	req := &empty.Empty{}
 
 	res, err := c.Orders(context.Background(), req)
 	if err != nil {
 		return err
 	}
 	log.Printf("Response from Orders: %v\n", res.GetOrders())
-
 	return nil
 }
 
@@ -90,6 +84,7 @@ func subscribeToOrders(c mookiespb.OrderServiceClient) error {
 			return nil
 		}
 		log.Printf("Received order: %v\n", order)
+		log.Printf("Order status: %v\n", order.GetStatus())
 	}
 	return nil
 }
