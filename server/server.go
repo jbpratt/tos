@@ -119,7 +119,7 @@ func (*server) SubmitOrder(ctx context.Context,
 	o.Status = mookiespb.Order_ACTIVE
 	Orders = append(Orders, o)
 	res := &mookiespb.SubmitOrderResponse{
-		Result: "Order was received.",
+		Result: "Order has been placed..",
 	}
 	go func() { reqChan <- o }()
 
