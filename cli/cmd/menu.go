@@ -38,18 +38,15 @@ var menuCmd = &cobra.Command{
 		defer cc.Close()
 
 		c := mookiespb.NewMenuServiceClient(cc)
-		items, err := doMenuRequest(c)
+		categories, err := doMenuRequest(c)
 		if err != nil {
 			log.Fatalf("Failed to get menu: %v", err)
 		}
-
-		for _, i := range items {
-			fmt.Printf("Item: %v\n", i)
-		}
+		fmt.Println(categories)
 	},
 }
 
-func doMenuRequest(c mookiespb.MenuServiceClient) ([]*mookiespb.Item, error) {
+func doMenuRequest(c mookiespb.MenuServiceClient) ([]*mookiespb.Category, error) {
 	fmt.Println("Starting to request menu...")
 	req := &empty.Empty{}
 
@@ -57,7 +54,7 @@ func doMenuRequest(c mookiespb.MenuServiceClient) ([]*mookiespb.Item, error) {
 	if err != nil {
 		return nil, err
 	}
-	return res.GetItems(), nil
+	return res.GetCategories(), nil
 }
 
 func init() {

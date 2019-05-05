@@ -55,7 +55,7 @@ func doSubmitOrderRequest(c mookiespb.OrderServiceClient) (string, error) {
 			Id:   1,
 			Name: "Majora",
 			Items: []*mookiespb.Item{
-				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Category: "Sandwich"},
+				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495},
 			},
 			Total:       495,
 			TimeOrdered: ptypes.TimestampNow(),

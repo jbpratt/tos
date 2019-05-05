@@ -180,7 +180,7 @@ func doMenuRequest(c mookiespb.MenuServiceClient) (*mookiespb.Menu, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("Response from GetMenu: %v\n", res.GetItems())
+	log.Printf("Response from GetMenu: %v\n", res.GetCategories())
 	return res, nil
 }
 
@@ -194,7 +194,7 @@ func doSubmitOrderRequest(
 			Id:   1,
 			Name: "Majora",
 			Items: []*mookiespb.Item{
-				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Category: "Sandwich"},
+				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495},
 			},
 			Total:       495,
 			TimeOrdered: ptypes.TimestampNow(),
@@ -259,11 +259,12 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 	// creates a group and puts it in the first column
 	if sw := w.GroupBegin("Group", groupFlags); sw != nil {
 		sw.Row(18).Static(od.GroupWidth)
-		items := menu.GetItems()
-		for _, item := range items {
-			if sw.Button(label.T(item.GetName()), false) {
-				od.order.Items = append(od.order.Items, item)
-				od.groupSelectedItem = item
+		categories := menu.GetCategories()
+		for _, category := range categories {
+			if sw.Button(label.T(category.GetName()), false) {
+				fmt.Println(category)
+				//od.order.Items = append(od.order.Items, item)
+				//od.groupSelectedItem = item
 			}
 		}
 		sw.GroupEnd()
@@ -276,9 +277,6 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 	// creates a second group and puts it in the second column
 	if sw := w.GroupBegin("asdasd", groupFlags); sw != nil {
 		if od.groupSelectedItem != nil {
-			sw.Row(20).Dynamic(2)
-			sw.Label("category: ", "RC")
-			sw.Label(od.groupSelectedItem.GetCategory(), "LC")
 			sw.Row(20).Dynamic(2)
 			sw.Label("name: ", "RC")
 			sw.Label(od.groupSelectedItem.GetName(), "LC")
