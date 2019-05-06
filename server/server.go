@@ -38,15 +38,11 @@ func (s *server) SubmitOrder(ctx context.Context,
 
 	log.Println("An order was received")
 	o := req.GetOrder()
-	row := s.db.QueryRow("SELECT COUNT(*) FROM orders")
-	err := row.Scan(&o.Id)
-	if err != nil {
-		return nil, err
-	}
-	o.Status = mookiespb.Order_ACTIVE
+	o.Id = int32(len(s.orders))
+	o.Status = "active"
 
-	_, err = s.db.Exec("INSERT INTO orders (name, total, status, time_ordered) VALUES (?, ?, ?, ?)",
-		o.GetName(), o.GetTotal(), o.GetStatus().String(), o.GetTimeOrdered().String())
+	_, err := s.db.Exec("INSERT INTO orders (name, total, status, time_ordered) VALUES (?, ?, ?, ?)",
+		o.GetName(), o.GetTotal(), o.GetStatus(), o.GetTimeOrdered().String())
 
 	if err != nil {
 		return nil, err
@@ -61,14 +57,12 @@ func (s *server) SubmitOrder(ctx context.Context,
 		}
 	}
 
-	// delete?
-	s.orders = append(s.orders, o)
 	res := &mookiespb.SubmitOrderResponse{
 		Result: "Order has been placed..",
 	}
 	go func() { reqChan <- o }()
 
-	return res, nil
+	return res, s.LoadData()
 }
 
 func (*server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
@@ -93,7 +87,7 @@ func (s *server) CompleteOrder(ctx context.Context,
 	// update order to be complete
 	for _, o := range s.orders {
 		if req.GetId() == o.GetId() {
-			o.Status = mookiespb.Order_COMPLETE
+			o.Status = "complete"
 		}
 	}
 	res := &mookiespb.CompleteOrderResponse{
@@ -102,53 +96,49 @@ func (s *server) CompleteOrder(ctx context.Context,
 	return res, nil
 }
 
-func (s *server) Orders(ctx context.Context,
+func (s *server) ActiveOrders(ctx context.Context,
 	empty *empty.Empty) (*mookiespb.OrdersResponse, error) {
 
-	log.Println("Orders function was invoked")
-	active := []*mookiespb.Order{}
-
-	// query out orders that are active and items associated
-
-	for _, o := range s.orders {
-		if o.GetStatus() == mookiespb.Order_ACTIVE {
-			active = append(active, o)
-		}
-	}
-
+	log.Println("Active orders function was invoked")
 	res := &mookiespb.OrdersResponse{
-		Orders: active,
+		Orders: s.orders,
 	}
-
 	return res, nil
 }
 
-func LoadData(db *sqlx.DB) (*mookiespb.Menu, error) {
+func (s *server) LoadData() error {
 	var categories []*mookiespb.Category
 	menu := &mookiespb.Menu{
 		Categories: categories,
 	}
 	// get menu
-	err := db.Select(&menu.Categories, "SELECT * from categories")
+	err := s.db.Select(&menu.Categories, "SELECT * from categories")
 	for _, c := range menu.GetCategories() {
-		err = db.Select(&c.Items, fmt.Sprintf("SELECT * FROM items WHERE category_id = %v", c.GetId()))
+		err = s.db.Select(&c.Items, fmt.Sprintf("SELECT * FROM items WHERE category_id = %v", c.GetId()))
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
 	if err != nil {
-		return nil, err
+		return err
 	}
+	s.menu = menu
 	// get all orders
-	return menu, nil
+	var orders []*mookiespb.Order
+	err = s.db.Select(&orders, "SELECT * FROM orders WHERE status = 'active'")
+	if err != nil {
+		return err
+	}
+	s.orders = orders
+	return nil
 }
 
 func NewServer(db *sqlx.DB) (*server, error) {
-	menu, err := LoadData(db)
+	server := &server{db: db}
+	err := server.LoadData()
 	if err != nil {
 		return nil, err
 	}
-	server := &server{db: db, menu: menu}
 	return server, nil
 }
 

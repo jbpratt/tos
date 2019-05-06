@@ -51,7 +51,7 @@ var activeCmd = &cobra.Command{
 func requestOrders(c mookiespb.OrderServiceClient) ([]*mookiespb.Order, error) {
 	req := &empty.Empty{}
 
-	res, err := c.Orders(context.Background(), req)
+	res, err := c.ActiveOrders(context.Background(), req)
 	if err != nil {
 		return nil, err
 	}

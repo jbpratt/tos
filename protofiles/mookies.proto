@@ -26,13 +26,11 @@ message Order {
   string name = 2;
   repeated Item items = 3;
   float total = 4;
-  enum Status {
-    ACTIVE = 0;
-    INACTIVE = 1;
-    COMPLETE = 2;
-  }
-  Status status = 5;
+  string status = 5;
+  // @inject_tag: db:"time_ordered"
   google.protobuf.Timestamp time_ordered = 6;
+  // @inject_tag: db:"time_complete"
+  google.protobuf.Timestamp time_complete = 7;
 } 
   
 message SubmitOrderRequest {
@@ -80,7 +78,7 @@ service OrderService {
   // server streaming
   rpc SubscribeToOrders(SubscribeToOrderRequest) returns (stream Order) {};
 
-  // all orders
-  rpc Orders(google.protobuf.Empty) returns (OrdersResponse) {};
+  // all active orders
+  rpc ActiveOrders(google.protobuf.Empty) returns (OrdersResponse) {};
 }
 
