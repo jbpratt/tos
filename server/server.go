@@ -31,6 +31,12 @@ func (s *server) GetMenu(ctx context.Context, empty *empty.Empty) (*mookiespb.Me
 	log.Println("Menu function was invoked")
 	var categories []*mookiespb.Category
 	err := s.db.Select(&categories, "SELECT * from categories")
+	for _, c := range categories {
+		err = s.db.Select(&c.Items, fmt.Sprintf("SELECT * FROM items WHERE category_id = %v", c.GetId()))
+		if err != nil {
+			return nil, err
+		}
+	}
 	if err != nil {
 		return nil, err
 	}

@@ -6,13 +6,14 @@ package mookies
 import (
 	context "context"
 	fmt "fmt"
+	math "math"
+
 	proto "github.com/golang/protobuf/proto"
 	empty "github.com/golang/protobuf/ptypes/empty"
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	math "math"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -55,10 +56,11 @@ func (Order_Status) EnumDescriptor() ([]byte, []int) {
 }
 
 type Item struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Id                   int32    `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	Price                float32  `protobuf:"fixed32,3,opt,name=price,proto3" json:"price,omitempty"`
-	CategoryID           int32    `protobuf:"varint,4,opt,name=categoryID,proto3" json:"categoryID,omitempty"`
+	Name  string  `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Id    int32   `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Price float32 `protobuf:"fixed32,3,opt,name=price,proto3" json:"price,omitempty"`
+	// @inject_tag: db:"category_id"
+	CategoryID           int32    `protobuf:"varint,4,opt,name=categoryID,proto3" json:"categoryID,omitempty" db:"category_id"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`

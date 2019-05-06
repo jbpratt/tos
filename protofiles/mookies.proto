@@ -7,6 +7,7 @@ message Item {
   string name = 1;
   int32 id = 2;
   float price = 3;
+  // @inject_tag: db:"category_id"
   int32 categoryID = 4;
 }
 
