@@ -21,39 +21,48 @@ var (
 	reqChan = make(chan *mookiespb.Order)
 )
 
-var Orders []*mookiespb.Order
-
 type server struct {
-	db *sqlx.DB
+	db     *sqlx.DB
+	orders []*mookiespb.Order
+	menu   *mookiespb.Menu
 }
 
 func (s *server) GetMenu(ctx context.Context, empty *empty.Empty) (*mookiespb.Menu, error) {
 	log.Println("Menu function was invoked")
-	var categories []*mookiespb.Category
-	err := s.db.Select(&categories, "SELECT * from categories")
-	for _, c := range categories {
-		err = s.db.Select(&c.Items, fmt.Sprintf("SELECT * FROM items WHERE category_id = %v", c.GetId()))
-		if err != nil {
-			return nil, err
-		}
-	}
-	if err != nil {
-		return nil, err
-	}
-	res := &mookiespb.Menu{
-		Categories: categories,
-	}
+	res := s.menu
 	return res, nil
 }
 
-func (*server) SubmitOrder(ctx context.Context,
+func (s *server) SubmitOrder(ctx context.Context,
 	req *mookiespb.SubmitOrderRequest) (*mookiespb.SubmitOrderResponse, error) {
 
 	log.Println("An order was received")
 	o := req.GetOrder()
-	o.Id = int32(len(Orders) + 1)
+	row := s.db.QueryRow("SELECT COUNT(*) FROM orders")
+	err := row.Scan(&o.Id)
+	if err != nil {
+		return nil, err
+	}
 	o.Status = mookiespb.Order_ACTIVE
-	Orders = append(Orders, o)
+
+	_, err = s.db.Exec("INSERT INTO orders (name, total, status, time_ordered) VALUES (?, ?, ?, ?)",
+		o.GetName(), o.GetTotal(), o.GetStatus().String(), o.GetTimeOrdered().String())
+
+	if err != nil {
+		return nil, err
+	}
+
+	// insert into order_item
+	for _, item := range o.GetItems() {
+		_, err = s.db.Exec("INSERT INTO order_item (itemid, orderid) VALUES (?, ?)",
+			item.GetId(), o.GetId())
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// delete?
+	s.orders = append(s.orders, o)
 	res := &mookiespb.SubmitOrderResponse{
 		Result: "Order has been placed..",
 	}
@@ -77,11 +86,12 @@ func (*server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
 	}
 }
 
-func (*server) CompleteOrder(ctx context.Context,
+func (s *server) CompleteOrder(ctx context.Context,
 	req *mookiespb.CompleteOrderRequest) (*mookiespb.CompleteOrderResponse, error) {
 
 	log.Printf("CompleteOrder function was invoked with %v\n", req)
-	for _, o := range Orders {
+	// update order to be complete
+	for _, o := range s.orders {
 		if req.GetId() == o.GetId() {
 			o.Status = mookiespb.Order_COMPLETE
 		}
@@ -92,13 +102,15 @@ func (*server) CompleteOrder(ctx context.Context,
 	return res, nil
 }
 
-func (*server) Orders(ctx context.Context,
+func (s *server) Orders(ctx context.Context,
 	empty *empty.Empty) (*mookiespb.OrdersResponse, error) {
 
 	log.Println("Orders function was invoked")
 	active := []*mookiespb.Order{}
 
-	for _, o := range Orders {
+	// query out orders that are active and items associated
+
+	for _, o := range s.orders {
 		if o.GetStatus() == mookiespb.Order_ACTIVE {
 			active = append(active, o)
 		}
@@ -111,14 +123,36 @@ func (*server) Orders(ctx context.Context,
 	return res, nil
 }
 
-func NewServer(db *sqlx.DB) *server {
-	return &server{
-		db: db,
+func LoadData(db *sqlx.DB) (*mookiespb.Menu, error) {
+	var categories []*mookiespb.Category
+	menu := &mookiespb.Menu{
+		Categories: categories,
 	}
+	// get menu
+	err := db.Select(&menu.Categories, "SELECT * from categories")
+	for _, c := range menu.GetCategories() {
+		err = db.Select(&c.Items, fmt.Sprintf("SELECT * FROM items WHERE category_id = %v", c.GetId()))
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+	// get all orders
+	return menu, nil
+}
+
+func NewServer(db *sqlx.DB) (*server, error) {
+	menu, err := LoadData(db)
+	if err != nil {
+		return nil, err
+	}
+	server := &server{db: db, menu: menu}
+	return server, nil
 }
 
 func main() {
-	seedData()
 	flag.Parse()
 	lis, err := net.Listen("tcp", *listen)
 	if err != nil {
@@ -130,8 +164,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to open DB: %v\n", err)
 	}
-	server := NewServer(db)
-	err = server.db.Ping()
+	defer db.Close()
+	server, err := NewServer(db)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -143,23 +177,6 @@ func main() {
 		log.Fatalf("Failed to serve: %v", err)
 	}
 }
-
-const itemDbSchema = `
-CREATE TABLE IF NOT EXISTS items (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	name TEXT NOT NULL,
-	price DECIMAL NOT NULL
-	category_id INTEGER,
-	CONSTRAINT fk_categories
-		FOREIGN KEY (category_id)
-		REFERENCES categories(id)
-);`
-
-const categoryDbSchema = `
-CREATE TABLE IF NOT EXISTS categories (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	name TEXT NOT NULL
-);`
 
 func seedData() {
 	data := []*mookiespb.Category{
