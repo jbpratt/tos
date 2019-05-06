@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/golang/protobuf/ptypes"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -58,8 +57,7 @@ func doSubmitOrderRequest(c mookiespb.OrderServiceClient) (string, error) {
 			Items: []*mookiespb.Item{
 				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495},
 			},
-			Total:       495,
-			TimeOrdered: ptypes.TimestampNow(),
+			Total: 495,
 		},
 	}
 

@@ -42,8 +42,9 @@ func (s *server) SubmitOrder(ctx context.Context,
 	o.Id = int32(len(s.orders))
 	o.Status = "active"
 
-	_, err := s.db.Exec("INSERT INTO orders (name, total, status, time_ordered) VALUES (?, ?, ?, ?)",
-		o.GetName(), o.GetTotal(), o.GetStatus(), o.GetTimeOrdered().String())
+	_, err := s.db.Exec(
+		"INSERT INTO orders (name, total, status, time_ordered, time_complete) VALUES (?, ?, ?, ?, ?)",
+		o.GetName(), o.GetTotal(), o.GetStatus(), time.Now().UTC().String(), "")
 
 	if err != nil {
 		return nil, err
@@ -86,15 +87,21 @@ func (s *server) CompleteOrder(ctx context.Context,
 
 	log.Printf("CompleteOrder function was invoked with %v\n", req)
 	// update order to be complete
-	for _, o := range s.orders {
-		if req.GetId() == o.GetId() {
-			o.Status = "complete"
-		}
+	//for _, o := range s.orders {
+	//	if req.GetId() == o.GetId() {
+	//		o.Status = "complete"
+	//	}
+	//}
+
+	// update query at req.GetId()
+	_, err := s.db.Exec("UPDATE orders SET status = 'complete' WHERE id = ?", req.GetId())
+	if err != nil {
+		return nil, err
 	}
 	res := &mookiespb.CompleteOrderResponse{
 		Result: "Order marked as complete",
 	}
-	return res, nil
+	return res, s.LoadData()
 }
 
 func (s *server) ActiveOrders(ctx context.Context, empty *empty.Empty) (*mookiespb.OrdersResponse, error) {

@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS orders (
 	name TEXT NOT NULL,
 	total DECIMAL NOT NULL,
 	status TEXT NOT NULL,
-	time_ordered INTEGER NOT NULL,
-	time_complete INTEGER
+	time_ordered TEXT NOT NULL,
+	time_complete TEXT
 );
 CREATE TABLE IF NOT EXISTS order_item (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
