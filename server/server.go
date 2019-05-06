@@ -38,6 +38,7 @@ func (s *server) SubmitOrder(ctx context.Context,
 
 	log.Println("An order was received")
 	o := req.GetOrder()
+	// expecting it to be right id
 	o.Id = int32(len(s.orders))
 	o.Status = "active"
 
@@ -96,9 +97,7 @@ func (s *server) CompleteOrder(ctx context.Context,
 	return res, nil
 }
 
-func (s *server) ActiveOrders(ctx context.Context,
-	empty *empty.Empty) (*mookiespb.OrdersResponse, error) {
-
+func (s *server) ActiveOrders(ctx context.Context, empty *empty.Empty) (*mookiespb.OrdersResponse, error) {
 	log.Println("Active orders function was invoked")
 	res := &mookiespb.OrdersResponse{
 		Orders: s.orders,
@@ -129,6 +128,9 @@ func (s *server) LoadData() error {
 	if err != nil {
 		return err
 	}
+
+	// TODO: query items along with orders
+
 	s.orders = orders
 	return nil
 }
