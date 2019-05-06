@@ -54,7 +54,7 @@ func completeOrder(c mookiespb.OrderServiceClient) error {
 func requestOrders(c mookiespb.OrderServiceClient) error {
 	req := &empty.Empty{}
 
-	res, err := c.Orders(context.Background(), req)
+	res, err := c.ActiveOrders(context.Background(), req)
 	if err != nil {
 		return err
 	}

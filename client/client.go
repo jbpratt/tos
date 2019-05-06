@@ -4,13 +4,11 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"image"
 	"log"
 
 	"github.com/aarzilli/nucular"
 	"github.com/aarzilli/nucular/label"
 	nstyle "github.com/aarzilli/nucular/style"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"google.golang.org/grpc"
@@ -33,32 +31,12 @@ type layout struct {
 	HeaderAlign nstyle.HeaderAlign
 
 	// Menu status
-	Mprog   int
-	Mslider int
-	Mcheck  bool
-	Prog    int
-	Slider  int
-	Check   bool
-
-	// Basic widgets status
-	IntSlider                          int
-	FloatSlider                        float64
-	ProgValue                          int
-	PropertyFloat                      float64
-	PropertyInt                        int
-	PropertyNeg                        int
-	RangeMin, RangeValue, RangeMax     float64
-	RangeIntMin, RangeInt, RangeIntMax int
-	Checkbox                           bool
-
 	// Selectable
 	Selected  []bool
 	Selected2 []bool
 
 	// Popup
 	PSelect []bool
-	PProg   int
-	PSlider int
 
 	// Layout
 	GroupBorder             bool
@@ -70,82 +48,35 @@ type layout struct {
 
 	// current order
 	order *mookiespb.Order
-
-	// Vertical Split
-	A, B, C    int
-	HA, HB, HC int
-
-	Img *image.RGBA
-
-	Resizing1, Resizing2, Resizing3, Resizing4 bool
-
-	edEntry1, edEntry2, edEntry3 nucular.TextEditor
-
+	menu  *mookiespb.Menu
 	Theme nstyle.Theme
 }
 
-func newLayout() (od *layout) {
-	od = &layout{}
-	od.ShowMenu = true
-	od.Titlebar = true
-	od.Border = true
-	od.Resize = true
-	od.Movable = true
-	od.NoScrollbar = false
-	od.Close = true
-	od.HeaderAlign = nstyle.HeaderRight
-	od.Mprog = 60
-	od.Mslider = 8
-	od.Mcheck = true
-	od.Prog = 40
-	od.Slider = 10
-	od.Check = true
-	od.IntSlider = 5
-	od.FloatSlider = 2.5
-	od.ProgValue = 40
-	od.Selected = []bool{false, false, true, false}
-	od.Selected2 = []bool{true, false, false, false, false, true, false, false, false, false, true, false, false, false, false, true}
-	od.PSelect = make([]bool, 4)
-	od.PProg = 0
-	od.PSlider = 10
-
+func newLayout() (l *layout) {
+	l = &layout{}
+	l.ShowMenu = true
+	l.Titlebar = true
+	l.Border = true
+	l.Resize = true
+	l.Movable = true
+	l.NoScrollbar = false
+	l.Close = true
+	l.HeaderAlign = nstyle.HeaderRight
 	//Layout
-	od.GroupBorder = true
-	od.GroupNoScrollbar = false
+	l.GroupBorder = true
+	l.GroupNoScrollbar = false
 
-	// TODO this need to change dynamically
-	od.GroupSelected = make([]bool, 10000)
-	od.groupCurrent = -1
+	// TlO this need to change dynamically
+	l.GroupSelected = make([]bool, 10000)
+	l.groupCurrent = -1
 
-	od.A = 100
-	od.B = 100
-	od.C = 100
+	l.GroupWidth = 0
+	l.GroupHeight = 0
 
-	od.HA = 100
-	od.HB = 100
-	od.HC = 100
+	l.order = &mookiespb.Order{}
 
-	od.PropertyFloat = 2
-	od.PropertyInt = 10
-	od.PropertyNeg = 10
-
-	od.RangeMin = 0
-	od.RangeValue = 50
-	od.RangeMax = 100
-
-	od.RangeIntMin = 0
-	od.RangeInt = 2048
-	od.RangeIntMax = 4096
-
-	od.GroupWidth = 0
-	od.GroupHeight = 0
-
-	od.order = &mookiespb.Order{}
-
-	return od
+	return l
 }
-
-var menu *mookiespb.Menu
 
 type Client struct {
 	MenuClient  mookiespb.MenuServiceClient
@@ -162,12 +93,9 @@ func main() {
 	defer cc.Close()
 	client.MenuClient = mookiespb.NewMenuServiceClient(cc)
 	client.OrderClient = mookiespb.NewOrderServiceClient(cc)
-	menu, _ = doMenuRequest(client.MenuClient)
-
-	//items := menu.GetItems()
-	//doSubmitOrderRequest(orderClient)
 
 	l := newLayout()
+	l.menu, _ = doMenuRequest(client.MenuClient)
 	wnd := nucular.NewMasterWindow(0, "Mookies", l.basicDemo)
 	wnd.Main()
 }
@@ -190,15 +118,7 @@ func doSubmitOrderRequest(
 
 	fmt.Println("Starting order request")
 	req := &mookiespb.SubmitOrderRequest{
-		Order: &mookiespb.Order{
-			Id:   1,
-			Name: "Majora",
-			Items: []*mookiespb.Item{
-				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495},
-			},
-			Total:       495,
-			TimeOrdered: ptypes.TimestampNow(),
-		},
+		Order: order,
 	}
 
 	res, err := c.SubmitOrder(context.Background(), req)
@@ -210,10 +130,6 @@ func doSubmitOrderRequest(
 
 func (l *layout) basicDemo(w *nucular.Window) {
 	l.overviewLayout(w)
-
-	//if l.Debug {
-	//	l.showDebug(w)
-	//}
 }
 
 // need to pass error into here
@@ -249,7 +165,7 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 	w.Label("Menu:", "LC")
 
 	// creates a row of height 0 (Dynamic sizing) with 2 columns
-	w.Row(0).Ratio(0.3, 0.7)
+	w.Row(0).Ratio(0.7, 0.3)
 
 	// create flags for the group we're about to create, turn off horizontal scrollbar and turn on borders
 	groupFlags := nucular.WindowFlags(0)
