@@ -155,7 +155,7 @@ func (l *layout) errorPopup(w *nucular.Window) {
 }
 
 func (od *layout) overviewLayout(w *nucular.Window) {
-	w.Row(30).Dynamic(3)
+	w.Row(30).Ratio(0.1, 0.8, 0.1)
 	if w.Button(label.T("debug"), false) {
 		od.DebugEnabled = !od.DebugEnabled
 	}
@@ -254,6 +254,7 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 				od.order.Total = float32(math.Round(float64(sum*100)) / 100)
 				od.doSubmitOrderRequest(od.order)
 				od.order.Reset()
+				od.NameEditor.Buffer = nil
 			} else {
 				w.Master().PopupOpen("Please give the order a name :)", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{20, 100, 230, 150}, true, od.errorPopup)
 			}
