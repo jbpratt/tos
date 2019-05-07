@@ -36,23 +36,11 @@ type layout struct {
 	DebugEnabled bool
 	DebugStrings []string
 
-	HeaderAlign nstyle.HeaderAlign
-
-	// Menu status
-	// Selectable
-	Selected  []bool
-	Selected2 []bool
-
 	// Popup
 	PSelect []bool
 
 	// Layout
-	GroupBorder             bool
-	GroupNoScrollbar        bool
-	GroupWidth, GroupHeight int
-	groupCurrent            int
-	groupSelectedItem       *mookiespb.Item
-	GroupSelected           []bool
+	groupSelectedItem *mookiespb.Item
 
 	// current order
 	NameEditor nucular.TextEditor
@@ -71,18 +59,9 @@ func newLayout() (l *layout) {
 	l.Movable = true
 	l.NoScrollbar = false
 	l.Close = true
-	l.HeaderAlign = nstyle.HeaderRight
-	//Layout
-	l.GroupBorder = true
-	l.GroupNoScrollbar = false
 
 	// TlO this need to change dynamically
 	l.NameEditor.Flags = nucular.EditField
-	l.GroupSelected = make([]bool, 10000)
-	l.groupCurrent = -1
-
-	l.GroupWidth = 0
-	l.GroupHeight = 0
 
 	l.order = &mookiespb.Order{}
 
