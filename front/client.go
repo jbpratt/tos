@@ -109,7 +109,9 @@ func (l *layout) doSubmitOrderRequest(order *mookiespb.Order) {
 		Order: order,
 	}
 
-	res, err := l.client.OrderClient.SubmitOrder(context.Background(), req)
+	ctx, _ := context.WithTimeout(context.Background(), 100*time.Millisecond)
+
+	res, err := l.client.OrderClient.SubmitOrder(ctx, req)
 	if err != nil {
 		log.Fatalf("Error while submitting order RPC: %v\n", err)
 	}

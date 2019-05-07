@@ -60,6 +60,8 @@ func newLayout() (l *layout) {
 	return l
 }
 
+var wnd nucular.MasterWindow
+
 func main() {
 	cc, err := grpc.Dial(*addr, grpc.WithInsecure())
 	if err != nil {
@@ -70,13 +72,13 @@ func main() {
 	l := newLayout()
 	l.client = mookiespb.NewOrderServiceClient(cc)
 
-	err = l.requestOrders(l.client)
+	err = l.requestOrders()
 	if err != nil {
 		log.Fatal(err)
 	}
-	go l.subscribeToOrders(l.client)
+	go l.subscribeToOrders()
 
-	wnd := nucular.NewMasterWindow(0, "Mookies", l.basicDemo)
+	wnd = nucular.NewMasterWindow(0, "Mookies", l.basicDemo)
 	wnd.Main()
 }
 
@@ -94,26 +96,26 @@ func (l *layout) completeOrder(id int32) error {
 	return nil
 }
 
-func (l *layout) requestOrders(c mookiespb.OrderServiceClient) error {
+func (l *layout) requestOrders() error {
 	req := &empty.Empty{}
 
-	res, err := c.ActiveOrders(context.Background(), req)
+	res, err := l.client.ActiveOrders(context.Background(), req)
 	if err != nil {
 		return err
 	}
 	l.Orders = res.GetOrders()
-	//log.Printf("Response from Orders: %v\n", l.Orders)
+	log.Printf("Response from Orders: %v\n", l.Orders)
 	return nil
 }
 
-func (l *layout) subscribeToOrders(c mookiespb.OrderServiceClient) error {
+func (l *layout) subscribeToOrders() error {
 
 	fmt.Println("Subscribing to orders...")
 	req := &mookiespb.SubscribeToOrderRequest{
 		Request: "send me orders",
 	}
 
-	stream, err := c.SubscribeToOrders(context.Background(), req)
+	stream, err := l.client.SubscribeToOrders(context.Background(), req)
 	if err != nil {
 		return err
 	}
@@ -129,7 +131,7 @@ func (l *layout) subscribeToOrders(c mookiespb.OrderServiceClient) error {
 		}
 		l.Orders = append(l.Orders, order)
 		log.Printf("Received order: %v\n", order)
-		log.Printf("Order status: %v\n", order.GetStatus())
+		wnd.Changed()
 	}
 	return nil
 }

@@ -62,7 +62,8 @@ func (s *server) SubmitOrder(ctx context.Context,
 	res := &mookiespb.SubmitOrderResponse{
 		Result: "Order has been placed..",
 	}
-	go func() { reqChan <- o }()
+
+	reqChan <- o
 
 	return res, s.LoadData()
 }
@@ -78,7 +79,7 @@ func (*server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
 		if err != nil {
 			return err
 		}
-		time.Sleep(time.Millisecond * 1000)
+		//time.Sleep(time.Millisecond * 1000)
 	}
 }
 
@@ -87,11 +88,11 @@ func (s *server) CompleteOrder(ctx context.Context,
 
 	log.Printf("CompleteOrder function was invoked with %v\n", req)
 	// update order to be complete
-	//for _, o := range s.orders {
-	//	if req.GetId() == o.GetId() {
-	//		o.Status = "complete"
-	//	}
-	//}
+	for _, o := range s.orders {
+		if req.GetId() == o.GetId() {
+			o.Status = "complete"
+		}
+	}
 
 	// update query at req.GetId()
 	_, err := s.db.Exec("UPDATE orders SET status = 'complete' WHERE id = ?", req.GetId())
