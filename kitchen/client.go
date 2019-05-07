@@ -154,7 +154,7 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 		for index := 0; index < len(widths); index++ {
 			widths[index] = 150
 		}
-		w.Row(20).Static(widths...)
+		ordersWindow.Row(0).Static(widths...)
 		for _, order := range od.Orders {
 			// create group for each order
 			if singleOrderWindow := ordersWindow.GroupBegin("fuck you", groupFlags); singleOrderWindow != nil {
