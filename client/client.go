@@ -5,9 +5,13 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math"
+	"strings"
+	"time"
 
 	"github.com/aarzilli/nucular"
 	"github.com/aarzilli/nucular/label"
+	"github.com/aarzilli/nucular/rect"
 	nstyle "github.com/aarzilli/nucular/style"
 	"github.com/golang/protobuf/ptypes/empty"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
@@ -28,6 +32,10 @@ type layout struct {
 	Minimizable bool
 	Close       bool
 
+	// debug
+	DebugEnabled bool
+	DebugStrings []string
+
 	HeaderAlign nstyle.HeaderAlign
 
 	// Menu status
@@ -47,9 +55,11 @@ type layout struct {
 	GroupSelected           []bool
 
 	// current order
-	order *mookiespb.Order
-	menu  *mookiespb.Menu
-	Theme nstyle.Theme
+	NameEditor nucular.TextEditor
+	order      *mookiespb.Order
+	menu       *mookiespb.Menu
+	Theme      nstyle.Theme
+	client     Client
 }
 
 func newLayout() (l *layout) {
@@ -67,6 +77,7 @@ func newLayout() (l *layout) {
 	l.GroupNoScrollbar = false
 
 	// TlO this need to change dynamically
+	l.NameEditor.Flags = nucular.EditField
 	l.GroupSelected = make([]bool, 10000)
 	l.groupCurrent = -1
 
@@ -75,6 +86,7 @@ func newLayout() (l *layout) {
 
 	l.order = &mookiespb.Order{}
 
+	l.client = Client{}
 	return l
 }
 
@@ -83,49 +95,46 @@ type Client struct {
 	OrderClient mookiespb.OrderServiceClient
 }
 
-var client Client
-
 func main() {
 	cc, err := grpc.Dial(*addr, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
 	}
 	defer cc.Close()
-	client.MenuClient = mookiespb.NewMenuServiceClient(cc)
-	client.OrderClient = mookiespb.NewOrderServiceClient(cc)
-
 	l := newLayout()
-	l.menu, _ = doMenuRequest(client.MenuClient)
+	l.client.MenuClient = mookiespb.NewMenuServiceClient(cc)
+	l.client.OrderClient = mookiespb.NewOrderServiceClient(cc)
+
+	l.menu, _ = l.doMenuRequest()
 	wnd := nucular.NewMasterWindow(0, "Mookies", l.basicDemo)
 	wnd.Main()
 }
 
-func doMenuRequest(c mookiespb.MenuServiceClient) (*mookiespb.Menu, error) {
-	fmt.Println("Starting to request menu...")
+func (l *layout) doMenuRequest() (*mookiespb.Menu, error) {
+	l.debug("Starting to request menu...")
 	req := &empty.Empty{}
 
-	res, err := c.GetMenu(context.Background(), req)
+	res, err := l.client.MenuClient.GetMenu(context.Background(), req)
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("Response from GetMenu: %v\n", res.GetCategories())
+	l.debug("Response from GetMenu: %v\n", res.GetCategories())
 	return res, nil
 }
 
 // pass in order as arg
-func doSubmitOrderRequest(
-	c mookiespb.OrderServiceClient, order *mookiespb.Order) {
+func (l *layout) doSubmitOrderRequest(order *mookiespb.Order) {
 
-	fmt.Println("Starting order request")
+	l.debug("Starting order request")
 	req := &mookiespb.SubmitOrderRequest{
 		Order: order,
 	}
 
-	res, err := c.SubmitOrder(context.Background(), req)
+	res, err := l.client.OrderClient.SubmitOrder(context.Background(), req)
 	if err != nil {
 		log.Fatalf("Error while submitting order RPC: %v\n", err)
 	}
-	log.Printf("Response from SubmitOrder: %v\n", res.GetResult())
+	l.debug("Response from SubmitOrder: %v\n", res.GetResult())
 }
 
 func (l *layout) basicDemo(w *nucular.Window) {
@@ -133,7 +142,7 @@ func (l *layout) basicDemo(w *nucular.Window) {
 }
 
 // need to pass error into here
-func errorPopup(w *nucular.Window) {
+func (l *layout) errorPopup(w *nucular.Window) {
 	w.Row(25).Dynamic(1)
 	w.Label("Error", "CC")
 	w.Row(25).Dynamic(2)
@@ -146,19 +155,12 @@ func errorPopup(w *nucular.Window) {
 }
 
 func (od *layout) overviewLayout(w *nucular.Window) {
-	// creates a row of height 20 with 1 column
-	w.Row(30).Dynamic(1)
-	// puts this text in the column with alignment x:center - y:center
-	w.Label("AYAYA", "CC")
-	// creates a row of height 20 with 2 columns with dybnamic width
-	w.Row(30).Ratio(0.4, 0.2, 0.4)
-	w.Spacing(1)
-	if w.Button(label.T("Send Order"), false) {
-		doSubmitOrderRequest(client.OrderClient, od.order)
-		od.order.Reset()
+	w.Row(30).Dynamic(3)
+	if w.Button(label.T("debug"), false) {
+		od.DebugEnabled = !od.DebugEnabled
 	}
+	w.Label(time.Now().Format("3:04PM"), "CC")
 	w.Spacing(1)
-
 	// creates a row of height 20 with 1 column
 	w.Row(20).Dynamic(1)
 	// puts this text in the column with alignment x:left - y:center
@@ -174,13 +176,37 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 
 	// creates a group and puts it in the first column
 	if sw := w.GroupBegin("Group", groupFlags); sw != nil {
-		sw.Row(18).Static(od.GroupWidth)
-		categories := menu.GetCategories()
+
+		if od.DebugEnabled {
+			sw.Row(int(sw.Bounds.H / 2)).Dynamic(1)
+			if debugWindow := sw.GroupBegin("debug", groupFlags); debugWindow != nil {
+				for _, line := range od.DebugStrings {
+					wrapped := wrapText(line, 100)
+					lines := strings.Split(wrapped, "\n")
+					for _, subLine := range lines {
+						debugWindow.Row(20).Dynamic(1)
+						debugWindow.Label(subLine, "LC")
+					}
+				}
+				debugWindow.GroupEnd()
+			}
+		}
+
+		categories := od.menu.GetCategories()
 		for _, category := range categories {
-			if sw.Button(label.T(category.GetName()), false) {
-				fmt.Println(category)
-				//od.order.Items = append(od.order.Items, item)
-				//od.groupSelectedItem = item
+			if sw.TreePush(nucular.TreeTab, category.GetName(), false) {
+				newRow := 4
+				for _, item := range category.GetItems() {
+					if newRow == 4 {
+						newRow = 0
+						sw.Row(100).Dynamic(4)
+					}
+					if sw.Button(label.T(wrapText(item.GetName(), 24)), false) {
+						od.order.Items = append(od.order.Items, item)
+					}
+					newRow++
+				}
+				sw.TreePop()
 			}
 		}
 		sw.GroupEnd()
@@ -192,40 +218,70 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 
 	// creates a second group and puts it in the second column
 	if sw := w.GroupBegin("asdasd", groupFlags); sw != nil {
-		if od.groupSelectedItem != nil {
-			sw.Row(20).Dynamic(2)
-			sw.Label("name: ", "RC")
-			sw.Label(od.groupSelectedItem.GetName(), "LC")
-			sw.Row(20).Dynamic(2)
-			sw.Label("price: ", "RC")
-			sw.Label(fmt.Sprintf("$ %.2f", od.groupSelectedItem.GetPrice()/100), "LC")
-			sw.Row(20).Dynamic(2)
-			sw.Label("ID: ", "RC")
-			sw.Label(fmt.Sprintf("%d", od.groupSelectedItem.GetId()), "LC")
-		}
 
-		sw.Row(10).Dynamic(1)
-		sw.Spacing(1)
-
-		if len(od.order.Items) > 0 {
-			var sum float32
-			for i, item := range od.order.Items {
-				sum += item.GetPrice() / 100
-				sw.Row(20).Ratio(0.7, 0.2, 0.1)
-				sw.Label(fmt.Sprintf("%v", item.GetName()), "LC")
-				sw.Label(fmt.Sprintf("$ %.2f", item.GetPrice()/100), "RC")
-				if sw.Button(label.T("X"), false) {
-					od.order.Items = append(od.order.Items[:i], od.order.Items[i+1:]...)
+		var sum float32
+		newHeight := int(float64(sw.Bounds.H) * 0.8)
+		sw.Row(newHeight).Dynamic(1)
+		if orderWindow := sw.GroupBegin("asdasd", groupFlags); sw != nil {
+			if len(od.order.Items) > 0 {
+				for i, item := range od.order.Items {
+					sum += item.GetPrice() / 100
+					orderWindow.Row(20).Ratio(0.7, 0.2, 0.1)
+					orderWindow.Label(fmt.Sprintf("%v", item.GetName()), "LC")
+					orderWindow.Label(fmt.Sprintf("$ %.2f", item.GetPrice()/100), "RC")
+					if orderWindow.Button(label.T("X"), false) {
+						od.order.Items = append(od.order.Items[:i], od.order.Items[i+1:]...)
+					}
 				}
 			}
+			orderWindow.GroupEnd()
+		}
 
-			sw.Row(10).Dynamic(1)
-			sw.Spacing(1)
+		sw.Row(20).Dynamic(2)
+		sw.Label("Sum:", "LC")
+		sw.Label(fmt.Sprintf("$ %.2f", sum), "RC")
+		sw.Row(20).Dynamic(2)
+		sw.Label("After Tax:", "LC")
+		sw.Label(fmt.Sprintf("$ %.2f", sum*1.04), "RC")
 
-			sw.Row(20).Dynamic(2)
-			sw.Label("Sum:", "LC")
-			sw.Label(fmt.Sprintf("$ %.2f", sum), "RC")
+		sw.Row(20).Dynamic(1)
+		od.NameEditor.Edit(sw)
+
+		sw.Row(0).Dynamic(1)
+		if sw.Button(label.T("ORDER"), false) {
+			if len(od.NameEditor.Buffer) > 0 {
+				od.order.Name = string(od.NameEditor.Buffer)
+				od.order.Total = float32(math.Round(float64(sum*100)) / 100)
+				od.doSubmitOrderRequest(od.order)
+				od.order.Reset()
+			} else {
+				w.Master().PopupOpen("Please give the order a name :)", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{20, 100, 230, 150}, true, od.errorPopup)
+			}
 		}
 		sw.GroupEnd()
 	}
+}
+
+func wrapText(text string, width int) string {
+	if len(text) <= width {
+		return text
+	}
+	var output string
+	subStrings := strings.Split(text, " ")
+	for i, subString := range subStrings {
+		if len(output)+len(subString)+1 <= width || i == 0 {
+			output += subString + " "
+		} else {
+			output += "\n" + wrapText(strings.Join(subStrings[i:], " "), width)
+			break
+		}
+	}
+	return output
+}
+
+func (l *layout) debug(message string, v ...interface{}) {
+	msg := fmt.Sprintf(message, v...)
+	log.Printf(msg)
+	// append to debug slice
+	l.DebugStrings = append(l.DebugStrings, msg)
 }
