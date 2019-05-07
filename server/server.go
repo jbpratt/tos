@@ -18,7 +18,7 @@ import (
 var (
 	listen  = flag.String("listen", ":50051", "listen address")
 	dbp     = flag.String("database", "./mookies.db", "database to use")
-	reqChan = make(chan *mookiespb.Order)
+	reqChan = make(chan *mookiespb.Order, 1024)
 )
 
 type server struct {
