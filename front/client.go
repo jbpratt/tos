@@ -160,6 +160,8 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 			sw.Row(int(sw.Bounds.H / 2)).Dynamic(1)
 			if debugWindow := sw.GroupBegin("debug", groupFlags); debugWindow != nil {
 				for _, line := range od.DebugStrings {
+
+					// TODO: don't run this on every screen update if the wrap factor doesnt change anyways
 					wrapped := wrapText(line, 100)
 					lines := strings.Split(wrapped, "\n")
 					for _, subLine := range lines {
@@ -228,7 +230,7 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 
 		sw.Row(0).Dynamic(1)
 		if sw.Button(label.T("ORDER"), false) {
-			if len(od.NameEditor.Buffer) > 0 {
+			if len(od.NameEditor.Buffer) > 0 && len(od.order.Items) > 0 {
 				od.order.Name = string(od.NameEditor.Buffer)
 				od.order.Total = float32(math.Round(float64(sum*100)) / 100)
 				od.doSubmitOrderRequest(od.order)

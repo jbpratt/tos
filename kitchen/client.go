@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/aarzilli/nucular"
@@ -79,13 +80,13 @@ func main() {
 	wnd.Main()
 }
 
-func completeOrder(c mookiespb.OrderServiceClient) error {
+func (l *layout) completeOrder(id int32) error {
 	fmt.Println("Starting complete order request...")
 	// take this order req in as param
 	req := &mookiespb.CompleteOrderRequest{
-		Id: 1,
+		Id: id,
 	}
-	res, err := c.CompleteOrder(context.Background(), req)
+	res, err := l.client.CompleteOrder(context.Background(), req)
 	if err != nil {
 		return err
 	}
@@ -144,7 +145,6 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 	w.Label("Orders:", "LC")
 
 	groupFlags := nucular.WindowFlags(0)
-	groupFlags |= nucular.WindowBorder
 
 	// create group that contains all orders
 	w.Row(0).Dynamic(1)
@@ -155,17 +155,53 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 			widths[index] = 150
 		}
 		ordersWindow.Row(0).Static(widths...)
-		for _, order := range od.Orders {
+		for i, order := range od.Orders {
+			groupFlags |= nucular.WindowBorder
 			// create group for each order
 			if singleOrderWindow := ordersWindow.GroupBegin("fuck you", groupFlags); singleOrderWindow != nil {
 				// create a row for text
 				singleOrderWindow.Row(20).Dynamic(1)
-				singleOrderWindow.Label(order.GetName(), "LC")
+				singleOrderWindow.Label(order.GetName(), "CC")
+				singleOrderWindow.Row(20).Dynamic(1)
+				if singleOrderWindow.Button(label.T("DONE"), false) {
+					od.completeOrder(order.GetId())
+					od.Orders = append(od.Orders[:i], od.Orders[i+1:]...)
+				}
+
+				for _, item := range order.Items {
+					lines := strings.Split(wrapText(item.Name, 18), "\n")
+					for i, line := range lines {
+						if i == len(lines)-1 {
+							singleOrderWindow.Row(22).Dynamic(1)
+						} else {
+							singleOrderWindow.Row(15).Dynamic(1)
+						}
+						singleOrderWindow.Label(line, "LC")
+					}
+				}
+
 				singleOrderWindow.GroupEnd()
 			}
 		}
 		ordersWindow.GroupEnd()
 	}
+}
+
+func wrapText(text string, width int) string {
+	if len(text) <= width {
+		return text
+	}
+	var output string
+	subStrings := strings.Split(text, " ")
+	for i, subString := range subStrings {
+		if len(output)+len(subString)+1 <= width || i == 0 {
+			output += subString + " "
+		} else {
+			output += "\n" + wrapText(strings.Join(subStrings[i:], " "), width)
+			break
+		}
+	}
+	return output
 }
 
 func (l *layout) basicDemo(w *nucular.Window) {
