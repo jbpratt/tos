@@ -211,16 +211,33 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 		groupFlags |= nucular.WindowBorder
 		if orderWindow := sw.GroupBegin("asdasd", groupFlags); sw != nil {
 			if len(l.order.Items) > 0 {
-				for i, item := range l.order.Items {
+				for itemNumber, item := range l.order.Items {
 					sum += item.GetPrice() / 100
-					// TODO: fix ratios
-					orderWindow.Row(20).Ratio(0.7, 0.2, 0.1)
-					// TODO: need linebreak in names
-					orderWindow.Label(fmt.Sprintf("%v", item.GetName()), "LC")
-					orderWindow.Label(fmt.Sprintf("$ %.2f", item.GetPrice()/100), "RC")
-					if orderWindow.Button(label.T("X"), false) {
-						l.order.Items = append(l.order.Items[:i], l.order.Items[i+1:]...)
+					lines := strings.Split(wrapText(item.Name, 24), "\n")
+					for i, line := range lines {
+						// more spacing between items
+						if i == 0 {
+							if len(lines) > 1 {
+								orderWindow.Row(12).Static(orderWindow.Bounds.W-95, 55, 20)
+							} else {
+								orderWindow.Row(20).Static(orderWindow.Bounds.W-95, 55, 20)
+							}
+							orderWindow.Label("• "+line, "LT")
+							orderWindow.Label(fmt.Sprintf("$ %5v", fmt.Sprintf("%.2f", item.GetPrice()/100)), "RT")
+							// button height need to be fixed
+							if orderWindow.Button(label.T("X"), false) {
+								l.order.Items = append(l.order.Items[:itemNumber], l.order.Items[itemNumber+1:]...)
+							}
+						} else {
+							if i == len(lines)-1 {
+								orderWindow.Row(20).Dynamic(1)
+							} else {
+								orderWindow.Row(12).Dynamic(1)
+							}
+							orderWindow.Label("  "+line, "LT")
+						}
 					}
+
 				}
 			}
 			orderWindow.GroupEnd()
