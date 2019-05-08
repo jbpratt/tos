@@ -47,7 +47,7 @@ type layout struct {
 	order      *mookiespb.Order
 	menu       *mookiespb.Menu
 	Theme      nstyle.Theme
-	client     Client
+	client     client
 }
 
 func newLayout() (l *layout) {
@@ -65,11 +65,11 @@ func newLayout() (l *layout) {
 
 	l.order = &mookiespb.Order{}
 
-	l.client = Client{}
+	l.client = client{}
 	return l
 }
 
-type Client struct {
+type client struct {
 	MenuClient  mookiespb.MenuServiceClient
 	OrderClient mookiespb.OrderServiceClient
 }
@@ -227,7 +227,7 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 		sw.Label("After Tax:", "LC")
 		sw.Label(fmt.Sprintf("$ %.2f", sum*1.04), "RC")
 
-		sw.Row(20).Dynamic(1)
+		sw.Row(25).Dynamic(1)
 		l.NameEditor.Edit(sw)
 
 		sw.Row(0).Dynamic(1)

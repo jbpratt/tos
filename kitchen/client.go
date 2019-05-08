@@ -33,7 +33,8 @@ type layout struct {
 	Close       bool
 
 	// orders
-	Orders []*mookiespb.Order
+	Orders             []*mookiespb.Order
+	LastCompletedOrder *mookiespb.Order
 
 	// debug
 	DebugEnabled bool
@@ -78,7 +79,9 @@ func main() {
 	}
 	go l.subscribeToOrders()
 
-	wnd = nucular.NewMasterWindow(0, "Mookies", l.basicDemo)
+	groupFlags := nucular.WindowFlags(0)
+	groupFlags |= nucular.WindowNoScrollbar
+	wnd = nucular.NewMasterWindow(groupFlags, "Mookies", l.basicDemo)
 	wnd.Main()
 }
 
@@ -147,6 +150,8 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 	w.Label("Orders:", "LC")
 
 	groupFlags := nucular.WindowFlags(0)
+	// looks like there is no option to only have a horizontal scrollbar
+	//groupFlags |= nucular.WindowNoScrollbar
 
 	// create group that contains all orders
 	w.Row(0).Dynamic(1)
@@ -156,32 +161,40 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 		for index := 0; index < len(widths); index++ {
 			widths[index] = 200
 		}
-		ordersWindow.Row(0).Static(widths...)
+		ordersWindow.Row(ordersWindow.Bounds.H - 15).Static(widths...)
 		for i, order := range l.Orders {
+			groupFlags = nucular.WindowFlags(0)
+			groupFlags |= nucular.WindowNoHScrollbar
 			groupFlags |= nucular.WindowBorder
 			// create group for each order
-			if singleOrderWindow := ordersWindow.GroupBegin("fuck you", groupFlags); singleOrderWindow != nil {
-				// create a row for text
+			if singleOrderWindow := ordersWindow.GroupBegin(fmt.Sprint(order.Id), groupFlags); singleOrderWindow != nil {
 				singleOrderWindow.Row(20).Dynamic(1)
 				singleOrderWindow.Label(order.GetName(), "CC")
 				singleOrderWindow.Row(20).Dynamic(1)
 				if singleOrderWindow.Button(label.T("DONE"), false) {
 					l.completeOrder(order.GetId())
 					l.Orders = append(l.Orders[:i], l.Orders[i+1:]...)
+					// so we have the option for an undo button if the order was dismissed too early
+					l.LastCompletedOrder = order
 				}
 
 				for _, item := range order.Items {
-					lines := strings.Split(wrapText(item.Name, 22), "\n")
+					lines := strings.Split(wrapText(item.Name, 24), "\n")
 					for i, line := range lines {
+						// more spacing between items
 						if i == len(lines)-1 {
-							singleOrderWindow.Row(22).Dynamic(1)
+							singleOrderWindow.Row(20).Dynamic(1)
 						} else {
-							singleOrderWindow.Row(15).Dynamic(1)
+							singleOrderWindow.Row(12).Dynamic(1)
 						}
-						singleOrderWindow.Label(line, "LC")
+						// bullet point for new orders
+						if i == 0 {
+							singleOrderWindow.Label("• "+line, "LT")
+						} else {
+							singleOrderWindow.Label("  "+line, "LT")
+						}
 					}
 				}
-
 				singleOrderWindow.GroupEnd()
 			}
 		}
@@ -208,4 +221,11 @@ func wrapText(text string, width int) string {
 
 func (l *layout) basicDemo(w *nucular.Window) {
 	l.overviewLayout(w)
+}
+
+func (l *layout) debug(message string, v ...interface{}) {
+	msg := fmt.Sprintf(message, v...)
+	log.Printf(msg)
+	// append to debug slice
+	l.DebugStrings = append(l.DebugStrings, msg)
 }
