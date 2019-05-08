@@ -42,21 +42,30 @@ func (s *server) SubmitOrder(ctx context.Context,
 	o.Id = int32(len(s.orders))
 	o.Status = "active"
 
-	_, err := s.db.Exec(
-		"INSERT INTO orders (name, total, status, time_ordered, time_complete) VALUES (?, ?, ?, ?, ?)",
-		o.GetName(), o.GetTotal(), o.GetStatus(), time.Now().UTC().String(), "")
-
+	tx, err := s.db.Begin()
 	if err != nil {
 		return nil, err
 	}
+	_, err = tx.Exec(
+		"INSERT INTO orders (name, total, status, time_ordered, time_complete) VALUES (?, ?, ?, ?, ?)",
+		o.GetName(), o.GetTotal(), o.GetStatus(), time.Now().UTC().String(), "")
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
 
-	// insert into order_item
 	for _, item := range o.GetItems() {
-		_, err = s.db.Exec("INSERT INTO order_item (itemid, orderid) VALUES (?, ?)",
+		_, err := tx.Exec(
+			"INSERT INTO order_item (itemid, orderid) VALUES (?, ?)",
 			item.GetId(), o.GetId())
 		if err != nil {
+			tx.Rollback()
 			return nil, err
 		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		return nil, err
 	}
 
 	res := &mookiespb.SubmitOrderResponse{
