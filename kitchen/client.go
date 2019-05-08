@@ -136,10 +136,10 @@ func (l *layout) subscribeToOrders() error {
 	return nil
 }
 
-func (od *layout) overviewLayout(w *nucular.Window) {
+func (l *layout) overviewLayout(w *nucular.Window) {
 	w.Row(30).Ratio(0.1, 0.8, 0.1)
 	if w.Button(label.T("debug"), false) {
-		od.DebugEnabled = !od.DebugEnabled
+		l.DebugEnabled = !l.DebugEnabled
 	}
 	w.Label(time.Now().Format("3:04PM"), "CC")
 	w.Spacing(1)
@@ -152,12 +152,12 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 	w.Row(0).Dynamic(1)
 	if ordersWindow := w.GroupBegin("orders", groupFlags); ordersWindow != nil {
 		// create a row with a column for every order
-		widths := make([]int, len(od.Orders))
+		widths := make([]int, len(l.Orders))
 		for index := 0; index < len(widths); index++ {
-			widths[index] = 150
+			widths[index] = 200
 		}
 		ordersWindow.Row(0).Static(widths...)
-		for i, order := range od.Orders {
+		for i, order := range l.Orders {
 			groupFlags |= nucular.WindowBorder
 			// create group for each order
 			if singleOrderWindow := ordersWindow.GroupBegin("fuck you", groupFlags); singleOrderWindow != nil {
@@ -166,12 +166,12 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 				singleOrderWindow.Label(order.GetName(), "CC")
 				singleOrderWindow.Row(20).Dynamic(1)
 				if singleOrderWindow.Button(label.T("DONE"), false) {
-					od.completeOrder(order.GetId())
-					od.Orders = append(od.Orders[:i], od.Orders[i+1:]...)
+					l.completeOrder(order.GetId())
+					l.Orders = append(l.Orders[:i], l.Orders[i+1:]...)
 				}
 
 				for _, item := range order.Items {
-					lines := strings.Split(wrapText(item.Name, 18), "\n")
+					lines := strings.Split(wrapText(item.Name, 22), "\n")
 					for i, line := range lines {
 						if i == len(lines)-1 {
 							singleOrderWindow.Row(22).Dynamic(1)

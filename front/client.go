@@ -135,10 +135,10 @@ func (l *layout) errorPopup(w *nucular.Window) {
 	}
 }
 
-func (od *layout) overviewLayout(w *nucular.Window) {
+func (l *layout) overviewLayout(w *nucular.Window) {
 	w.Row(30).Ratio(0.1, 0.8, 0.1)
 	if w.Button(label.T("debug"), false) {
-		od.DebugEnabled = !od.DebugEnabled
+		l.DebugEnabled = !l.DebugEnabled
 	}
 	w.Label(time.Now().Format("3:04PM"), "CC")
 	w.Spacing(1)
@@ -158,10 +158,10 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 	// creates a group and puts it in the first column
 	if sw := w.GroupBegin("Group", groupFlags); sw != nil {
 
-		if od.DebugEnabled {
+		if l.DebugEnabled {
 			sw.Row(int(sw.Bounds.H / 2)).Dynamic(1)
 			if debugWindow := sw.GroupBegin("debug", groupFlags); debugWindow != nil {
-				for _, line := range od.DebugStrings {
+				for _, line := range l.DebugStrings {
 
 					// TODO: don't run this on every screen update if the wrap factor doesnt change anyways
 					wrapped := wrapText(line, 100)
@@ -175,7 +175,7 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 			}
 		}
 
-		categories := od.menu.GetCategories()
+		categories := l.menu.GetCategories()
 		for _, category := range categories {
 			if sw.TreePush(nucular.TreeTab, category.GetName(), false) {
 				newRow := 4
@@ -185,7 +185,7 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 						sw.Row(100).Dynamic(4)
 					}
 					if sw.Button(label.T(wrapText(item.GetName(), 24)), false) {
-						od.order.Items = append(od.order.Items, item)
+						l.order.Items = append(l.order.Items, item)
 					}
 					newRow++
 				}
@@ -206,14 +206,14 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 		newHeight := int(float64(sw.Bounds.H) * 0.8)
 		sw.Row(newHeight).Dynamic(1)
 		if orderWindow := sw.GroupBegin("asdasd", groupFlags); sw != nil {
-			if len(od.order.Items) > 0 {
-				for i, item := range od.order.Items {
+			if len(l.order.Items) > 0 {
+				for i, item := range l.order.Items {
 					sum += item.GetPrice() / 100
 					orderWindow.Row(20).Ratio(0.7, 0.2, 0.1)
 					orderWindow.Label(fmt.Sprintf("%v", item.GetName()), "LC")
 					orderWindow.Label(fmt.Sprintf("$ %.2f", item.GetPrice()/100), "RC")
 					if orderWindow.Button(label.T("X"), false) {
-						od.order.Items = append(od.order.Items[:i], od.order.Items[i+1:]...)
+						l.order.Items = append(l.order.Items[:i], l.order.Items[i+1:]...)
 					}
 				}
 			}
@@ -228,18 +228,18 @@ func (od *layout) overviewLayout(w *nucular.Window) {
 		sw.Label(fmt.Sprintf("$ %.2f", sum*1.04), "RC")
 
 		sw.Row(20).Dynamic(1)
-		od.NameEditor.Edit(sw)
+		l.NameEditor.Edit(sw)
 
 		sw.Row(0).Dynamic(1)
 		if sw.Button(label.T("ORDER"), false) {
-			if len(od.NameEditor.Buffer) > 0 && len(od.order.Items) > 0 {
-				od.order.Name = string(od.NameEditor.Buffer)
-				od.order.Total = float32(math.Round(float64(sum*100)) / 100)
-				od.doSubmitOrderRequest(od.order)
-				od.order.Reset()
-				od.NameEditor.Buffer = nil
+			if len(l.NameEditor.Buffer) > 0 && len(l.order.Items) > 0 {
+				l.order.Name = string(l.NameEditor.Buffer)
+				l.order.Total = float32(math.Round(float64(sum*100)) / 100)
+				l.doSubmitOrderRequest(l.order)
+				l.order.Reset()
+				l.NameEditor.Buffer = nil
 			} else {
-				w.Master().PopupOpen("Please give the order a name :)", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{20, 100, 230, 150}, true, od.errorPopup)
+				w.Master().PopupOpen("Please give the order a name :)", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{20, 100, 230, 150}, true, l.errorPopup)
 			}
 		}
 		sw.GroupEnd()
