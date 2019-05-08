@@ -208,7 +208,7 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 		sw.Row(newHeight).Dynamic(1)
 		groupFlags = nucular.WindowFlags(0)
 		groupFlags |= nucular.WindowBorder
-		if orderWindow := sw.GroupBegin("asdasd", groupFlags); sw != nil {
+		if orderWindow := sw.GroupBegin("asdasd", groupFlags); orderWindow != nil {
 			if len(l.order.Items) > 0 {
 				for itemNumber, item := range l.order.Items {
 					sum += item.GetPrice() / 100
