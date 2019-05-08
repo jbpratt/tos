@@ -164,8 +164,6 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 			sw.Row(int(sw.Bounds.H / 2)).Dynamic(1)
 			if debugWindow := sw.GroupBegin("debug", groupFlags); debugWindow != nil {
 				for _, line := range l.DebugStrings {
-
-					// TODO: don't run this on every screen update if the wrap factor doesnt change anyways
 					wrapped := wrapText(line, 100)
 					lines := strings.Split(wrapped, "\n")
 					for _, subLine := range lines {
@@ -186,7 +184,8 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 						newRow = 0
 						sw.Row(100).Dynamic(4)
 					}
-					if sw.Button(label.T(wrapText(item.GetName(), 24)), false) {
+					text := wrapText(item.GetName(), int(float64(sw.Bounds.W)/4.0/8.0))
+					if sw.Button(label.T(text), false) {
 						l.order.Items = append(l.order.Items, item)
 					}
 					newRow++
@@ -213,7 +212,7 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 			if len(l.order.Items) > 0 {
 				for itemNumber, item := range l.order.Items {
 					sum += item.GetPrice() / 100
-					lines := strings.Split(wrapText(item.Name, 24), "\n")
+					lines := strings.Split(wrapText(item.Name, int(float64(orderWindow.Bounds.W-95)/8.0)), "\n")
 					for i, line := range lines {
 						// more spacing between items
 						if i == 0 {
