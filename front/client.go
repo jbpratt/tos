@@ -85,7 +85,9 @@ func main() {
 	l.client.OrderClient = mookiespb.NewOrderServiceClient(cc)
 
 	l.menu, _ = l.doMenuRequest()
-	wnd := nucular.NewMasterWindow(0, "Mookies", l.basicDemo)
+	groupFlags := nucular.WindowFlags(0)
+	groupFlags |= nucular.WindowNoScrollbar
+	wnd := nucular.NewMasterWindow(groupFlags, "Mookies", l.basicDemo)
 	wnd.Main()
 }
 
@@ -148,7 +150,7 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 	w.Label("Menu:", "LC")
 
 	// creates a row of height 0 (Dynamic sizing) with 2 columns
-	w.Row(0).Ratio(0.7, 0.3)
+	w.Row(w.Bounds.H-70).Ratio(0.7, 0.3)
 
 	// create flags for the group we're about to create, turn off horizontal scrollbar and turn on borders
 	groupFlags := nucular.WindowFlags(0)
@@ -197,19 +199,23 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 
 	// create new flags, turn off horizontal scrollbar
 	groupFlags = nucular.WindowFlags(0)
-	groupFlags |= nucular.WindowNoHScrollbar
+	groupFlags |= nucular.WindowNoScrollbar
 
 	// creates a second group and puts it in the second column
 	if sw := w.GroupBegin("asdasd", groupFlags); sw != nil {
 
 		var sum float32
-		newHeight := int(float64(sw.Bounds.H) * 0.8)
+		newHeight := sw.Bounds.H - 117
 		sw.Row(newHeight).Dynamic(1)
+		groupFlags = nucular.WindowFlags(0)
+		groupFlags |= nucular.WindowBorder
 		if orderWindow := sw.GroupBegin("asdasd", groupFlags); sw != nil {
 			if len(l.order.Items) > 0 {
 				for i, item := range l.order.Items {
 					sum += item.GetPrice() / 100
+					// TODO: fix ratios
 					orderWindow.Row(20).Ratio(0.7, 0.2, 0.1)
+					// TODO: need linebreak in names
 					orderWindow.Label(fmt.Sprintf("%v", item.GetName()), "LC")
 					orderWindow.Label(fmt.Sprintf("$ %.2f", item.GetPrice()/100), "RC")
 					if orderWindow.Button(label.T("X"), false) {
@@ -230,7 +236,7 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 		sw.Row(25).Dynamic(1)
 		l.NameEditor.Edit(sw)
 
-		sw.Row(0).Dynamic(1)
+		sw.Row(40).Dynamic(1)
 		if sw.Button(label.T("ORDER"), false) {
 			if len(l.NameEditor.Buffer) > 0 && len(l.order.Items) > 0 {
 				l.order.Name = string(l.NameEditor.Buffer)
