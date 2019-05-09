@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "google/protobuf/empty.proto";
+package mookiespb;
 
 message Item {
   string name = 1;
@@ -8,6 +8,12 @@ message Item {
   float price = 3;
   // @inject_tag: db:"category_id"
   int32 categoryID = 4;
+  repeated Option options = 5;
+}
+
+message Option {
+  string name = 1;
+  float price = 2;
 }
 
 message Category {
@@ -60,9 +66,13 @@ message OrdersResponse {
   repeated Order orders = 1;
 }
 
+message Empty {
+
+}
+
 service MenuService{
   // Unary get menu
-  rpc GetMenu(google.protobuf.Empty) returns (Menu) {};
+  rpc GetMenu(Empty) returns (Menu) {};
 }
 
 service OrderService {
@@ -78,6 +88,6 @@ service OrderService {
   rpc SubscribeToOrders(SubscribeToOrderRequest) returns (stream Order) {};
 
   // all active orders
-  rpc ActiveOrders(google.protobuf.Empty) returns (OrdersResponse) {};
+  rpc ActiveOrders(Empty) returns (OrdersResponse) {};
 }
 

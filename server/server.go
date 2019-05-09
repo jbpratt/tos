@@ -8,7 +8,6 @@ import (
 	"net"
 	"time"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
@@ -27,7 +26,7 @@ type server struct {
 	menu   *mookiespb.Menu
 }
 
-func (s *server) GetMenu(ctx context.Context, empty *empty.Empty) (*mookiespb.Menu, error) {
+func (s *server) GetMenu(ctx context.Context, empty *mookiespb.Empty) (*mookiespb.Menu, error) {
 	log.Println("Menu function was invoked")
 	res := s.menu
 	return res, nil
@@ -114,7 +113,7 @@ func (s *server) CompleteOrder(ctx context.Context,
 	return res, s.LoadData()
 }
 
-func (s *server) ActiveOrders(ctx context.Context, empty *empty.Empty) (*mookiespb.OrdersResponse, error) {
+func (s *server) ActiveOrders(ctx context.Context, empty *mookiespb.Empty) (*mookiespb.OrdersResponse, error) {
 	log.Println("Active orders function was invoked")
 	res := &mookiespb.OrdersResponse{
 		Orders: s.orders,
@@ -192,17 +191,17 @@ func seedData() {
 		{
 			Name: "Sandwich",
 			Items: []*mookiespb.Item{
-				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, CategoryID: 1},
-				{Name: "Regular Smoked Pulled Pork", Id: 2, Price: 395, CategoryID: 1},
-				{Name: "Large Smoked Chicken Breast", Id: 3, Price: 495, CategoryID: 1},
-				{Name: "Regular Smoked Chicken Breast", Id: 4, Price: 395, CategoryID: 1},
-				{Name: "'The Molly'", Id: 5, Price: 395, CategoryID: 1},
-				{Name: "Large Hamburger", Id: 6, Price: 495, CategoryID: 1},
-				{Name: "Hamburger", Id: 7, Price: 395, CategoryID: 1},
-				{Name: "Large Cheeseburger", Id: 8, Price: 550, CategoryID: 1},
-				{Name: "Cheeseburger", Id: 9, Price: 425, CategoryID: 1},
-				{Name: "Grilled Cheese", Id: 10, Price: 300, CategoryID: 1},
-				{Name: "Pulled Pork Melt", Id: 11, Price: 395, CategoryID: 1},
+				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, CategoryID: 1, Options: []*mookiespb.Option{}},
+				{Name: "Regular Smoked Pulled Pork", Id: 2, Price: 395, CategoryID: 1, Options: []*mookiespb.Option{}},
+				{Name: "Large Smoked Chicken Breast", Id: 3, Price: 495, CategoryID: 1, Options: []*mookiespb.Option{}},
+				{Name: "Regular Smoked Chicken Breast", Id: 4, Price: 395, CategoryID: 1, Options: []*mookiespb.Option{}},
+				{Name: "'The Molly'", Id: 5, Price: 395, CategoryID: 1, Options: []*mookiespb.Option{}},
+				{Name: "Large Hamburger", Id: 6, Price: 495, CategoryID: 1, Options: []*mookiespb.Option{}},
+				{Name: "Hamburger", Id: 7, Price: 395, CategoryID: 1, Options: []*mookiespb.Option{}},
+				{Name: "Large Cheeseburger", Id: 8, Price: 550, CategoryID: 1, Options: []*mookiespb.Option{}},
+				{Name: "Cheeseburger", Id: 9, Price: 425, CategoryID: 1, Options: []*mookiespb.Option{}},
+				{Name: "Grilled Cheese", Id: 10, Price: 300, CategoryID: 1, Options: []*mookiespb.Option{}},
+				{Name: "Pulled Pork Melt", Id: 11, Price: 395, CategoryID: 1, Options: []*mookiespb.Option{}},
 			},
 		},
 		{
