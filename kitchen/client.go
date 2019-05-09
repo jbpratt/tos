@@ -13,7 +13,6 @@ import (
 	"github.com/aarzilli/nucular/label"
 	nstyle "github.com/aarzilli/nucular/style"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"google.golang.org/grpc"
 )
@@ -100,7 +99,7 @@ func (l *layout) completeOrder(id int32) error {
 }
 
 func (l *layout) requestOrders() error {
-	req := &empty.Empty{}
+	req := &mookiespb.Empty{}
 
 	res, err := l.client.ActiveOrders(context.Background(), req)
 	if err != nil {

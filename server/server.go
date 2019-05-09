@@ -191,81 +191,105 @@ func seedData() {
 		{
 			Name: "Sandwich",
 			Items: []*mookiespb.Item{
-				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, CategoryID: 1, Options: []*mookiespb.Option{}},
-				{Name: "Regular Smoked Pulled Pork", Id: 2, Price: 395, CategoryID: 1, Options: []*mookiespb.Option{}},
-				{Name: "Large Smoked Chicken Breast", Id: 3, Price: 495, CategoryID: 1, Options: []*mookiespb.Option{}},
-				{Name: "Regular Smoked Chicken Breast", Id: 4, Price: 395, CategoryID: 1, Options: []*mookiespb.Option{}},
-				{Name: "'The Molly'", Id: 5, Price: 395, CategoryID: 1, Options: []*mookiespb.Option{}},
-				{Name: "Large Hamburger", Id: 6, Price: 495, CategoryID: 1, Options: []*mookiespb.Option{}},
-				{Name: "Hamburger", Id: 7, Price: 395, CategoryID: 1, Options: []*mookiespb.Option{}},
-				{Name: "Large Cheeseburger", Id: 8, Price: 550, CategoryID: 1, Options: []*mookiespb.Option{}},
-				{Name: "Cheeseburger", Id: 9, Price: 425, CategoryID: 1, Options: []*mookiespb.Option{}},
-				{Name: "Grilled Cheese", Id: 10, Price: 300, CategoryID: 1, Options: []*mookiespb.Option{}},
-				{Name: "Pulled Pork Melt", Id: 11, Price: 395, CategoryID: 1, Options: []*mookiespb.Option{}},
+				{Name: "Large Smoked Pulled Pork", Price: 495, Options: []*mookiespb.Option{
+					{Name: "pickles"}, {Name: "lettuce"}, {Name: "tomato"}, {Name: "mayo"},
+				}},
+				{Name: "Regular Smoked Pulled Pork", Price: 395, Options: []*mookiespb.Option{
+					{Name: "coleslaw"}, {Name: "pickles"}, {Name: "lettuce"}, {Name: "tomato"}, {Name: "mayo"},
+				}},
+				{Name: "Large Smoked Chicken Breast", Price: 495, Options: []*mookiespb.Option{
+					{Name: "coleslaw"}, {Name: "pickles"}, {Name: "lettuce"}, {Name: "tomato"}, {Name: "mayo"},
+				}},
+				{Name: "Regular Smoked Chicken Breast", Price: 395, Options: []*mookiespb.Option{
+					{Name: "coleslaw"}, {Name: "pickles"}, {Name: "lettuce"}, {Name: "tomato"}, {Name: "mayo"},
+				}},
+				{Name: "'The Molly'", Price: 395, Options: []*mookiespb.Option{
+					{Name: "coleslaw"}, {Name: "pickles"}, {Name: "lettuce"}, {Name: "tomato"}, {Name: "mayo"},
+				}},
+				{Name: "Large Hamburger", Price: 495, Options: []*mookiespb.Option{
+					{Name: "coleslaw"}, {Name: "pickles"}, {Name: "lettuce"}, {Name: "tomato"}, {Name: "mayo"},
+				}},
+				{Name: "Hamburger", Price: 395, Options: []*mookiespb.Option{
+					{Name: "coleslaw"}, {Name: "pickles"}, {Name: "lettuce"}, {Name: "tomato"}, {Name: "mayo"},
+				}},
+				{Name: "Large Cheeseburger", Price: 550, Options: []*mookiespb.Option{
+					{Name: "coleslaw"}, {Name: "pickles"}, {Name: "lettuce"}, {Name: "tomato"}, {Name: "mayo"},
+				}},
+				{Name: "Cheeseburger", Price: 425, Options: []*mookiespb.Option{
+					{Name: "coleslaw"}, {Name: "pickles"}, {Name: "lettuce"}, {Name: "tomato"}, {Name: "mayo"},
+				}},
+				{Name: "Grilled Cheese", Price: 300, Options: []*mookiespb.Option{
+					{Name: "coleslaw"}, {Name: "pickles"}, {Name: "lettuce"}, {Name: "tomato"}, {Name: "mayo"},
+				}},
+				{Name: "Pulled Pork Melt", Price: 395, Options: []*mookiespb.Option{
+					{Name: "coleslaw"}, {Name: "pickles"}, {Name: "lettuce"}, {Name: "tomato"}, {Name: "mayo"},
+				}},
 			},
 		},
 		{
 			Name: "Plates",
 			Items: []*mookiespb.Item{
-				{Name: "Smoked Pulled Pork", Id: 12, Price: 990, CategoryID: 2},
-				{Name: "Regular Rib", Id: 13, Price: 995, CategoryID: 2},
-				{Name: "1/2 Smoked Chicken", Id: 14, Price: 995, CategoryID: 2},
-				{Name: "Smoked Chicken Breast", Id: 15, Price: 725, CategoryID: 2},
-				{Name: "Smoked Wing (8 wings)", Id: 16, Price: 999, CategoryID: 2},
-				{Name: "Loaded Nachos (BBQ or Chicken)", Id: 17, Price: 875, CategoryID: 2},
+				{Name: "Smoked Pulled Pork", Price: 990, Options: []*mookiespb.Option{
+					{Name: "baked beans"}, {Name: ""},
+				}},
+				{Name: "Regular Rib", Price: 995},
+				{Name: "1/2 Smoked Chicken", Price: 995},
+				{Name: "Smoked Chicken Breast", Price: 725},
+				{Name: "Smoked Wing (8 wings)", Price: 999},
+				{Name: "Loaded Nachos (BBQ or Chicken)", Price: 875},
 			},
 		},
 		{
 			Name: "Baskets",
 			Items: []*mookiespb.Item{
-				{Name: "Smoked Wing", Id: 18, Price: 500, CategoryID: 3},
-				{Name: "Rib", Id: 19, Price: 500, CategoryID: 3},
+				{Name: "Smoked Wing", Price: 500},
+				{Name: "Rib", Price: 500},
 			},
 		},
 		{
 			Name: "Potatoes",
 			Items: []*mookiespb.Item{
-				{Name: "Loaded Pork", Id: 20, Price: 899, CategoryID: 4},
-				{Name: "Loaded Chicken", Id: 21, Price: 899, CategoryID: 4},
-				{Name: "Loaded Potato (no meat)", Id: 22, Price: 699, CategoryID: 4},
-				{Name: "Smothered and Covered Fries", Id: 23, Price: 899, CategoryID: 4},
+				{Name: "Loaded Pork", Price: 899},
+				{Name: "Loaded Chicken", Price: 899},
+				{Name: "Loaded Potato (no meat)", Price: 699},
+				{Name: "Smothered and Covered Fries", Price: 899},
 			},
 		},
 		{
 			Name: "Sides",
 			Items: []*mookiespb.Item{
-				{Name: "Small Cole Slaw", Id: 24, Price: 300, CategoryID: 5},
-				{Name: "Large Cole Slaw", Id: 25, Price: 600, CategoryID: 5},
-				{Name: "Small Baked Beans", Id: 26, Price: 300, CategoryID: 5},
-				{Name: "Large Baked Beans", Id: 27, Price: 600, CategoryID: 5},
-				{Name: "Small Potato Salad", Id: 28, Price: 300, CategoryID: 5},
-				{Name: "Large Potato Salad", Id: 29, Price: 600, CategoryID: 5},
-				{Name: "Plain Chips", Id: 30, Price: 100, CategoryID: 5},
-				{Name: "Fries", Id: 31, Price: 300, CategoryID: 5},
+				{Name: "Small Cole Slaw", Price: 300},
+				{Name: "Large Cole Slaw", Price: 600},
+				{Name: "Small Baked Beans", Price: 300},
+				{Name: "Large Baked Beans", Price: 600},
+				{Name: "Small Potato Salad", Price: 300},
+				{Name: "Large Potato Salad", Price: 600},
+				{Name: "Plain Chips", Price: 100},
+				{Name: "Fries", Price: 300},
 			},
 		},
 		{
 			Name: "Drinks",
 			Items: []*mookiespb.Item{
-				{Name: "Canned Drink", Id: 32, Price: 100, CategoryID: 6},
-				{Name: "Bottled Water", Id: 33, Price: 150, CategoryID: 6},
+				{Name: "Canned Drink", Price: 100},
+				{Name: "Bottled Water", Price: 150},
 			},
 		},
 		{
 			Name: "Desserts",
 			Items: []*mookiespb.Item{
-				{Name: "Oreo Dream", Id: 34, Price: 350, CategoryID: 7},
-				{Name: "Lemon Delight", Id: 35, Price: 350, CategoryID: 7},
-				{Name: "Strawberry Pizza", Id: 36, Price: 350, CategoryID: 7},
-				{Name: "Whole Dessert", Id: 37, Price: 3000, CategoryID: 7},
-				{Name: "Small Banana Pudding", Id: 38, Price: 350, CategoryID: 7},
-				{Name: "Large Banana Pudding", Id: 39, Price: 700, CategoryID: 7},
+				{Name: "Oreo Dream", Price: 350},
+				{Name: "Lemon Delight", Price: 350},
+				{Name: "Strawberry Pizza", Price: 350},
+				{Name: "Whole Dessert", Price: 3000},
+				{Name: "Small Banana Pudding", Price: 350},
+				{Name: "Large Banana Pudding", Price: 700},
 			},
 		},
 		{
 			Name: "Sauces",
 			Items: []*mookiespb.Item{
-				{Name: "Extra sauce", Id: 40, Price: 50, CategoryID: 8},
+				{Name: "Extra sauce", Price: 50},
 			},
 		},
 	}
@@ -277,10 +301,10 @@ func seedData() {
 		//res := s.db.MustExec(cmd)
 	}
 
-	for _, c := range data {
+	for x, c := range data {
 		for _, i := range c.GetItems() {
 			t := "INSERT INTO items (name, price, category_id) VALUES ('%v', '%v', '%v');"
-			cmd := fmt.Sprintf(t, i.GetName(), i.GetPrice(), i.GetCategoryID())
+			cmd := fmt.Sprintf(t, i.GetName(), i.GetPrice(), x)
 			fmt.Println(cmd)
 		}
 	}

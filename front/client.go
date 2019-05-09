@@ -13,7 +13,6 @@ import (
 	"github.com/aarzilli/nucular/label"
 	"github.com/aarzilli/nucular/rect"
 	nstyle "github.com/aarzilli/nucular/style"
-	"github.com/golang/protobuf/ptypes/empty"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"google.golang.org/grpc"
 )
@@ -93,7 +92,7 @@ func main() {
 
 func (l *layout) doMenuRequest() (*mookiespb.Menu, error) {
 	l.debug("Starting to request menu...")
-	req := &empty.Empty{}
+	req := &mookiespb.Empty{}
 
 	res, err := l.client.MenuClient.GetMenu(context.Background(), req)
 	if err != nil {
