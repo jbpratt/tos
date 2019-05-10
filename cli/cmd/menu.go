@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -48,7 +47,7 @@ var menuCmd = &cobra.Command{
 
 func doMenuRequest(c mookiespb.MenuServiceClient) ([]*mookiespb.Category, error) {
 	fmt.Println("Starting to request menu...")
-	req := &empty.Empty{}
+	req := &mookiespb.Empty{}
 
 	res, err := c.GetMenu(context.Background(), req)
 	if err != nil {

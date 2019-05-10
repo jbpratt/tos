@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -49,7 +48,7 @@ var activeCmd = &cobra.Command{
 }
 
 func requestOrders(c mookiespb.OrderServiceClient) ([]*mookiespb.Order, error) {
-	req := &empty.Empty{}
+	req := &mookiespb.Empty{}
 
 	res, err := c.ActiveOrders(context.Background(), req)
 	if err != nil {

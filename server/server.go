@@ -57,7 +57,7 @@ func (s *server) SubmitOrder(ctx context.Context,
 
 	for _, item := range o.GetItems() {
 		_, err := tx.Exec(
-			"INSERT INTO order_item (itemid, orderid) VALUES (?, ?)",
+			"INSERT INTO order_items (item_id, order_id) VALUES (?, ?)",
 			item.GetId(), o.GetId())
 		if err != nil {
 			tx.Rollback()
@@ -149,10 +149,18 @@ func (s *server) LoadData() error {
 		return err
 	}
 	s.menu = menu
-	fmt.Println(s.menu)
 
 	// TODO: query items along with orders
-	//s.orders = orders
+	var orders []*mookiespb.Order
+	err = s.db.Select(&orders,
+		"SELECT * FROM orders WHERE status = 'active'")
+	if err != nil {
+		return err
+	}
+
+	s.orders = orders
+	log.Println("Data queried...")
+
 	return nil
 }
 
