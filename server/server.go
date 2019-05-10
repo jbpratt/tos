@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -140,7 +139,7 @@ func (s *server) LoadData() error {
 			err = s.db.Select(&item.Options,
 				fmt.Sprintf("SELECT name,price,by_default FROM options JOIN item_options as io ON options.id = io.option_id WHERE item_id = %d", item.GetId()))
 			if err != nil {
-				return errors.New(fmt.Sprintf("error on %v, error: %v", item, err.Error()))
+				return err
 			}
 		}
 	}
@@ -156,6 +155,14 @@ func (s *server) LoadData() error {
 		"SELECT * FROM orders WHERE status = 'active'")
 	if err != nil {
 		return err
+	}
+	for _, order := range orders {
+		err = s.db.Select(&order.Items, fmt.Sprintf(
+			"SELECT name,price FROM items JOIN order_items ON items.id = order_items.item_id WHERE order_id = %d",
+			order.GetId()))
+		if err != nil {
+			return err
+		}
 	}
 
 	s.orders = orders
