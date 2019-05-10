@@ -97,9 +97,10 @@ func (m *Item) GetOptions() []*Option {
 }
 
 type Option struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Price                float32  `protobuf:"fixed32,2,opt,name=price,proto3" json:"price,omitempty"`
-	ByDefault            bool     `protobuf:"varint,3,opt,name=byDefault,proto3" json:"byDefault,omitempty"`
+	Name  string  `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Price float32 `protobuf:"fixed32,2,opt,name=price,proto3" json:"price,omitempty"`
+	// @inject_tag: db:"by_default"
+	ByDefault            bool     `protobuf:"varint,3,opt,name=byDefault,proto3" json:"byDefault,omitempty" db:"by_default"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`

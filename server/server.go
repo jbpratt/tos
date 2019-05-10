@@ -136,16 +136,15 @@ func (s *server) LoadData() error {
 		if err != nil {
 			return err
 		}
-		fmt.Println("First query: all categories + items: ", category.GetItems())
 		for _, item := range category.GetItems() {
 			err = s.db.Select(&item.Options,
-				fmt.Sprintf("SELECT name,price,by_default FROM options JOIN item_options as io ON options.id = io.option_id WHERE item_id = ?", item.GetId()))
+				fmt.Sprintf("SELECT name,price,by_default FROM options JOIN item_options as io ON options.id = io.option_id WHERE item_id = %d", item.GetId()))
 			if err != nil {
 				return errors.New(fmt.Sprintf("error on %v, error: %v", item, err.Error()))
 			}
 		}
-
 	}
+
 	if err != nil {
 		return err
 	}
