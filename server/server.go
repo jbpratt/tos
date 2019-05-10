@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -129,33 +130,29 @@ func (s *server) LoadData() error {
 	}
 	// get menu
 	err := s.db.Select(&menu.Categories, "SELECT * from categories")
-	for _, c := range menu.GetCategories() {
-		err = s.db.Select(&c.Items, fmt.Sprintf("SELECT * FROM items WHERE category_id = %v", c.GetId()))
+	for _, category := range menu.GetCategories() {
+		err = s.db.Select(&category.Items,
+			fmt.Sprintf("SELECT * FROM items WHERE category_id = %v", category.GetId()))
 		if err != nil {
 			return err
 		}
-		item_options := []struct {
-			item_id   int
-			option_id int
-		}{}
-		err = s.db.Select(&item_options, fmt.Sprintf("SELECT * FROM item_options"))
-		if err != nil {
-			return err
+		fmt.Println("First query: all categories + items: ", category.GetItems())
+		for _, item := range category.GetItems() {
+			err = s.db.Select(&item.Options,
+				fmt.Sprintf("SELECT name,price,by_default FROM options JOIN item_options as io ON options.id = io.option_id WHERE item_id = ?", item.GetId()))
+			if err != nil {
+				return errors.New(fmt.Sprintf("error on %v, error: %v", item, err.Error()))
+			}
 		}
+
 	}
 	if err != nil {
 		return err
 	}
 	s.menu = menu
-	// get all orders
-	/*var orders []*mookiespb.Order
-	err = s.db.Select(&orders, "SELECT * FROM orders WHERE status = 'active'")
-	if err != nil {
-		return err
-	}*/
+	fmt.Println(s.menu)
 
 	// TODO: query items along with orders
-
 	//s.orders = orders
 	return nil
 }
@@ -208,25 +205,27 @@ func (s *server) seedData() error {
 			tx.Rollback()
 			return err
 		}
-		for x, item := range category.GetItems() {
-			_, err = tx.Exec(
+		for _, item := range category.GetItems() {
+			result, err := tx.Exec(
 				"INSERT INTO items (name, price, category_id) VALUES (?,?,?)",
 				item.GetName(), item.GetPrice(), i+1)
 			if err != nil {
 				tx.Rollback()
 				return err
 			}
-			for o, option := range item.GetOptions() {
-				_, err = tx.Exec(
+			itemid, _ := result.LastInsertId()
+			for _, option := range item.GetOptions() {
+				res, err := tx.Exec(
 					"INSERT INTO options (name, price, by_default) VALUES (?,?,?)",
 					option.GetName(), option.GetPrice(), option.GetByDefault())
 				if err != nil {
 					tx.Rollback()
 					return err
 				}
+				optionid, _ := res.LastInsertId()
 				_, err = tx.Exec(
 					"INSERT INTO item_options (item_id, option_id) VALUES (?,?)",
-					x+1, o+1)
+					itemid, optionid)
 				if err != nil {
 					tx.Rollback()
 					return err
