@@ -21,11 +21,3 @@ Implement a ticket order system in Go
 * Ability to push new order to client
 * Ability to receive completed order
 * Validate orders from the server as they are built in the 'cart'
-
-#### Mockups
-
-##### Client 1: Front
-![front](https://i.vgy.me/zyYZjo.png)
-
-##### Client 2: Kitchen
-![kitchen](https://i.vgy.me/nuYZ5k.png)
