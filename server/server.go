@@ -153,6 +153,7 @@ func (s *server) LoadData() error {
 
 func NewServer(db *sqlx.DB) (*server, error) {
 	server := &server{db: db}
+	//err := server.seedData()
 	err := server.LoadData()
 	if err != nil {
 		return nil, err
@@ -186,12 +187,12 @@ func main() {
 	}
 }
 
-func seedData() {
+func (s *server) seedData() error {
 	data := []*mookiespb.Category{
 		{
 			Name: "Sandwich",
 			Items: []*mookiespb.Item{
-				{Name: "Large Smoked Pulled Pork", Price: 495, Options: []*mookiespb.Option{
+				{Name: "LG Smoked Pulled Pork", Price: 495, Options: []*mookiespb.Option{
 					{Name: "pickles", Price: 0, ByDefault: true},
 					{Name: "bbq sauce", Price: 0, ByDefault: true},
 					{Name: "white sauce", Price: 0, ByDefault: false},
@@ -201,8 +202,9 @@ func seedData() {
 					{Name: "tomato", Price: 25, ByDefault: false},
 					{Name: "lettuce", Price: 25, ByDefault: false},
 					{Name: "cheese", Price: 25, ByDefault: false},
+					{Name: "onion", Price: 25, ByDefault: false},
 				}},
-				{Name: "Regular Smoked Pulled Pork", Price: 395, Options: []*mookiespb.Option{
+				{Name: "RG Smoked Pulled Pork", Price: 395, Options: []*mookiespb.Option{
 					{Name: "pickles", Price: 0, ByDefault: true},
 					{Name: "bbq sauce", Price: 0, ByDefault: true},
 					{Name: "white sauce", Price: 0, ByDefault: false},
@@ -211,38 +213,46 @@ func seedData() {
 					{Name: "coleslaw", Price: 25, ByDefault: false},
 					{Name: "tomato", Price: 25, ByDefault: false},
 					{Name: "lettuce", Price: 25, ByDefault: false},
+					{Name: "cheese", Price: 25, ByDefault: false},
+					{Name: "onion", Price: 25, ByDefault: false},
 				}},
-				{Name: "Large Smoked Chicken Breast", Price: 495, Options: []*mookiespb.Option{
-					{Name: "pickles", Price: 0, ByDefault: true},
-					{Name: "bbq sauce", Price: 0, ByDefault: true},
+				{Name: "LG Smoked Chicken Breast", Price: 495, Options: []*mookiespb.Option{
+					{Name: "pickles", Price: 0, ByDefault: false},
+					{Name: "bbq sauce", Price: 0, ByDefault: false},
 					{Name: "white sauce", Price: 0, ByDefault: false},
 					{Name: "ketchup", Price: 0, ByDefault: false},
-					{Name: "mayo", Price: 0, ByDefault: false},
+					{Name: "mayo", Price: 0, ByDefault: true},
 					{Name: "coleslaw", Price: 25, ByDefault: false},
-					{Name: "tomato", Price: 25, ByDefault: false},
-					{Name: "lettuce", Price: 25, ByDefault: false},
+					{Name: "tomato", Price: 25, ByDefault: true},
+					{Name: "lettuce", Price: 25, ByDefault: true},
+					{Name: "cheese", Price: 25, ByDefault: false},
+					{Name: "onion", Price: 25, ByDefault: false},
 				}},
-				{Name: "Regular Smoked Chicken Breast", Price: 395, Options: []*mookiespb.Option{
-					{Name: "pickles", Price: 0, ByDefault: true},
-					{Name: "bbq sauce", Price: 0, ByDefault: true},
+				{Name: "RG Smoked Chicken Breast", Price: 395, Options: []*mookiespb.Option{
+					{Name: "pickles", Price: 0, ByDefault: false},
+					{Name: "bbq sauce", Price: 0, ByDefault: false},
 					{Name: "white sauce", Price: 0, ByDefault: false},
-					{Name: "ketchup", Price: 0, ByDefault: false},
-					{Name: "mayo", Price: 0, ByDefault: false},
+					{Name: "ketchup", Price: 0, ByDefault: true},
+					{Name: "mayo", Price: 0, ByDefault: true},
 					{Name: "coleslaw", Price: 25, ByDefault: false},
-					{Name: "tomato", Price: 25, ByDefault: false},
-					{Name: "lettuce", Price: 25, ByDefault: false},
+					{Name: "tomato", Price: 25, ByDefault: true},
+					{Name: "lettuce", Price: 25, ByDefault: true},
+					{Name: "cheese", Price: 25, ByDefault: false},
+					{Name: "onion", Price: 25, ByDefault: false},
 				}},
 				{Name: "'The Molly'", Price: 395, Options: []*mookiespb.Option{
 					{Name: "pickles", Price: 0, ByDefault: true},
 					{Name: "bbq sauce", Price: 0, ByDefault: true},
-					{Name: "white sauce", Price: 0, ByDefault: false},
+					{Name: "white sauce", Price: 0, ByDefault: true},
 					{Name: "ketchup", Price: 0, ByDefault: false},
 					{Name: "mayo", Price: 0, ByDefault: false},
-					{Name: "coleslaw", Price: 25, ByDefault: false},
+					{Name: "coleslaw", Price: 25, ByDefault: true},
 					{Name: "tomato", Price: 25, ByDefault: false},
 					{Name: "lettuce", Price: 25, ByDefault: false},
+					{Name: "cheese", Price: 25, ByDefault: false},
+					{Name: "onion", Price: 25, ByDefault: false},
 				}},
-				{Name: "Large Hamburger", Price: 495, Options: []*mookiespb.Option{
+				{Name: "LG Hamburger", Price: 495, Options: []*mookiespb.Option{
 					{Name: "pickles", Price: 0, ByDefault: true},
 					{Name: "bbq sauce", Price: 0, ByDefault: true},
 					{Name: "white sauce", Price: 0, ByDefault: false},
@@ -262,7 +272,7 @@ func seedData() {
 					{Name: "tomato", Price: 25, ByDefault: false},
 					{Name: "lettuce", Price: 25, ByDefault: false},
 				}},
-				{Name: "Large Cheeseburger", Price: 550, Options: []*mookiespb.Option{
+				{Name: "LG Cheeseburger", Price: 550, Options: []*mookiespb.Option{
 					{Name: "pickles", Price: 0, ByDefault: true},
 					{Name: "bbq sauce", Price: 0, ByDefault: true},
 					{Name: "white sauce", Price: 0, ByDefault: false},
@@ -293,7 +303,6 @@ func seedData() {
 					{Name: "lettuce", Price: 25, ByDefault: false},
 				}},
 				{Name: "Pulled Pork Melt", Price: 395, Options: []*mookiespb.Option{
-					{Name: "coleslaw"}, {Name: "pickles"}, {Name: "lettuce"}, {Name: "tomato"}, {Name: "mayo"},
 					{Name: "pickles", Price: 0, ByDefault: true},
 					{Name: "bbq sauce", Price: 0, ByDefault: true},
 					{Name: "white sauce", Price: 0, ByDefault: false},
@@ -308,39 +317,132 @@ func seedData() {
 		{
 			Name: "Plates",
 			Items: []*mookiespb.Item{
-				{Name: "Smoked Pulled Pork", Price: 990, Options: []*mookiespb.Option{}},
-				{Name: "Regular Rib", Price: 995},
-				{Name: "1/2 Smoked Chicken", Price: 995},
-				{Name: "Smoked Chicken Breast", Price: 725},
-				{Name: "Smoked Wing (8 wings)", Price: 999},
-				{Name: "Loaded Nachos (BBQ or Chicken)", Price: 875},
+				{Name: "Smoked Pulled Pork", Price: 990, Options: []*mookiespb.Option{
+					{Name: "potato salad", Price: 0, ByDefault: false},
+					{Name: "baked beans", Price: 0, ByDefault: false},
+					{Name: "coleslaw", Price: 0, ByDefault: false},
+					{Name: "chips", Price: 0, ByDefault: false},
+					{Name: "fries", Price: 0, ByDefault: false},
+					{Name: "baked potato", Price: 100, ByDefault: false},
+				}},
+				{Name: "RG Rib", Price: 995, Options: []*mookiespb.Option{
+					{Name: "potato salad", Price: 0, ByDefault: false},
+					{Name: "baked beans", Price: 0, ByDefault: false},
+					{Name: "coleslaw", Price: 0, ByDefault: false},
+					{Name: "chips", Price: 0, ByDefault: false},
+					{Name: "fries", Price: 0, ByDefault: false},
+					{Name: "baked potato", Price: 100, ByDefault: false},
+				}},
+				{Name: "½ Smoked Chicken", Price: 995, Options: []*mookiespb.Option{
+					{Name: "potato salad", Price: 0, ByDefault: false},
+					{Name: "baked beans", Price: 0, ByDefault: false},
+					{Name: "coleslaw", Price: 0, ByDefault: false},
+					{Name: "chips", Price: 0, ByDefault: false},
+					{Name: "fries", Price: 0, ByDefault: false},
+					{Name: "baked potato", Price: 100, ByDefault: false},
+				}},
+				{Name: "Smoked Chicken Breast", Price: 725, Options: []*mookiespb.Option{
+					{Name: "potato salad", Price: 0, ByDefault: false},
+					{Name: "baked beans", Price: 0, ByDefault: false},
+					{Name: "coleslaw", Price: 0, ByDefault: false},
+					{Name: "chips", Price: 0, ByDefault: false},
+					{Name: "fries", Price: 0, ByDefault: false},
+					{Name: "baked potato", Price: 100, ByDefault: false},
+				}},
+				{Name: "Smoked Wing (8 wings)", Price: 999, Options: []*mookiespb.Option{
+					{Name: "potato salad", Price: 0, ByDefault: false},
+					{Name: "baked beans", Price: 0, ByDefault: false},
+					{Name: "coleslaw", Price: 0, ByDefault: false},
+					{Name: "chips", Price: 0, ByDefault: false},
+					{Name: "fries", Price: 0, ByDefault: false},
+					{Name: "baked potato", Price: 100, ByDefault: false},
+				}},
+				{Name: "BBQ Loaded Nachos", Price: 875, Options: []*mookiespb.Option{
+					{Name: "cheddar cheese", Price: 0, ByDefault: true},
+					{Name: "green onions", Price: 0, ByDefault: true},
+					{Name: "jalapeños", Price: 0, ByDefault: true},
+					{Name: "bbq sauce", Price: 0, ByDefault: false},
+					{Name: "white sauce", Price: 0, ByDefault: false},
+				}},
+				{Name: "Chicken Loaded Nachos", Price: 875, Options: []*mookiespb.Option{
+					{Name: "cheddar cheese", Price: 0, ByDefault: true},
+					{Name: "green onions", Price: 0, ByDefault: true},
+					{Name: "jalapeños", Price: 0, ByDefault: true},
+					{Name: "bbq sauce", Price: 0, ByDefault: false},
+					{Name: "white sauce", Price: 0, ByDefault: false},
+				}},
 			},
 		},
 		{
 			Name: "Baskets",
 			Items: []*mookiespb.Item{
-				{Name: "Smoked Wing", Price: 500},
-				{Name: "Rib", Price: 500},
+				{Name: "Smoked Wing", Price: 500, Options: []*mookiespb.Option{
+					{Name: "potato salad", Price: 0, ByDefault: false},
+					{Name: "baked beans", Price: 0, ByDefault: false},
+					{Name: "coleslaw", Price: 0, ByDefault: false},
+					{Name: "chips", Price: 0, ByDefault: false},
+					{Name: "fries", Price: 0, ByDefault: false},
+					{Name: "baked potato", Price: 100, ByDefault: false},
+				}},
+				{Name: "Rib", Price: 500, Options: []*mookiespb.Option{
+					{Name: "potato salad", Price: 0, ByDefault: false},
+					{Name: "baked beans", Price: 0, ByDefault: false},
+					{Name: "coleslaw", Price: 0, ByDefault: false},
+					{Name: "chips", Price: 0, ByDefault: false},
+					{Name: "fries", Price: 0, ByDefault: false},
+					{Name: "baked potato", Price: 100, ByDefault: false},
+				}},
 			},
 		},
 		{
 			Name: "Potatoes",
 			Items: []*mookiespb.Item{
-				{Name: "Loaded Pork", Price: 899},
-				{Name: "Loaded Chicken", Price: 899},
-				{Name: "Loaded Potato (no meat)", Price: 699},
-				{Name: "Smothered and Covered Fries", Price: 899},
+				{Name: "Loaded Pork", Price: 899, Options: []*mookiespb.Option{
+					{Name: "cheese", Price: 0, ByDefault: true},
+					{Name: "bacon bits", Price: 0, ByDefault: true},
+					{Name: "green onions", Price: 0, ByDefault: true},
+					{Name: "butter", Price: 0, ByDefault: true},
+					{Name: "sour cream", Price: 0, ByDefault: true},
+				}},
+				{Name: "Loaded Chicken", Price: 899, Options: []*mookiespb.Option{
+					{Name: "cheese", Price: 0, ByDefault: true},
+					{Name: "bacon bits", Price: 0, ByDefault: true},
+					{Name: "green onions", Price: 0, ByDefault: true},
+					{Name: "butter", Price: 0, ByDefault: true},
+					{Name: "sour cream", Price: 0, ByDefault: true},
+				}},
+				{Name: "Loaded Potato (no meat)", Price: 699, Options: []*mookiespb.Option{
+					{Name: "cheese", Price: 0, ByDefault: true},
+					{Name: "bacon bits", Price: 0, ByDefault: true},
+					{Name: "green onions", Price: 0, ByDefault: true},
+					{Name: "butter", Price: 0, ByDefault: true},
+					{Name: "sour cream", Price: 0, ByDefault: true},
+				}},
+				{Name: "(Pork) Smothered and Covered Fries", Price: 899, Options: []*mookiespb.Option{
+					{Name: "cheese", Price: 0, ByDefault: true},
+					{Name: "bacon bits", Price: 0, ByDefault: true},
+					{Name: "green onions", Price: 0, ByDefault: true},
+					{Name: "butter", Price: 0, ByDefault: true},
+					{Name: "sour cream", Price: 0, ByDefault: true},
+				}},
+				{Name: "(Chicken) Smothered and Covered Fries", Price: 899, Options: []*mookiespb.Option{
+					{Name: "cheese", Price: 0, ByDefault: true},
+					{Name: "bacon bits", Price: 0, ByDefault: true},
+					{Name: "green onions", Price: 0, ByDefault: true},
+					{Name: "butter", Price: 0, ByDefault: true},
+					{Name: "sour cream", Price: 0, ByDefault: true},
+				}},
 			},
 		},
 		{
 			Name: "Sides",
 			Items: []*mookiespb.Item{
-				{Name: "Small Cole Slaw", Price: 300},
-				{Name: "Large Cole Slaw", Price: 600},
-				{Name: "Small Baked Beans", Price: 300},
-				{Name: "Large Baked Beans", Price: 600},
-				{Name: "Small Potato Salad", Price: 300},
-				{Name: "Large Potato Salad", Price: 600},
+				{Name: "SM Cole Slaw", Price: 300},
+				{Name: "LG Cole Slaw", Price: 600},
+				{Name: "SM Baked Beans", Price: 300},
+				{Name: "LG Baked Beans", Price: 600},
+				{Name: "SM Potato Salad", Price: 300},
+				{Name: "LG Potato Salad", Price: 600},
 				{Name: "Plain Chips", Price: 100},
 				{Name: "Fries", Price: 300},
 			},
@@ -359,23 +461,67 @@ func seedData() {
 				{Name: "Lemon Delight", Price: 350},
 				{Name: "Strawberry Pizza", Price: 350},
 				{Name: "Whole Dessert", Price: 3000},
-				{Name: "Small Banana Pudding", Price: 350},
-				{Name: "Large Banana Pudding", Price: 700},
+				{Name: "SM Banana Pudding", Price: 350},
+				{Name: "LG Banana Pudding", Price: 700},
 			},
 		},
 		{
 			Name: "Sauces",
 			Items: []*mookiespb.Item{
-				{Name: "Extra sauce", Price: 50},
+				{Name: "Extra Ranch", Price: 50},
+				{Name: "Extra White", Price: 50},
+				{Name: "Extra Buffalo Wing", Price: 50},
+				{Name: "Extra BBQ", Price: 50},
 			},
 		},
 	}
 
-	for _, c := range data {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	for i, category := range data {
+		_, err := tx.Exec("INSERT INTO categories (name) VALUES (?)", category.GetName())
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+		for x, item := range category.GetItems() {
+			_, err = tx.Exec(
+				"INSERT INTO items (name, price, category_id) VALUES (?,?,?)",
+				item.GetName(), item.GetPrice(), i+1)
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+			for o, option := range item.GetOptions() {
+				_, err = tx.Exec(
+					"INSERT INTO options (name, price, by_default) VALUES (?,?,?)",
+					option.GetName(), option.GetPrice(), option.GetByDefault())
+				if err != nil {
+					tx.Rollback()
+					return err
+				}
+				_, err = tx.Exec(
+					"INSERT INTO item_options (item_id, option_id) VALUES (?,?)",
+					x+1, o+1)
+				if err != nil {
+					tx.Rollback()
+					return err
+				}
+			}
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		return err
+	}
+	/*for _, c := range data {
 		t := "INSERT INTO categories (name) VALUES ('%s');"
 		cmd := fmt.Sprintf(t, c.GetName())
 		fmt.Println(cmd)
-		//res := s.db.MustExec(cmd)
+		//res := tx.MustExec(cmd)
 	}
 
 	for x, c := range data {
@@ -384,5 +530,10 @@ func seedData() {
 			cmd := fmt.Sprintf(t, i.GetName(), i.GetPrice(), x)
 			fmt.Println(cmd)
 		}
+	}*/
+
+	if err = tx.Commit(); err != nil {
+		return err
 	}
+	return nil
 }
