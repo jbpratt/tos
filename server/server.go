@@ -8,6 +8,7 @@ import (
 	"net"
 	"time"
 
+	"github.com/cskr/pubsub"
 	"github.com/jbpratt78/mookies-tos/data"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"github.com/jmoiron/sqlx"
@@ -25,6 +26,7 @@ type server struct {
 	db     *sqlx.DB
 	orders []*mookiespb.Order
 	menu   *mookiespb.Menu
+	ps     *pubsub.PubSub
 }
 
 func (s *server) GetMenu(ctx context.Context, empty *mookiespb.Empty) (*mookiespb.Menu, error) {
@@ -72,24 +74,15 @@ func (s *server) SubmitOrder(ctx context.Context,
 		Result: "Order has been placed..",
 	}
 
-	reqChan <- o
-
 	return res, s.LoadData()
 }
 
-func (*server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
+func (s *server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
 	stream mookiespb.OrderService_SubscribeToOrdersServer) error {
 
 	log.Printf("SubscribeToOrders function was invoked with %v\n", req)
-	for {
-		res := <-reqChan
-		log.Printf("Sending order to client: %v\n", res)
-		err := stream.Send(res)
-		if err != nil {
-			return err
-		}
-		//time.Sleep(time.Millisecond * 1000)
-	}
+
+	return nil
 }
 
 func (s *server) CompleteOrder(ctx context.Context,
@@ -136,8 +129,8 @@ func (s *server) LoadData() error {
 			return err
 		}
 		for _, item := range category.GetItems() {
-			err = s.db.Select(&item.Options,
-				fmt.Sprintf("SELECT name,price,by_default FROM options JOIN item_options as io ON options.id = io.option_id WHERE item_id = %d", item.GetId()))
+			err = s.db.Select(&item.Options, fmt.Sprintf(
+				"SELECT name,price,by_default FROM options JOIN item_options as io ON options.id = io.option_id WHERE item_id = %d", item.GetId()))
 			if err != nil {
 				return err
 			}
@@ -149,7 +142,7 @@ func (s *server) LoadData() error {
 	}
 	s.menu = menu
 
-	// TODO: query items along with orders
+	// TODO: query options with items per order
 	var orders []*mookiespb.Order
 	err = s.db.Select(&orders,
 		"SELECT * FROM orders WHERE status = 'active'")
@@ -173,6 +166,7 @@ func (s *server) LoadData() error {
 
 func NewServer(db *sqlx.DB) (*server, error) {
 	server := &server{db: db}
+	server.ps = pubsub.New(0)
 	//err := server.seedData()
 	err := server.LoadData()
 	if err != nil {
