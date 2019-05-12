@@ -4,6 +4,7 @@ go 1.12
 
 require (
 	github.com/aarzilli/nucular v0.0.0-20190426090038-64ec1eba9181
+	github.com/cskr/pubsub v1.0.2 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/protobuf v1.3.1
 	github.com/hashicorp/golang-lru v0.5.1 // indirect

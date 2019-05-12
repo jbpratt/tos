@@ -206,36 +206,33 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 		newHeight := sw.Bounds.H - 117
 		sw.Row(newHeight).Dynamic(1)
 		groupFlags = nucular.WindowFlags(0)
+		groupFlags |= nucular.WindowNoHScrollbar
 		groupFlags |= nucular.WindowBorder
 		if orderWindow := sw.GroupBegin("asdasd", groupFlags); orderWindow != nil {
 			if len(l.order.Items) > 0 {
 				for itemNumber, item := range l.order.Items {
 					sum += item.GetPrice() / 100
-					lines := strings.Split(wrapText(item.Name, int(float64(orderWindow.Bounds.W-95)/8.0)), "\n")
-					for i, line := range lines {
-						// more spacing between items
-						if i == 0 {
-							if len(lines) > 1 {
-								orderWindow.Row(12).Static(orderWindow.Bounds.W-95, 55, 20)
+					lines := strings.Split(wrapText(item.Name, int(float64(orderWindow.Bounds.W-115)/8.0)), "\n")
+					orderWindow.Row((len(lines)*12)+15).Static(orderWindow.Bounds.W-50, 30)
+					groupFlags = nucular.WindowFlags(0)
+					groupFlags |= nucular.WindowNoScrollbar
+					if itemWindow := orderWindow.GroupBegin(item.GetName(), groupFlags); itemWindow != nil {
+						for i, line := range lines {
+							// more spacing between items
+							if i == 0 {
+								itemWindow.Row(12).Static(itemWindow.Bounds.W-65, 10)
+								itemWindow.Label("• "+line, "LT")
+								itemWindow.Label(fmt.Sprintf("$ %5v", fmt.Sprintf("%.2f", item.GetPrice()/100)), "RT")
 							} else {
-								orderWindow.Row(20).Static(orderWindow.Bounds.W-95, 55, 20)
+								itemWindow.Row(12).Dynamic(1)
+								itemWindow.Label("  "+line, "LT")
 							}
-							orderWindow.Label("• "+line, "LT")
-							orderWindow.Label(fmt.Sprintf("$ %5v", fmt.Sprintf("%.2f", item.GetPrice()/100)), "RT")
-							// button height need to be fixed
-							if orderWindow.Button(label.T("X"), false) {
-								l.order.Items = append(l.order.Items[:itemNumber], l.order.Items[itemNumber+1:]...)
-							}
-						} else {
-							if i == len(lines)-1 {
-								orderWindow.Row(20).Dynamic(1)
-							} else {
-								orderWindow.Row(12).Dynamic(1)
-							}
-							orderWindow.Label("  "+line, "LT")
 						}
+						itemWindow.GroupEnd()
 					}
-
+					if orderWindow.Button(label.T("X"), false) {
+						l.order.Items = append(l.order.Items[:itemNumber], l.order.Items[itemNumber+1:]...)
+					}
 				}
 			}
 			orderWindow.GroupEnd()
