@@ -29,6 +29,8 @@ type server struct {
 	ps     *pubsub.PubSub
 }
 
+const topic = "orders"
+
 func (s *server) GetMenu(ctx context.Context, empty *mookiespb.Empty) (*mookiespb.Menu, error) {
 	log.Println("Menu function was invoked")
 	res := s.menu
@@ -74,6 +76,8 @@ func (s *server) SubmitOrder(ctx context.Context,
 		Result: "Order has been placed..",
 	}
 
+	go publish(s.ps, o)
+
 	return res, s.LoadData()
 }
 
@@ -81,8 +85,22 @@ func (s *server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
 	stream mookiespb.OrderService_SubscribeToOrdersServer) error {
 
 	log.Printf("SubscribeToOrders function was invoked with %v\n", req)
+	ch := s.ps.Sub(topic)
+	for {
+		if o, ok := <-ch; ok {
+			log.Printf("Sending order to client: %v\n", o)
+			err := stream.Send(o.(*mookiespb.Order))
+			if err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
+}
+
+func publish(ps *pubsub.PubSub, order *mookiespb.Order) {
+	ps.Pub(order, topic)
 }
 
 func (s *server) CompleteOrder(ctx context.Context,
@@ -245,23 +263,6 @@ func (s *server) seedData() error {
 	if err = tx.Commit(); err != nil {
 		return err
 	}
-	/*for _, c := range data {
-		t := "INSERT INTO categories (name) VALUES ('%s');"
-		cmd := fmt.Sprintf(t, c.GetName())
-		fmt.Println(cmd)
-		//res := tx.MustExec(cmd)
-	}
 
-	for x, c := range data {
-		for _, i := range c.GetItems() {
-			t := "INSERT INTO items (name, price, category_id) VALUES ('%v', '%v', '%v');"
-			cmd := fmt.Sprintf(t, i.GetName(), i.GetPrice(), x)
-			fmt.Println(cmd)
-		}
-	}*/
-
-	if err = tx.Commit(); err != nil {
-		return err
-	}
 	return nil
 }
