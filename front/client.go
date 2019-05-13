@@ -273,8 +273,19 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 			if len(l.order.Items) > 0 {
 				for itemNumber, item := range l.order.Items {
 					sum += item.GetPrice() / 100
+					for _, option := range item.GetOptions() {
+						if option.GetSelected() {
+							sum += option.GetPrice() / 100
+						}
+					}
 					lines := strings.Split(wrapText(item.Name, int(float64(orderWindow.Bounds.W-115)/8.0)), "\n")
-					orderWindow.Row((len(lines)*12)+15).Static(orderWindow.Bounds.W-50, 30)
+					numberOfOptionsActive := 0
+					for _, option := range item.GetOptions() {
+						if option.GetSelected() {
+							numberOfOptionsActive++
+						}
+					}
+					orderWindow.Row((len(lines)*12)+15+numberOfOptionsActive*15).Static(orderWindow.Bounds.W-50, 30)
 					groupFlags = nucular.WindowFlags(0)
 					groupFlags |= nucular.WindowNoScrollbar
 					if itemWindow := orderWindow.GroupBegin(item.GetName(), groupFlags); itemWindow != nil {
@@ -289,6 +300,14 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 								itemWindow.Label("  "+line, "LT")
 							}
 						}
+						for _, option := range item.GetOptions() {
+							if option.GetSelected() {
+								itemWindow.Row(12).Static(itemWindow.Bounds.W-65, 10)
+								itemWindow.Label("    • "+option.GetName(), "LT")
+								itemWindow.Label(fmt.Sprintf("$ %5v", fmt.Sprintf("%.2f", option.GetPrice()/100)), "RT")
+							}
+						}
+
 						itemWindow.GroupEnd()
 					}
 					if orderWindow.Button(label.T("X"), false) {
