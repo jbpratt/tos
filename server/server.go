@@ -43,14 +43,13 @@ func (s *server) SubmitOrder(ctx context.Context,
 	log.Println("An order was received")
 	o := req.GetOrder()
 	// expecting it to be right id
-	o.Id = int32(len(s.orders))
 	o.Status = "active"
 
 	tx, err := s.db.Begin()
 	if err != nil {
 		return nil, err
 	}
-	_, err = tx.Exec(
+	x, err := tx.Exec(
 		"INSERT INTO orders (name, total, status, time_ordered, time_complete) VALUES (?, ?, ?, ?, ?)",
 		o.GetName(), o.GetTotal(), o.GetStatus(), time.Now().UTC().String(), "")
 	if err != nil {
@@ -58,14 +57,35 @@ func (s *server) SubmitOrder(ctx context.Context,
 		return nil, err
 	}
 
+	id, _ := x.LastInsertId()
+
 	for _, item := range o.GetItems() {
 		_, err := tx.Exec(
 			"INSERT INTO order_items (item_id, order_id) VALUES (?, ?)",
-			item.GetId(), o.GetId())
+			item.GetId(), id)
 		if err != nil {
 			tx.Rollback()
 			return nil, err
 		}
+		/*for _, option := range item.GetOptions() {
+			var io int
+			err := s.db.Select(&io, fmt.Sprintf(
+				"SELECT * from item_options WHERE item_id = %d AND option_id = %d",
+				item.GetId(), option.GetId()))
+			if err != nil {
+				return nil, err
+			}
+			x, _ := res.LastInsertId()
+			_, err = tx.Exec(
+				"INSERT INTO order_item_option (order_item, item_option) VALUES (?, ?)",
+				x, io,
+			)
+
+			if err != nil {
+				tx.Rollback()
+				return nil, err
+			}
+		}*/
 	}
 
 	if err = tx.Commit(); err != nil {
@@ -148,7 +168,7 @@ func (s *server) LoadData() error {
 		}
 		for _, item := range category.GetItems() {
 			err = s.db.Select(&item.Options, fmt.Sprintf(
-				"SELECT name,price,by_default FROM options JOIN item_options as io ON options.id = io.option_id WHERE item_id = %d", item.GetId()))
+				"SELECT name,price,selected FROM options JOIN item_options as io ON options.id = io.option_id WHERE item_id = %d", item.GetId()))
 			if err != nil {
 				return err
 			}
@@ -242,8 +262,8 @@ func (s *server) seedData() error {
 			itemid, _ := result.LastInsertId()
 			for _, option := range item.GetOptions() {
 				res, err := tx.Exec(
-					"INSERT INTO options (name, price, by_default) VALUES (?,?,?)",
-					option.GetName(), option.GetPrice(), option.GetByDefault())
+					"INSERT INTO options (name, price, selected) VALUES (?,?,?)",
+					option.GetName(), option.GetPrice(), option.GetSelected())
 				if err != nil {
 					tx.Rollback()
 					return err
