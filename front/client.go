@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -31,6 +33,8 @@ type layout struct {
 	Minimizable bool
 	Close       bool
 
+	TextVisible bool
+
 	// debug
 	DebugEnabled bool
 	DebugStrings []string
@@ -42,11 +46,14 @@ type layout struct {
 	groupSelectedItem *mookiespb.Item
 
 	// current order
-	NameEditor nucular.TextEditor
-	order      *mookiespb.Order
-	menu       *mookiespb.Menu
-	Theme      nstyle.Theme
-	client     client
+	CurrentItem             *mookiespb.Item
+	NameEditor              nucular.TextEditor
+	CustomOptionNameEditor  nucular.TextEditor
+	CustomOptionPriceEditor nucular.TextEditor
+	order                   *mookiespb.Order
+	menu                    *mookiespb.Menu
+	Theme                   nstyle.Theme
+	client                  client
 }
 
 func newLayout() (l *layout) {
@@ -61,6 +68,8 @@ func newLayout() (l *layout) {
 
 	// TlO this need to change dynamically
 	l.NameEditor.Flags = nucular.EditField
+	l.CustomOptionNameEditor.Flags = nucular.EditField
+	l.CustomOptionPriceEditor.Flags = nucular.EditField
 
 	l.order = &mookiespb.Order{}
 
@@ -131,9 +140,56 @@ func (l *layout) errorPopup(w *nucular.Window) {
 	if w.Button(label.T("OK"), false) {
 		w.Close()
 	}
-	if w.Button(label.T("Cancel"), false) {
+}
+
+func (l *layout) itemOptionPopup(w *nucular.Window) {
+	options := l.CurrentItem.GetOptions()
+
+	sort.Slice(options, func(i, j int) bool {
+		return options[i].Selected && !options[j].Selected
+	})
+
+	for _, option := range options {
+		w.Row(30).Static(w.Bounds.W-100, 83)
+		w.CheckboxText(option.GetName(), &option.Selected)
+		w.Label(fmt.Sprintf("$ %.2f", option.GetPrice()/100.0), "RC")
+	}
+
+	w.Row(30).Dynamic(1)
+	if w.Button(label.T("Custom Option"), false) {
+		l.TextVisible = !l.TextVisible
+	}
+	if l.TextVisible {
+		w.Row(30).Static(w.Bounds.W-90, 10, 83)
+		l.CustomOptionNameEditor.Edit(w)
+		w.Label("$", "CC")
+		l.CustomOptionPriceEditor.Edit(w)
+		w.Row(30).Dynamic(1)
+		if w.Button(label.T("Add"), false) {
+			price := string(l.CustomOptionPriceEditor.Buffer)
+			if s, err := strconv.ParseFloat(price, 32); err == nil {
+				newOption := new(mookiespb.Option)
+				newOption.Price = float32(s * 100)
+				newOption.Name = string(l.CustomOptionNameEditor.Buffer)
+				newOption.Selected = true
+				l.CustomOptionPriceEditor.Buffer = nil
+				l.CustomOptionNameEditor.Buffer = nil
+				l.CurrentItem.Options = append(options, newOption)
+				l.TextVisible = false
+			}
+		}
+	}
+
+	w.Row(30).Dynamic(2)
+	if w.Button(label.T("OK"), false) {
+		l.order.Items = append(l.order.Items, l.CurrentItem)
 		w.Close()
 	}
+	if w.Button(label.T("Cancel"), false) {
+		l.CurrentItem = nil
+		w.Close()
+	}
+
 }
 
 func (l *layout) overviewLayout(w *nucular.Window) {
@@ -185,7 +241,12 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 					}
 					text := wrapText(item.GetName(), int(float64(sw.Bounds.W)/4.0/8.0))
 					if sw.Button(label.T(text), false) {
-						l.order.Items = append(l.order.Items, item)
+						l.CurrentItem = item
+						if len(item.GetOptions()) < 1 {
+							l.order.Items = append(l.order.Items, l.CurrentItem)
+						} else {
+							w.Master().PopupOpen("Select options:", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{(w.Bounds.W / 2) - 115, 100, 230, (len(item.GetOptions()) * 40) + 140}, true, l.itemOptionPopup)
+						}
 					}
 					newRow++
 				}
@@ -257,7 +318,7 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 				l.order.Reset()
 				l.NameEditor.Buffer = nil
 			} else {
-				w.Master().PopupOpen("Please give the order a name :)", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{20, 100, 230, 150}, true, l.errorPopup)
+				w.Master().PopupOpen("Enter name for order:", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{20, 100, 230, 150}, true, l.errorPopup)
 			}
 		}
 		sw.GroupEnd()
