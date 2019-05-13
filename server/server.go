@@ -17,9 +17,8 @@ import (
 )
 
 var (
-	listen  = flag.String("listen", ":50051", "listen address")
-	dbp     = flag.String("database", "./mookies.db", "database to use")
-	reqChan = make(chan *mookiespb.Order, 1024)
+	listen = flag.String("listen", ":50051", "listen address")
+	dbp    = flag.String("database", "./mookies.db", "database to use")
 )
 
 type server struct {
@@ -68,7 +67,6 @@ func (s *server) SubmitOrder(ctx context.Context,
 			return nil, err
 		}
 		for _, option := range item.GetOptions() {
-
 			if err != nil {
 				return nil, err
 			}
