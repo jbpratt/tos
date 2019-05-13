@@ -168,7 +168,7 @@ func (s *server) LoadData() error {
 		}
 		for _, item := range category.GetItems() {
 			err = s.db.Select(&item.Options, fmt.Sprintf(
-				"SELECT name,price,selected FROM options JOIN item_options as io ON options.id = io.option_id WHERE item_id = %d", item.GetId()))
+				"SELECT name,price,selected,options.id FROM options JOIN item_options as io ON options.id = io.option_id WHERE item_id = %d", item.GetId()))
 			if err != nil {
 				return err
 			}
@@ -189,11 +189,15 @@ func (s *server) LoadData() error {
 	}
 	for _, order := range orders {
 		err = s.db.Select(&order.Items, fmt.Sprintf(
-			"SELECT name,price FROM items JOIN order_items ON items.id = order_items.item_id WHERE order_id = %d",
+			"SELECT name,price,items.id FROM items JOIN order_items ON items.id = order_items.item_id WHERE order_id = %d",
 			order.GetId()))
 		if err != nil {
 			return err
 		}
+		/*for _, item := range order.GetItems() {
+		err = s.db.Select(&item.Options, fmt.Sprintf(
+			"SELECT "
+		))}*/
 	}
 
 	s.orders = orders
