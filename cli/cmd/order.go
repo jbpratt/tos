@@ -56,7 +56,7 @@ func doSubmitOrderRequest(c mookiespb.OrderServiceClient) (string, error) {
 			Name: name,
 			Items: []*mookiespb.Item{
 				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Options: []*mookiespb.Option{
-					{Name: "pickles", Price: 0, Selected: true},
+					{Name: "pickles", Price: 0, Selected: true, Id: 1},
 				}},
 			},
 			Total: 495,

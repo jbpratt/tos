@@ -60,32 +60,29 @@ func (s *server) SubmitOrder(ctx context.Context,
 	id, _ := x.LastInsertId()
 
 	for _, item := range o.GetItems() {
-		_, err := tx.Exec(
+		res, err := tx.Exec(
 			"INSERT INTO order_items (item_id, order_id) VALUES (?, ?)",
 			item.GetId(), id)
 		if err != nil {
 			tx.Rollback()
 			return nil, err
 		}
-		/*for _, option := range item.GetOptions() {
-			var io int
-			err := s.db.Select(&io, fmt.Sprintf(
-				"SELECT * from item_options WHERE item_id = %d AND option_id = %d",
-				item.GetId(), option.GetId()))
+		for _, option := range item.GetOptions() {
+
 			if err != nil {
 				return nil, err
 			}
 			x, _ := res.LastInsertId()
 			_, err = tx.Exec(
-				"INSERT INTO order_item_option (order_item, item_option) VALUES (?, ?)",
-				x, io,
+				"INSERT INTO order_item_option (order_item_id, option_id) VALUES (?, ?)",
+				x, option.GetId(),
 			)
 
 			if err != nil {
 				tx.Rollback()
 				return nil, err
 			}
-		}*/
+		}
 	}
 
 	if err = tx.Commit(); err != nil {
@@ -135,7 +132,8 @@ func (s *server) CompleteOrder(ctx context.Context,
 	}
 
 	// update query at req.GetId()
-	_, err := s.db.Exec("UPDATE orders SET status = 'complete' WHERE id = ?", req.GetId())
+	_, err := s.db.Exec(
+		"UPDATE orders SET status = 'complete' WHERE id = ?", req.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +166,10 @@ func (s *server) LoadData() error {
 		}
 		for _, item := range category.GetItems() {
 			err = s.db.Select(&item.Options, fmt.Sprintf(
-				"SELECT name,price,selected,options.id FROM options JOIN item_options as io ON options.id = io.option_id WHERE item_id = %d", item.GetId()))
+				`
+				SELECT name,price,selected,options.id 
+				FROM options JOIN item_options as io ON options.id = io.option_id 
+				WHERE item_id = %d`, item.GetId()))
 			if err != nil {
 				return err
 			}
@@ -189,15 +190,24 @@ func (s *server) LoadData() error {
 	}
 	for _, order := range orders {
 		err = s.db.Select(&order.Items, fmt.Sprintf(
-			"SELECT name,price,items.id FROM items JOIN order_items ON items.id = order_items.item_id WHERE order_id = %d",
-			order.GetId()))
+			`
+			SELECT name,price,items.id 
+			FROM items JOIN order_items ON items.id = order_items.item_id 
+			WHERE order_id = %d`, order.GetId()))
 		if err != nil {
 			return err
 		}
-		/*for _, item := range order.GetItems() {
-		err = s.db.Select(&item.Options, fmt.Sprintf(
-			"SELECT "
-		))}*/
+		for _, item := range order.GetItems() {
+			err = s.db.Select(&item.Options, fmt.Sprintf(
+				`
+				SELECT options.name,options.price 
+				FROM order_item_option AS oio CROSS JOIN order_items
+				CROSS JOIN options WHERE oio.option_id = options.id
+				AND order_id = %d`, order.GetId()))
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	s.orders = orders
