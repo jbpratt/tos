@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -44,6 +45,8 @@ type layout struct {
 
 	// Popup
 	PSelect []bool
+
+	Error error
 
 	// Layout
 	groupSelectedItem *mookiespb.Item
@@ -139,8 +142,8 @@ func (l *layout) basicDemo(w *nucular.Window) {
 // need to pass error into here
 func (l *layout) errorPopup(w *nucular.Window) {
 	w.Row(25).Dynamic(1)
-	w.Label("Error", "CC")
-	w.Row(25).Dynamic(2)
+	w.Label(l.Error.Error(), "CC")
+	w.Row(25).Dynamic(1)
 	if w.Button(label.T("OK"), false) {
 		w.Close()
 	}
@@ -187,6 +190,18 @@ func (l *layout) itemOptionPopup(w *nucular.Window) {
 	w.Row(30).Dynamic(2)
 	if w.Button(label.T("OK"), false) {
 		l.order.Items = append(l.order.Items, l.CurrentItem)
+		if l.CurrentItem.GetCategoryID() == 2 || l.CurrentItem.GetCategoryID() == 3 {
+			count := 0
+			for _, option := range l.CurrentItem.GetOptions() {
+				if option.GetSelected() {
+					count++
+				}
+			}
+			if count > 2 || count < 2 {
+				l.Error = errors.New("Item has too many or too few options")
+				w.Master().PopupOpen("Error", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{400, 100, 300, 150}, true, l.errorPopup)
+			}
+		}
 		w.Close()
 	}
 	if w.Button(label.T("Cancel"), false) {
@@ -364,6 +379,7 @@ func cloneItem(originalItem *mookiespb.Item) *mookiespb.Item {
 	newItem.Id = originalItem.GetId()
 	newItem.Name = originalItem.GetName()
 	newItem.Price = originalItem.GetPrice()
+	newItem.CategoryID = originalItem.GetCategoryID()
 	newItem.Options = make([]*mookiespb.Option, len(originalItem.GetOptions()))
 	for i, option := range originalItem.GetOptions() {
 		newItem.Options[i] = new(mookiespb.Option)
@@ -396,7 +412,8 @@ func (l *layout) sendOrder(w *nucular.Window) {
 		l.order.Reset()
 		l.NameEditor.Buffer = nil
 	} else {
-		w.Master().PopupOpen("Enter name for order:", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{20, 100, 230, 150}, true, l.errorPopup)
+		l.Error = errors.New("Please give the order a name")
+		w.Master().PopupOpen("Error", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{20, 100, 230, 150}, true, l.errorPopup)
 	}
 }
 
