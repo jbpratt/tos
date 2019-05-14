@@ -16,8 +16,11 @@ import (
 	"github.com/aarzilli/nucular/rect"
 	nstyle "github.com/aarzilli/nucular/style"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
+	"golang.org/x/mobile/event/key"
 	"google.golang.org/grpc"
 )
+
+const taxRate = 1.04
 
 var (
 	addr = flag.String("addr", ":50051", "address to dial")
@@ -119,7 +122,8 @@ func (l *layout) doSubmitOrderRequest(order *mookiespb.Order) {
 		Order: order,
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
 
 	res, err := l.client.OrderClient.SubmitOrder(ctx, req)
 	if err != nil {
@@ -189,10 +193,10 @@ func (l *layout) itemOptionPopup(w *nucular.Window) {
 		l.CurrentItem = nil
 		w.Close()
 	}
-
 }
 
 func (l *layout) overviewLayout(w *nucular.Window) {
+	l.keybindings(w)
 	w.Row(30).Ratio(0.1, 0.8, 0.1)
 	if w.Button(label.T("debug"), false) {
 		l.DebugEnabled = !l.DebugEnabled
@@ -241,7 +245,7 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 					}
 					text := wrapText(item.GetName(), int(float64(sw.Bounds.W)/4.0/8.0))
 					if sw.Button(label.T(text), false) {
-						l.CurrentItem = item
+						l.CurrentItem = cloneItem(item)
 						if len(item.GetOptions()) < 1 {
 							l.order.Items = append(l.order.Items, l.CurrentItem)
 						} else {
@@ -262,8 +266,6 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 
 	// creates a second group and puts it in the second column
 	if sw := w.GroupBegin("asdasd", groupFlags); sw != nil {
-
-		var sum float32
 		newHeight := sw.Bounds.H - 117
 		sw.Row(newHeight).Dynamic(1)
 		groupFlags = nucular.WindowFlags(0)
@@ -272,12 +274,7 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 		if orderWindow := sw.GroupBegin("asdasd", groupFlags); orderWindow != nil {
 			if len(l.order.Items) > 0 {
 				for itemNumber, item := range l.order.Items {
-					sum += item.GetPrice() / 100
-					for _, option := range item.GetOptions() {
-						if option.GetSelected() {
-							sum += option.GetPrice() / 100
-						}
-					}
+
 					lines := strings.Split(wrapText(item.Name, int(float64(orderWindow.Bounds.W-115)/8.0)), "\n")
 					numberOfOptionsActive := 0
 					for _, option := range item.GetOptions() {
@@ -318,27 +315,21 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 			orderWindow.GroupEnd()
 		}
 
+		sum := calculateSum(l.order)
+		price := calculatePrice(l.order)
 		sw.Row(20).Dynamic(2)
 		sw.Label("Sum:", "LC")
 		sw.Label(fmt.Sprintf("$ %.2f", sum), "RC")
 		sw.Row(20).Dynamic(2)
 		sw.Label("After Tax:", "LC")
-		sw.Label(fmt.Sprintf("$ %.2f", sum*1.04), "RC")
+		sw.Label(fmt.Sprintf("$ %.2f", price), "RC")
 
 		sw.Row(25).Dynamic(1)
 		l.NameEditor.Edit(sw)
 
 		sw.Row(40).Dynamic(1)
 		if sw.Button(label.T("ORDER"), false) {
-			if len(l.NameEditor.Buffer) > 0 && len(l.order.Items) > 0 {
-				l.order.Name = string(l.NameEditor.Buffer)
-				l.order.Total = float32(math.Round(float64(sum*100)) / 100)
-				l.doSubmitOrderRequest(l.order)
-				l.order.Reset()
-				l.NameEditor.Buffer = nil
-			} else {
-				w.Master().PopupOpen("Enter name for order:", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{20, 100, 230, 150}, true, l.errorPopup)
-			}
+			l.sendOrder(w)
 		}
 		sw.GroupEnd()
 	}
@@ -366,4 +357,63 @@ func (l *layout) debug(message string, v ...interface{}) {
 	log.Printf(msg)
 	// append to debug slice
 	l.DebugStrings = append(l.DebugStrings, msg)
+}
+
+func cloneItem(originalItem *mookiespb.Item) *mookiespb.Item {
+	newItem := new(mookiespb.Item)
+	newItem.Id = originalItem.GetId()
+	newItem.Name = originalItem.GetName()
+	newItem.Price = originalItem.GetPrice()
+	newItem.Options = make([]*mookiespb.Option, len(originalItem.GetOptions()))
+	for i, option := range originalItem.GetOptions() {
+		newItem.Options[i] = new(mookiespb.Option)
+		newItem.Options[i].Id = option.GetId()
+		newItem.Options[i].Name = option.GetName()
+		newItem.Options[i].Price = option.GetPrice()
+		newItem.Options[i].Selected = option.GetSelected()
+	}
+	return newItem
+}
+
+func (l *layout) keybindings(w *nucular.Window) {
+	if in := w.Input(); in != nil {
+		k := in.Keyboard
+		for _, e := range k.Keys {
+			switch {
+			case (e.Code == key.CodeReturnEnter):
+				l.sendOrder(w)
+			}
+		}
+	}
+}
+
+func (l *layout) sendOrder(w *nucular.Window) {
+	sum := calculatePrice(l.order)
+	if len(l.NameEditor.Buffer) > 0 && len(l.order.Items) > 0 {
+		l.order.Name = string(l.NameEditor.Buffer)
+		l.order.Total = float32(math.Round(float64(sum*100)) / 100)
+		l.doSubmitOrderRequest(l.order)
+		l.order.Reset()
+		l.NameEditor.Buffer = nil
+	} else {
+		w.Master().PopupOpen("Enter name for order:", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{20, 100, 230, 150}, true, l.errorPopup)
+	}
+}
+
+func calculateSum(order *mookiespb.Order) float32 {
+	var sum float32
+	for _, item := range order.GetItems() {
+		sum += item.GetPrice() / 100
+		for _, option := range item.GetOptions() {
+			if option.GetSelected() {
+				sum += option.GetPrice() / 100
+			}
+		}
+	}
+	sum *= 1.04
+	return sum
+}
+
+func calculatePrice(order *mookiespb.Order) float32 {
+	return calculateSum(order) * taxRate
 }
