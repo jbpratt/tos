@@ -180,17 +180,22 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 				for _, item := range order.Items {
 					lines := strings.Split(wrapText(item.Name, 24), "\n")
 					for i, line := range lines {
-						// more spacing between items
-						if i == len(lines)-1 {
-							singleOrderWindow.Row(20).Dynamic(1)
-						} else {
-							singleOrderWindow.Row(12).Dynamic(1)
-						}
-						// bullet point for new orders
+						singleOrderWindow.Row(12).Dynamic(1)
 						if i == 0 {
 							singleOrderWindow.Label("• "+line, "LT")
 						} else {
 							singleOrderWindow.Label("  "+line, "LT")
+						}
+					}
+					for _, option := range item.GetOptions() {
+						lines := strings.Split(wrapText(option.GetName(), 22), "\n")
+						for i, line := range lines {
+							singleOrderWindow.Row(12).Dynamic(1)
+							if i == 0 {
+								singleOrderWindow.Label("  • "+line, "LT")
+							} else {
+								singleOrderWindow.Label("    "+line, "LT")
+							}
 						}
 					}
 				}

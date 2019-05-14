@@ -67,18 +67,17 @@ func (s *server) SubmitOrder(ctx context.Context,
 			return nil, err
 		}
 		for _, option := range item.GetOptions() {
-			if err != nil {
-				return nil, err
-			}
-			x, _ := res.LastInsertId()
-			_, err = tx.Exec(
-				"INSERT INTO order_item_option (order_item_id, option_id) VALUES (?, ?)",
-				x, option.GetId(),
-			)
+			if option.GetSelected() {
+				x, _ := res.LastInsertId()
+				_, err = tx.Exec(
+					"INSERT INTO order_item_option (order_item_id, option_id) VALUES (?, ?)",
+					x, option.GetId(),
+				)
 
-			if err != nil {
-				tx.Rollback()
-				return nil, err
+				if err != nil {
+					tx.Rollback()
+					return nil, err
+				}
 			}
 		}
 	}
@@ -106,11 +105,10 @@ func (s *server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
 			log.Printf("Sending order to client: %v\n", o)
 			err := stream.Send(o.(*mookiespb.Order))
 			if err != nil {
-				return err
+				log.Println(err)
 			}
 		}
 	}
-
 	return nil
 }
 
