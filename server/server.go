@@ -71,7 +71,6 @@ func (s *server) SubmitOrder(ctx context.Context,
 		fmt.Printf("inserted order_item at iid: %d and oid: %d\n", item.GetId(), o.GetId())
 		fmt.Println(res.RowsAffected())
 		for _, option := range item.GetOptions() {
-			fmt.Println()
 			if option.GetSelected() {
 				x, _ := res.LastInsertId()
 				res, err = tx.Exec(
@@ -223,7 +222,7 @@ func NewServer(db *sqlx.DB) (*server, error) {
 	server := &server{db: db}
 	server.ps = pubsub.New(0)
 	err := server.LoadData()
-	//err = server.seedData()
+	err = server.seedData()
 	if err != nil {
 		return nil, err
 	}
