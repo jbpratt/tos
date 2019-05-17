@@ -209,7 +209,7 @@ func (s *server) LoadData() error {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("item options for %d, %v", item.GetName(), item.GetOptions())
+			fmt.Printf("item options for %d, %v\n", item.GetName(), item.GetOptions())
 		}
 	}
 
@@ -223,7 +223,7 @@ func NewServer(db *sqlx.DB) (*server, error) {
 	server := &server{db: db}
 	server.ps = pubsub.New(0)
 	err := server.LoadData()
-	err = server.seedData()
+	//err = server.seedData()
 	if err != nil {
 		return nil, err
 	}
