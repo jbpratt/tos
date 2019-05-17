@@ -58,18 +58,23 @@ func (s *server) SubmitOrder(ctx context.Context,
 
 	id, _ := x.LastInsertId()
 
+	fmt.Printf("inserted order: %v @ %v\n", o, id)
+	o.Id = int32(id)
 	for _, item := range o.GetItems() {
 		res, err := tx.Exec(
 			"INSERT INTO order_items (item_id, order_id) VALUES (?, ?)",
-			item.GetId(), id)
+			item.GetId(), o.GetId())
 		if err != nil {
 			tx.Rollback()
 			return nil, err
 		}
+		fmt.Printf("inserted order_item at iid: %d and oid: %d\n", item.GetId(), o.GetId())
+		fmt.Println(res.RowsAffected())
 		for _, option := range item.GetOptions() {
+			fmt.Println()
 			if option.GetSelected() {
 				x, _ := res.LastInsertId()
-				_, err = tx.Exec(
+				res, err = tx.Exec(
 					"INSERT INTO order_item_option (order_item_id, option_id) VALUES (?, ?)",
 					x, option.GetId(),
 				)
@@ -78,10 +83,11 @@ func (s *server) SubmitOrder(ctx context.Context,
 					tx.Rollback()
 					return nil, err
 				}
+				fmt.Printf("inserted orderitemid: %d and optionid: %v into order_items_options: %v\n", x, option.GetId(), res)
+				fmt.Println(res.RowsAffected())
 			}
 		}
 	}
-
 	if err = tx.Commit(); err != nil {
 		return nil, err
 	}
@@ -199,10 +205,11 @@ func (s *server) LoadData() error {
 				SELECT options.name,options.price 
 				FROM order_item_option AS oio CROSS JOIN order_items
 				CROSS JOIN options WHERE oio.option_id = options.id
-				AND order_id = %d`, order.GetId()))
+				AND order_id = %d AND item_id = %d`, order.GetId(), item.GetId()))
 			if err != nil {
 				return err
 			}
+			fmt.Printf("item options for %d, %v", item.GetName(), item.GetOptions())
 		}
 	}
 
@@ -215,8 +222,8 @@ func (s *server) LoadData() error {
 func NewServer(db *sqlx.DB) (*server, error) {
 	server := &server{db: db}
 	server.ps = pubsub.New(0)
-	//err := server.seedData()
 	err := server.LoadData()
+	err = server.seedData()
 	if err != nil {
 		return nil, err
 	}
