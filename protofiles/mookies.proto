@@ -8,7 +8,9 @@ message Item {
   float price = 3;
   // @inject_tag: db:"category_id"
   int32 categoryID = 4;
-  repeated Option options = 5;
+  // @inject_tag: db:"order_item_id"
+  int32 orderItemID = 5;
+  repeated Option options = 6;
 }
 
 message Option {
