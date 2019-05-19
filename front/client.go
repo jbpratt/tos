@@ -213,9 +213,7 @@ func (l *layout) itemOptionPopup(w *nucular.Window) {
 func (l *layout) overviewLayout(w *nucular.Window) {
 	l.keybindings(w)
 	w.Row(30).Ratio(0.1, 0.8, 0.1)
-	if w.Button(label.T("debug"), false) {
-		l.DebugEnabled = !l.DebugEnabled
-	}
+	w.Spacing(1)
 	w.Label(time.Now().Format("3:04PM"), "CC")
 	w.Spacing(1)
 	// creates a row of height 20 with 1 column
@@ -379,8 +377,8 @@ func cloneItem(originalItem *mookiespb.Item) *mookiespb.Item {
 	newItem.Id = originalItem.GetId()
 	newItem.Name = originalItem.GetName()
 	newItem.Price = originalItem.GetPrice()
-	newItem.CategoryID = originalItem.GetCategoryID()
 	newItem.Options = make([]*mookiespb.Option, len(originalItem.GetOptions()))
+	newItem.CategoryID = originalItem.GetCategoryID()
 	for i, option := range originalItem.GetOptions() {
 		newItem.Options[i] = new(mookiespb.Option)
 		newItem.Options[i].Id = option.GetId()
@@ -398,6 +396,8 @@ func (l *layout) keybindings(w *nucular.Window) {
 			switch {
 			case (e.Code == key.CodeReturnEnter):
 				l.sendOrder(w)
+			case (e.Code == key.CodeF12):
+				l.DebugEnabled = !l.DebugEnabled
 			}
 		}
 	}

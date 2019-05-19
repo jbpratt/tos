@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -12,6 +13,7 @@ import (
 	"github.com/aarzilli/nucular"
 	"github.com/aarzilli/nucular/label"
 	nstyle "github.com/aarzilli/nucular/style"
+	"golang.org/x/mobile/event/key"
 
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"google.golang.org/grpc"
@@ -30,6 +32,8 @@ type layout struct {
 	NoScrollbar bool
 	Minimizable bool
 	Close       bool
+
+	CompleteOrderIndex int
 
 	// orders
 	Orders             []*mookiespb.Order
@@ -56,6 +60,7 @@ func newLayout() (l *layout) {
 	l.Movable = true
 	l.NoScrollbar = false
 	l.Close = true
+	l.CompleteOrderIndex = 0
 
 	return l
 }
@@ -84,7 +89,8 @@ func main() {
 	wnd.Main()
 }
 
-func (l *layout) completeOrder(id int32) error {
+func (l *layout) completeOrder(order *mookiespb.Order, i int) error {
+	id := order.GetId()
 	fmt.Println("Starting complete order request...")
 	// take this order req in as param
 	req := &mookiespb.CompleteOrderRequest{
@@ -95,6 +101,10 @@ func (l *layout) completeOrder(id int32) error {
 		return err
 	}
 	log.Printf("Response from CompleteOrder: %v\n", res.GetResult())
+
+	l.Orders = append(l.Orders[:i], l.Orders[i+1:]...)
+	// so we have the option for an undo button if the order was dismissed too early
+	l.LastCompletedOrder = order
 	return nil
 }
 
@@ -139,10 +149,9 @@ func (l *layout) subscribeToOrders() error {
 }
 
 func (l *layout) overviewLayout(w *nucular.Window) {
+	l.keybindings(w)
 	w.Row(30).Ratio(0.1, 0.8, 0.1)
-	if w.Button(label.T("debug"), false) {
-		l.DebugEnabled = !l.DebugEnabled
-	}
+	w.Label(fmt.Sprintf("selected: %v", l.CompleteOrderIndex), "LC")
 	w.Label(time.Now().Format("3:04PM"), "CC")
 	w.Spacing(1)
 	w.Row(20).Dynamic(1)
@@ -168,13 +177,11 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 			// create group for each order
 			if singleOrderWindow := ordersWindow.GroupBegin(fmt.Sprint(order.Id), groupFlags); singleOrderWindow != nil {
 				singleOrderWindow.Row(20).Dynamic(1)
-				singleOrderWindow.Label(order.GetName(), "CC")
+				orderTitle := fmt.Sprintf("%v : %v", i+1, order.GetName())
+				singleOrderWindow.Label(orderTitle, "CC")
 				singleOrderWindow.Row(20).Dynamic(1)
 				if singleOrderWindow.Button(label.T("DONE"), false) {
-					l.completeOrder(order.GetId())
-					l.Orders = append(l.Orders[:i], l.Orders[i+1:]...)
-					// so we have the option for an undo button if the order was dismissed too early
-					l.LastCompletedOrder = order
+					l.completeOrder(order, i)
 				}
 
 				for _, item := range order.Items {
@@ -188,6 +195,9 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 						}
 					}
 					for _, option := range item.GetOptions() {
+						if !option.GetSelected() {
+							continue
+						}
 						lines := strings.Split(wrapText(option.GetName(), 22), "\n")
 						for i, line := range lines {
 							singleOrderWindow.Row(12).Dynamic(1)
@@ -232,4 +242,67 @@ func (l *layout) debug(message string, v ...interface{}) {
 	log.Printf(msg)
 	// append to debug slice
 	l.DebugStrings = append(l.DebugStrings, msg)
+}
+
+func (l *layout) keybindings(w *nucular.Window) {
+	if in := w.Input(); in != nil {
+		k := in.Keyboard
+		for _, e := range k.Keys {
+			// TODO figure this out
+			fmt.Printf("%v\n", e.Code)
+			switch {
+			case (e.Code == key.CodeF12):
+				l.DebugEnabled = !l.DebugEnabled
+			case (e.Code == key.CodeKeypad0 || e.Code == key.Code0):
+				l.addToCompleteOrderIndex(0)
+			case (e.Code == key.CodeKeypad1 || e.Code == key.Code1):
+				l.addToCompleteOrderIndex(1)
+			case (e.Code == key.CodeKeypad2 || e.Code == key.Code2):
+				l.addToCompleteOrderIndex(2)
+			case (e.Code == key.CodeKeypad3 || e.Code == key.Code3):
+				l.addToCompleteOrderIndex(3)
+			case (e.Code == key.CodeKeypad4 || e.Code == key.Code4):
+				l.addToCompleteOrderIndex(4)
+			case (e.Code == key.CodeKeypad5 || e.Code == key.Code5):
+				l.addToCompleteOrderIndex(5)
+			case (e.Code == key.CodeKeypad6 || e.Code == key.Code6):
+				l.addToCompleteOrderIndex(6)
+			case (e.Code == key.CodeKeypad7 || e.Code == key.Code7):
+				l.addToCompleteOrderIndex(7)
+			case (e.Code == key.CodeKeypad8 || e.Code == key.Code8):
+				l.addToCompleteOrderIndex(8)
+			case (e.Code == key.CodeKeypad9 || e.Code == key.Code9):
+				l.addToCompleteOrderIndex(9)
+			case (e.Code == key.CodeKeypadFullStop || e.Code == key.CodeDeleteBackspace):
+				fmt.Println("delete pressed")
+				l.resetCompleteOrderIndex()
+			case (e.Code == key.CodeKeypadEnter || e.Code == key.CodeReturnEnter):
+				index := l.CompleteOrderIndex - 1
+				fmt.Printf("enter pressed with index %v\n", index)
+				if index >= len(l.Orders) || index < 0 {
+					// TODO add popup
+					fmt.Println("no order at that index")
+					l.resetCompleteOrderIndex()
+				} else {
+					fmt.Println("calling complete")
+					order := l.Orders[index]
+					l.completeOrder(order, index)
+					l.resetCompleteOrderIndex()
+				}
+			}
+		}
+	}
+}
+
+func (l *layout) addToCompleteOrderIndex(i int) error {
+	if i > 9 {
+		return errors.New("number too large")
+	}
+	l.CompleteOrderIndex *= 10
+	l.CompleteOrderIndex += i
+	return nil
+}
+
+func (l *layout) resetCompleteOrderIndex() {
+	l.CompleteOrderIndex = 0
 }

@@ -72,9 +72,9 @@ func (s *server) SubmitOrder(ctx context.Context,
 		item.OrderItemID = int32(orderItemID)
 		fmt.Printf("inserted order_item at iid: %d and oid: %d\n", item.GetId(), o.GetId())
 		fmt.Println(res.RowsAffected())
+		x, _ := res.LastInsertId()
 		for _, option := range item.GetOptions() {
 			if option.GetSelected() {
-				x, _ := res.LastInsertId()
 				res, err = tx.Exec(
 					"INSERT INTO order_item_option (order_item_id, option_id) VALUES (?, ?)",
 					x, option.GetId(),
@@ -116,7 +116,6 @@ func (s *server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
 			}
 		}
 	}
-	return nil
 }
 
 func publish(ps *pubsub.PubSub, order *mookiespb.Order) {
@@ -212,6 +211,9 @@ func (s *server) LoadData() error {
 				AND order_item_id = %d`, order.GetId(), item.GetId(), item.GetOrderItemID()))
 			if err != nil {
 				return err
+			}
+			for _, option := range item.GetOptions() {
+				option.Selected = true
 			}
 		}
 	}
