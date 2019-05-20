@@ -214,7 +214,7 @@ func submitOrder(db *sqlx.DB, o *mookiespb.Order) error {
 	}
 	res, err := tx.Exec(
 		"INSERT INTO orders (name, total, status, time_ordered, time_complete) VALUES (?, ?, ?, ?, ?)",
-		o.GetName(), o.GetTotal(), o.GetStatus(), time.Now().UTC().String(), "")
+		o.GetName(), o.GetTotal(), o.GetStatus(), time.Now().Format("2006-01-02 15:04:05"), "")
 	if err != nil {
 		tx.Rollback()
 		return err

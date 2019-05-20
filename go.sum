@@ -3,6 +3,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/BurntSushi/xgb v0.0.0-20160522221800-27f122750802 h1:otE7gFP0KwnPTKtMvPLOcWDZxx6rXYyJGlrXbhoD7og=
 github.com/BurntSushi/xgb v0.0.0-20160522221800-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
+github.com/DATA-DOG/go-sqlmock v1.3.3 h1:CWUqKXe0s8A2z6qCgkP4Kru7wC11YoAnoupUKFDnH08=
+github.com/DATA-DOG/go-sqlmock v1.3.3/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
 github.com/aarzilli/nucular v0.0.0-20190426090038-64ec1eba9181 h1:XzoxXG7giVhNDb5Hz5EtEp9BR+xg98rK+cGQxVJxFwg=
 github.com/aarzilli/nucular v0.0.0-20190426090038-64ec1eba9181/go.mod h1:hIJQ6Pr+wAoPzwNcD17HXvSwNelx6KBiKVZM2GYT5gw=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
