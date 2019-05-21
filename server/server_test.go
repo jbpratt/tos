@@ -40,4 +40,29 @@ func TestSubmitOrder(t *testing.T) {
 	if err = submitOrder(sqlxDB, order); err != nil {
 		t.Errorf("error encountered while submitting order: %s", err)
 	}
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func TestCompleteOrder(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error %s occured when opening a stub database connection", err)
+	}
+	defer db.Close()
+	sqlxDB := sqlx.NewDb(db, "sqlmock")
+
+	mock.ExpectBegin()
+	mock.ExpectExec("UPDATE orders").WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec("UPDATE orders").WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
+
+	if err = completeOrder(sqlxDB, 1); err != nil {
+		t.Errorf("error encountered while completing order: %s", err)
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
 }

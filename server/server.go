@@ -323,9 +323,23 @@ func loadOrders(db *sqlx.DB) ([]*mookiespb.Order, error) {
 // seedData ?
 
 func completeOrder(db *sqlx.DB, id int32) error {
-	_, err := db.Exec(
-		"UPDATE orders SET status = 'complete' WHERE id = ?", id)
+	tx, err := db.Begin()
 	if err != nil {
+		return err
+	}
+	if _, err := tx.Exec(
+		"UPDATE orders SET status = 'complete' WHERE id = ?", id); err != nil {
+		tx.Rollback()
+		return err
+	}
+	if _, err = tx.Exec(
+		"UPDATE orders SET time_complete = ? WHERE id = ?", time.Now().Format("2006-01-02 15:04:05"), id); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err = tx.Commit(); err != nil {
+		tx.Rollback()
 		return err
 	}
 	return nil
