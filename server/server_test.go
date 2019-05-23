@@ -9,7 +9,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func TestSubmitOrder(t *testing.T) {
+func TestOrder_SubmitOrder(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error %s occured when opening a stub database connection", err)
@@ -46,7 +46,7 @@ func TestSubmitOrder(t *testing.T) {
 	}
 }
 
-func TestCompleteOrder(t *testing.T) {
+func TestOrder_CompleteOrder(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error %s occured when opening a stub database connection", err)
@@ -65,4 +65,8 @@ func TestCompleteOrder(t *testing.T) {
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
+}
+
+func TestOrder_QueryCorrectOrder(t *testing.T) {
+
 }
