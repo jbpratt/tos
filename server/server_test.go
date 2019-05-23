@@ -67,6 +67,91 @@ func TestOrder_CompleteOrder(t *testing.T) {
 	}
 }
 
-func TestOrder_QueryCorrectOrder(t *testing.T) {
+/*func TestOrder_QueryCorrectOrders(t *testing.T) {
 
 }
+
+func TestMenu_GetMenu(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error %s occured when opening a stub database connection", err)
+	}
+	defer db.Close()
+	sqlxDB := sqlx.NewDb(db, "sqlmock")
+
+	categories := []*mookiespb.Category{
+		&mookiespb.Category{
+			Id:   1,
+			Name: "Sandwiches",
+			/*Items: []*mookiespb.Item{
+				&mookiespb.Item{
+					Id:    1,
+					Name:  "Large Hamburger",
+					Price: 495,
+					Options: []*mookiespb.Option{
+						&mookiespb.Option{
+							Id:       1,
+							Name:     "pickles",
+							Price:    0,
+							Selected: true,
+						},
+					},
+				},
+			},
+		},
+		&mookiespb.Category{
+			Id:   2,
+			Name: "Plates",
+			/*Items: []*mookiespb.Item{
+				&mookiespb.Item{
+					Id:    2,
+					Name:  "Smoked Pulled Pork",
+					Price: 990,
+					Options: []*mookiespb.Option{
+						&mookiespb.Option{
+							Id:       109,
+							Name:     "fries",
+							Price:    0,
+							Selected: false,
+						},
+					},
+				},
+			},
+		},
+	}
+	categoryRows := sqlmock.NewRows([]string{"id", "name"}).
+		AddRow(categories[0].GetId(), categories[0].GetName()).
+		AddRow(categories[1].GetId(), categories[1].GetName())
+
+	mock.ExpectQuery("^SELECT (.+) FROM categories").WillReturnRows(categoryRows)
+
+	for _, category := range categories {
+		itemRows := sqlmock.NewRows([]string{"id", "name", "price", "category_id"}).
+			AddRow(category.Items[0].GetId(), category.Items[0].GetName(),
+				category.Items[0].GetPrice(), category.Items[0].GetCategoryID())
+		mock.ExpectQuery("^SELECT (.+) FROM items").WithArgs("category_id").WillReturnRows(itemRows)
+
+		for _, item := range category.GetItems() {
+			itemOptionRows := sqlmock.NewRows([]string{"name", "price", "selected", "id"}).
+				AddRow(item.Options[0].GetName(), item.Options[0].GetPrice(),
+					item.Options[0].GetSelected(), item.Options[0].GetId())
+
+			mock.ExpectQuery("^SELECT (.+) FROM options JOIN item_options*").WithArgs("item_id").
+				WillReturnRows(itemOptionRows)
+		}
+	}
+
+	expectedMenu := &mookiespb.Menu{
+		Categories: categories,
+	}
+
+	menu, err := getMenu(sqlxDB)
+	if err != nil {
+		t.Fatalf("getMenu() failed with: %v", err)
+	}
+
+	fmt.Println(menu)
+
+	assert.Equal(t, expectedMenu, menu)
+}
+*/

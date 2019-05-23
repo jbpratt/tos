@@ -6,7 +6,7 @@ import (
 
 var Menu = []*mookiespb.Category{
 	{
-		Name: "Sandwich",
+		Name: "Sandwiches",
 		Items: []*mookiespb.Item{
 			{Name: "LG Smoked Pulled Pork", Price: 495, Options: []*mookiespb.Option{
 				{Name: "pickles", Price: 0, Selected: true},

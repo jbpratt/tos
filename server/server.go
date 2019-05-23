@@ -109,13 +109,13 @@ func (s *server) ActiveOrders(
 }
 
 func (s *server) LoadData() error {
-	menu, err := loadMenu(s.db)
+	menu, err := getMenu(s.db)
 	if err != nil {
 		return err
 	}
 	s.menu = menu
 
-	orders, err := loadOrders(s.db)
+	orders, err := getOrders(s.db)
 	s.orders = orders
 
 	log.Println("Menu and orders have been successfully queried")
@@ -257,7 +257,7 @@ func submitOrder(db *sqlx.DB, o *mookiespb.Order) error {
 	return nil
 }
 
-func loadMenu(db *sqlx.DB) (*mookiespb.Menu, error) {
+func getMenu(db *sqlx.DB) (*mookiespb.Menu, error) {
 	var categories []*mookiespb.Category
 	menu := &mookiespb.Menu{
 		Categories: categories,
@@ -283,7 +283,7 @@ func loadMenu(db *sqlx.DB) (*mookiespb.Menu, error) {
 	return menu, nil
 }
 
-func loadOrders(db *sqlx.DB) ([]*mookiespb.Order, error) {
+func getOrders(db *sqlx.DB) ([]*mookiespb.Order, error) {
 	var orders []*mookiespb.Order
 	err := db.Select(&orders,
 		"SELECT * FROM orders WHERE status = 'active'")
@@ -328,7 +328,7 @@ func completeOrder(db *sqlx.DB, id int32) error {
 		return err
 	}
 	if _, err := tx.Exec(
-		"UPDATE orders SET status = 'complete' WHERE id = ?", id); err != nil {
+		"UPDATE orders SET status = ? WHERE id = ?", "complete", id); err != nil {
 		tx.Rollback()
 		return err
 	}

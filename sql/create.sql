@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS order_items (
   FOREIGN KEY (order_id) REFERENCES orders(id)
 );
 
-CREATE TABLE IF NOT EXISTS order_item_option (
+CREATE TABLE IF NOT EXISTS order_item_options (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   order_item_id INTEGER NOT NULL,
   option_id INTEGER NOT NULL,
