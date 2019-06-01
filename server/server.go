@@ -19,6 +19,7 @@ import (
 var (
 	listen = flag.String("listen", ":50051", "listen address")
 	dbp    = flag.String("database", "./mookies.db", "database to use")
+	lpDev  = flag.String("p", "/dev/usb/lp0", "Printer dev file")
 )
 
 type server struct {
@@ -96,6 +97,7 @@ func (s *server) CompleteOrder(ctx context.Context,
 	res := &mookiespb.CompleteOrderResponse{
 		Result: "Order marked as complete",
 	}
+
 	return res, s.LoadData()
 }
 
