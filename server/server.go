@@ -29,7 +29,8 @@ type server struct {
 	ps     *pubsub.PubSub
 }
 
-const topic = "orders"
+const topicOrder = "orders"
+const topicComplete = "complete"
 
 func (s *server) GetMenu(ctx context.Context, empty *mookiespb.Empty) (*mookiespb.Menu, error) {
 	log.Println("Client has requested the menu")
@@ -54,7 +55,7 @@ func (s *server) SubmitOrder(ctx context.Context,
 		Result: "Order has been placed..",
 	}
 
-	go publish(s.ps, o)
+	go publish(s.ps, o, topicOrder)
 
 	return res, s.LoadData()
 }
@@ -63,7 +64,7 @@ func (s *server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
 	stream mookiespb.OrderService_SubscribeToOrdersServer) error {
 
 	log.Printf("Client has subscribed to orders: %v\n", req)
-	ch := s.ps.Sub(topic)
+	ch := s.ps.Sub(topicOrder)
 	for {
 		if o, ok := <-ch; ok {
 			log.Printf("Sending order to client: %v\n", o)
@@ -75,7 +76,23 @@ func (s *server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
 	}
 }
 
-func publish(ps *pubsub.PubSub, order *mookiespb.Order) {
+func (s *server) SubscribeToCompleteOrders(req *mookiespb.SubscribeToOrderRequest,
+	stream mookiespb.OrderService_SubscribeToCompleteOrdersServer) error {
+
+	log.Printf("Client has subscribed to orders: %v\n", req)
+	ch := s.ps.Sub(topicComplete)
+	for {
+		if o, ok := <-ch; ok {
+			log.Printf("Sending order to client: %v\n", o)
+			err := stream.Send(o.(*mookiespb.Order))
+			if err != nil {
+				log.Println(err)
+			}
+		}
+	}
+}
+
+func publish(ps *pubsub.PubSub, order *mookiespb.Order, topic string) {
 	ps.Pub(order, topic)
 }
 
@@ -87,6 +104,7 @@ func (s *server) CompleteOrder(ctx context.Context,
 	for _, o := range s.orders {
 		if req.GetId() == o.GetId() {
 			o.Status = "complete"
+			go publish(s.ps, o, topicComplete)
 		}
 	}
 

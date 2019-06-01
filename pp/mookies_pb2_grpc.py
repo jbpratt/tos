@@ -71,6 +71,11 @@ class OrderServiceStub(object):
         request_serializer=mookies__pb2.SubscribeToOrderRequest.SerializeToString,
         response_deserializer=mookies__pb2.Order.FromString,
         )
+    self.SubscribeToCompleteOrders = channel.unary_stream(
+        '/mookiespb.OrderService/SubscribeToCompleteOrders',
+        request_serializer=mookies__pb2.SubscribeToOrderRequest.SerializeToString,
+        response_deserializer=mookies__pb2.Order.FromString,
+        )
     self.ActiveOrders = channel.unary_unary(
         '/mookiespb.OrderService/ActiveOrders',
         request_serializer=mookies__pb2.Empty.SerializeToString,
@@ -105,6 +110,13 @@ class OrderServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def SubscribeToCompleteOrders(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def ActiveOrders(self, request, context):
     """all active orders
     """
@@ -127,6 +139,11 @@ def add_OrderServiceServicer_to_server(servicer, server):
       ),
       'SubscribeToOrders': grpc.unary_stream_rpc_method_handler(
           servicer.SubscribeToOrders,
+          request_deserializer=mookies__pb2.SubscribeToOrderRequest.FromString,
+          response_serializer=mookies__pb2.Order.SerializeToString,
+      ),
+      'SubscribeToCompleteOrders': grpc.unary_stream_rpc_method_handler(
+          servicer.SubscribeToCompleteOrders,
           request_deserializer=mookies__pb2.SubscribeToOrderRequest.FromString,
           response_serializer=mookies__pb2.Order.SerializeToString,
       ),
