@@ -320,8 +320,6 @@ func getOrders(db *sqlx.DB) ([]*mookiespb.Order, error) {
 	return orders, nil
 }
 
-// seedData ?
-
 func completeOrder(db *sqlx.DB, id int32) error {
 	tx, err := db.Begin()
 	if err != nil {
@@ -333,7 +331,8 @@ func completeOrder(db *sqlx.DB, id int32) error {
 		return err
 	}
 	if _, err = tx.Exec(
-		"UPDATE orders SET time_complete = ? WHERE id = ?", time.Now().Format("2006-01-02 15:04:05"), id); err != nil {
+		"UPDATE orders SET time_complete = ? WHERE id = ?",
+		time.Now().Format("2006-01-02 15:04:05"), id); err != nil {
 		tx.Rollback()
 		return err
 	}
