@@ -12,11 +12,16 @@ def run():
     
         try:
             for order in order_stub.SubscribeToCompleteOrders(mookies_pb2.SubscribeToOrderRequest(request='pls')):
-                Epson.text(order.__name__)
+                Epson.control("LF")
+                Epson.set(font='a', height=4, align='center')
+                Epson.text("Mookie's Smokehouse'\n")
+                Epson.set(font='a', height=2, align='center')
+                Epson.text(order.name + "\n")
+                Epson.cut()
                 print(order)
 
         except grpc.RpcError as e:
-            print("Error raised: " + e.details())
+            print("Error raised: " + e.__cause__)
 
 if __name__ == '__main__':
     run()
