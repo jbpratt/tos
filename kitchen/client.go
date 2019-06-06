@@ -290,6 +290,7 @@ func (l *layout) keybindings(w *nucular.Window) {
 					l.resetCompleteOrderIndex()
 				}
 			}
+
 		}
 	}
 }
