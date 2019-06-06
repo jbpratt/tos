@@ -393,9 +393,11 @@ func cloneItem(originalItem *mookiespb.Item) *mookiespb.Item {
 }
 
 func (l *layout) keybindings(w *nucular.Window) {
+	mw := w.Master()
 	if in := w.Input(); in != nil {
 		k := in.Keyboard
 		for _, e := range k.Keys {
+			scaling := mw.Style().Scaling
 			switch {
 			case (e.Code == key.CodeReturnEnter):
 				l.sendOrder(w)
@@ -404,6 +406,10 @@ func (l *layout) keybindings(w *nucular.Window) {
 			case (e.Modifiers == key.ModControl || e.Modifiers == key.ModControl|key.ModShift) && (e.Code == key.CodeZ):
 				// TODO: theme pop up to pick from theme list
 				fmt.Println("pop up theme list")
+			case (e.Modifiers == key.ModControl || e.Modifiers == key.ModControl|key.ModShift) && (e.Code == key.CodeEqualSign):
+				mw.Style().Scale(scaling + 0.1)
+			case (e.Modifiers == key.ModControl || e.Modifiers == key.ModControl|key.ModShift) && (e.Code == key.CodeHyphenMinus):
+				mw.Style().Scale(scaling - 0.1)
 			}
 		}
 	}
