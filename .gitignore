@@ -1,2 +1,4 @@
 .vscode/
 bin/
+pp/__pycache__/
+vendor/

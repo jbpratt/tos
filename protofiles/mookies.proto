@@ -91,6 +91,7 @@ service OrderService {
   // server streaming
   rpc SubscribeToOrders(SubscribeToOrderRequest) returns (stream Order) {};
 
+  rpc SubscribeToCompleteOrders(SubscribeToOrderRequest) returns (stream Order) {};
   // all active orders
   rpc ActiveOrders(Empty) returns (OrdersResponse) {};
 }
