@@ -12,6 +12,7 @@ import (
 
 	"github.com/aarzilli/nucular"
 	"github.com/aarzilli/nucular/label"
+	"github.com/aarzilli/nucular/style"
 	nstyle "github.com/aarzilli/nucular/style"
 	"golang.org/x/mobile/event/key"
 
@@ -46,7 +47,6 @@ type layout struct {
 	// Popup
 	PSelect []bool
 
-	// current order
 	Theme  nstyle.Theme
 	client mookiespb.OrderServiceClient
 }
@@ -61,6 +61,7 @@ func newLayout() (l *layout) {
 	l.NoScrollbar = false
 	l.Close = true
 	l.CompleteOrderIndex = 0
+	l.Theme = style.WhiteTheme
 
 	return l
 }
@@ -86,6 +87,7 @@ func main() {
 	groupFlags := nucular.WindowFlags(0)
 	groupFlags |= nucular.WindowNoScrollbar
 	wnd = nucular.NewMasterWindow(groupFlags, "Mookies", l.basicDemo)
+	wnd.SetStyle(style.FromTheme(l.Theme, 1.5))
 	wnd.Main()
 }
 
@@ -250,8 +252,8 @@ func (l *layout) keybindings(w *nucular.Window) {
 		k := in.Keyboard
 		for _, e := range k.Keys {
 			// TODO: set numpad code on Pi
+			// TODO: swap scaling keys to be accesible from numpad
 			scaling := mw.Style().Scaling
-			fmt.Printf("%v\n", e.Code)
 			switch {
 			case (e.Modifiers == key.ModControl || e.Modifiers == key.ModControl|key.ModShift) && (e.Code == key.CodeEqualSign):
 				mw.Style().Scale(scaling + 0.1)

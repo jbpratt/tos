@@ -15,6 +15,7 @@ import (
 	"github.com/aarzilli/nucular"
 	"github.com/aarzilli/nucular/label"
 	"github.com/aarzilli/nucular/rect"
+	"github.com/aarzilli/nucular/style"
 	nstyle "github.com/aarzilli/nucular/style"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"golang.org/x/mobile/event/key"
@@ -71,8 +72,9 @@ func newLayout() (l *layout) {
 	l.Movable = true
 	l.NoScrollbar = false
 	l.Close = true
+	l.Theme = nstyle.DarkTheme
 
-	// TlO this need to change dynamically
+	// TODO: this need to change dynamically
 	l.NameEditor.Flags = nucular.EditField
 	l.CustomOptionNameEditor.Flags = nucular.EditField
 	l.CustomOptionPriceEditor.Flags = nucular.EditField
@@ -102,6 +104,7 @@ func main() {
 	groupFlags := nucular.WindowFlags(0)
 	groupFlags |= nucular.WindowNoScrollbar
 	wnd := nucular.NewMasterWindow(groupFlags, "Mookies", l.basicDemo)
+	wnd.SetStyle(style.FromTheme(l.Theme, 1.0))
 	wnd.Main()
 }
 
@@ -398,6 +401,9 @@ func (l *layout) keybindings(w *nucular.Window) {
 				l.sendOrder(w)
 			case (e.Code == key.CodeF12):
 				l.DebugEnabled = !l.DebugEnabled
+			case (e.Modifiers == key.ModControl || e.Modifiers == key.ModControl|key.ModShift) && (e.Code == key.CodeZ):
+				// TODO: theme pop up to pick from theme list
+				fmt.Println("pop up theme list")
 			}
 		}
 	}
