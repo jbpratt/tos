@@ -245,12 +245,18 @@ func (l *layout) debug(message string, v ...interface{}) {
 }
 
 func (l *layout) keybindings(w *nucular.Window) {
+	mw := w.Master()
 	if in := w.Input(); in != nil {
 		k := in.Keyboard
 		for _, e := range k.Keys {
-			// TODO figure this out
+			// TODO: set numpad code on Pi
+			scaling := mw.Style().Scaling
 			fmt.Printf("%v\n", e.Code)
 			switch {
+			case (e.Modifiers == key.ModControl || e.Modifiers == key.ModControl|key.ModShift) && (e.Code == key.CodeEqualSign):
+				mw.Style().Scale(scaling + 0.1)
+			case (e.Modifiers == key.ModControl || e.Modifiers == key.ModControl|key.ModShift) && (e.Code == key.CodeHyphenMinus):
+				mw.Style().Scale(scaling - 0.1)
 			case (e.Code == key.CodeF12):
 				l.DebugEnabled = !l.DebugEnabled
 			case (e.Code == key.CodeKeypad0 || e.Code == key.Code0):
