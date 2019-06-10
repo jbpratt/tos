@@ -20,10 +20,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-var (
-	addr = flag.String("addr", ":50051", "address to dial")
-)
-
 type layout struct {
 	ShowMenu    bool
 	Titlebar    bool
@@ -69,6 +65,7 @@ func newLayout() (l *layout) {
 var wnd nucular.MasterWindow
 
 func main() {
+	addr := flag.String("addr", "mserver:50051", "server address to dial")
 	cc, err := grpc.Dial(*addr, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)

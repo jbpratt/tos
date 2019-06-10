@@ -1,7 +1,7 @@
 PKG := "github.com/jbpratt78/mookies-tos"
 SERVER_OUT := "bin/server"
 FRONT_CLIENT_OUT := "bin/front"
-BACK_CLIENT_OUT := "bin/back"
+BACK_CLIENT_OUT := "bin/kitchen"
 SERVER_PKG_BUILD := "${PKG}/server"
 FRONT_CLIENT_PKG_BUILD := "${PKG}/front"
 BACK_CLIENT_PKG_BUILD := "${PKG}/kitchen"
