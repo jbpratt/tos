@@ -24,10 +24,6 @@ import (
 
 const taxRate = 1.04
 
-var (
-	addr = flag.String("addr", ":50051", "address to dial")
-)
-
 type layout struct {
 	ShowMenu    bool
 	Titlebar    bool
@@ -91,6 +87,8 @@ type client struct {
 }
 
 func main() {
+	addr := flag.String("addr", "msever:50051", "server to dial")
+	flag.Parse()
 	cc, err := grpc.Dial(*addr, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
@@ -122,7 +120,6 @@ func (l *layout) doMenuRequest() (*mookiespb.Menu, error) {
 
 // pass in order as arg
 func (l *layout) doSubmitOrderRequest(order *mookiespb.Order) {
-
 	l.debug("Starting order request")
 	req := &mookiespb.SubmitOrderRequest{
 		Order: order,
