@@ -6,3 +6,5 @@ TODO:
 - [ ] Deploy script
 - [ ] Determine proper restart order and script
 - [ ] Fix launching clients dialing specific addr
+- [ ] Organize new python proto files
+- [ ] Fix gen script
