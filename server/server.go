@@ -14,12 +14,14 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/keepalive"
 )
 
 var (
 	listen = flag.String("listen", ":50051", "listen address")
 	dbp    = flag.String("database", "./mookies.db", "database to use")
 	lpDev  = flag.String("p", "/dev/usb/lp0", "Printer dev file")
+	kasp   = keepalive.ServerParameters{Time: 5 * time.Second}
 )
 
 type server struct {
@@ -171,7 +173,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(grpc.KeepaliveParams(kasp))
 	mookiespb.RegisterMenuServiceServer(s, server)
 	mookiespb.RegisterOrderServiceServer(s, server)
 	if err := s.Serve(lis); err != nil {

@@ -18,6 +18,7 @@ import (
 
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/keepalive"
 )
 
 type layout struct {
@@ -62,11 +63,19 @@ func newLayout() (l *layout) {
 	return l
 }
 
-var wnd nucular.MasterWindow
+var (
+	kacp = keepalive.ClientParameters{
+		Time:                10 * time.Second,
+		Timeout:             time.Second,
+		PermitWithoutStream: true,
+	}
+	wnd nucular.MasterWindow
+)
 
 func main() {
 	addr := flag.String("addr", "mserver:50051", "server address to dial")
-	cc, err := grpc.Dial(*addr, grpc.WithInsecure())
+	flag.Parse()
+	cc, err := grpc.Dial(*addr, grpc.WithInsecure(), grpc.WithKeepaliveParams(kacp))
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
 	}
