@@ -20,6 +20,7 @@ import (
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"golang.org/x/mobile/event/key"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/keepalive"
 )
 
 const taxRate = 1.04
@@ -86,10 +87,18 @@ type client struct {
 	OrderClient mookiespb.OrderServiceClient
 }
 
+var (
+	kacp = keepalive.ClientParameters{
+		Time:                10 * time.Second,
+		Timeout:             time.Second,
+		PermitWithoutStream: true,
+	}
+)
+
 func main() {
 	addr := flag.String("addr", "msever:50051", "server to dial")
 	flag.Parse()
-	cc, err := grpc.Dial(*addr, grpc.WithInsecure())
+	cc, err := grpc.Dial(*addr, grpc.WithInsecure(), grpc.WithKeepaliveParams(kacp))
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
 	}
