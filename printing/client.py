@@ -1,3 +1,6 @@
+import sys
+import os
+
 import grpc
 import argparse
 from escpos import printer 
@@ -29,4 +32,11 @@ def run():
             print("Error raised: " + e.__cause__)
 
 if __name__ == '__main__':
-    run()
+    try:
+        run()
+    except KeyboardInterrupt:
+        print('Interrupted')
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
