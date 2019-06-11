@@ -1,16 +1,20 @@
 import grpc
+import argparse
 from escpos import printer 
 
 import mookies_pb2
 import mookies_pb2_grpc
 
-Epson = printer.File("/dev/usb/lp0")
 
 def run():
-    with grpc.insecure_channel('localhost:50051') as channel:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("address", help="server address to dial")
+    args = parser.parse_args()
+    with grpc.insecure_channel(args.address) as channel:
         order_stub = mookies_pb2_grpc.OrderServiceStub(channel)
-    
+        Epson = printer.File("/dev/usb/lp0")
         try:
+            print("Dialed " + args.address) 
             for order in order_stub.SubscribeToCompleteOrders(
                     mookies_pb2.SubscribeToOrderRequest(request='pls')):
                 Epson.control("LF")
