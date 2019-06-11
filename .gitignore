@@ -1,4 +1,4 @@
 .vscode/
 bin/
-pp/__pycache__/
+printing/__pycache__/
 vendor/

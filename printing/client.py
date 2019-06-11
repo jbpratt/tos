@@ -11,7 +11,8 @@ def run():
         order_stub = mookies_pb2_grpc.OrderServiceStub(channel)
     
         try:
-            for order in order_stub.SubscribeToCompleteOrders(mookies_pb2.SubscribeToOrderRequest(request='pls')):
+            for order in order_stub.SubscribeToCompleteOrders(
+                    mookies_pb2.SubscribeToOrderRequest(request='pls')):
                 Epson.control("LF")
                 Epson.set(font='a', height=4, align='center')
                 Epson.text("Mookie's Smokehouse'\n")
