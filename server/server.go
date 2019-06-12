@@ -17,6 +17,9 @@ import (
 	"google.golang.org/grpc/keepalive"
 )
 
+const topicOrder = "orders"
+const topicComplete = "complete"
+
 var (
 	listen = flag.String("listen", ":50051", "listen address")
 	dbp    = flag.String("database", "./mookies.db", "database to use")
@@ -30,9 +33,6 @@ type server struct {
 	menu   *mookiespb.Menu
 	ps     *pubsub.PubSub
 }
-
-const topicOrder = "orders"
-const topicComplete = "complete"
 
 func (s *server) GetMenu(ctx context.Context, empty *mookiespb.Empty) (*mookiespb.Menu, error) {
 	log.Println("Client has requested the menu")
