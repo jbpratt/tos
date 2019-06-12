@@ -9,7 +9,7 @@ BACK_CLIENT_PKG_BUILD := "${PKG}/kitchen"
 all: server front back
 
 dep: ## Get the dependencies
-	@go get -v -d ./...
+	@go get -u
 
 server: dep protofiles/mookies.pb.go
 	@go build -i -v -o $(SERVER_OUT) $(SERVER_PKG_BUILD)
