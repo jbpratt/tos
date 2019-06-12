@@ -8,6 +8,7 @@
 - [ ] Deploy script
 - [ ] Determine proper restart order and script
 - [ ] Handle errors in a more Go like style
+- [ ] Print order properly
 - [ ] Testing
 - [ ] Additional GRPC features
   - [x] Keep alive (TODO: Python client)
