@@ -9,6 +9,12 @@ import mookies_pb2
 import mookies_pb2_grpc
 
 
+GRAPHICS_PATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'assets')) 
+
+def logo():
+    image = GRAPHICS_PATH + '/logo-small.png'
+    return image
+
 def run(address):
     with grpc.insecure_channel(address) as channel:
         order_stub = mookies_pb2_grpc.OrderServiceStub(channel)
@@ -19,7 +25,7 @@ def run(address):
                         mookies_pb2.SubscribeToOrderRequest(request='Request')):
                     Epson.control('LF')
                     Epson.set(font='a', height=2, align='center')
-                    Epson.text('Mookies Smokehouse\n')
+                    Epson.image(logo())
                     Epson.text('\n')
                     Epson.text(order.name + '\n')
                     Epson.text('Total: $' + str(order.total/100) + '\n')
