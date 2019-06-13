@@ -12,6 +12,7 @@ import (
 
 	"github.com/aarzilli/nucular"
 	"github.com/aarzilli/nucular/label"
+	"github.com/aarzilli/nucular/rect"
 	"github.com/aarzilli/nucular/style"
 	nstyle "github.com/aarzilli/nucular/style"
 	"golang.org/x/mobile/event/key"
@@ -93,7 +94,7 @@ func main() {
 	groupFlags := nucular.WindowFlags(0)
 	groupFlags |= nucular.WindowNoScrollbar
 	wnd = nucular.NewMasterWindow(groupFlags, "Mookies", l.basicDemo)
-	wnd.SetStyle(style.FromTheme(l.Theme, 1.5))
+	wnd.SetStyle(style.FromTheme(l.Theme, 1))
 	wnd.Main()
 }
 
@@ -156,10 +157,12 @@ func (l *layout) subscribeToOrders() error {
 
 func (l *layout) overviewLayout(w *nucular.Window) {
 	l.keybindings(w)
-	w.Row(30).Ratio(0.1, 0.8, 0.1)
+	w.Row(30).Ratio(0.3, 0.6, 0.1)
 	w.Label(fmt.Sprintf("selected: %v", l.CompleteOrderIndex), "LC")
 	w.Label(time.Now().Format("3:04PM"), "CC")
-	w.Spacing(1)
+	if w.Button(label.T("settings"), false) {
+		w.Master().PopupOpen("Settings:", nucular.WindowMovable, rect.Rect{200, 100, 230, 200}, true, l.settings)
+	}
 	w.Row(20).Dynamic(1)
 	w.Label("Orders:", "LC")
 
@@ -318,4 +321,26 @@ func (l *layout) addToCompleteOrderIndex(i int) error {
 
 func (l *layout) resetCompleteOrderIndex() {
 	l.CompleteOrderIndex = 0
+}
+
+func (l *layout) settings(w *nucular.Window) {
+	w.Row(25).Dynamic(1)
+	newtheme := l.Theme
+	if w.OptionText("Default Theme", newtheme == nstyle.DefaultTheme) {
+		newtheme = nstyle.DefaultTheme
+	}
+	if w.OptionText("White Theme", newtheme == nstyle.WhiteTheme) {
+		newtheme = nstyle.WhiteTheme
+	}
+	if w.OptionText("Red Theme", newtheme == nstyle.RedTheme) {
+		newtheme = nstyle.RedTheme
+	}
+	if w.OptionText("Dark Theme", newtheme == nstyle.DarkTheme) {
+		newtheme = nstyle.DarkTheme
+	}
+	if newtheme != l.Theme {
+		l.Theme = newtheme
+		w.Master().SetStyle(nstyle.FromTheme(l.Theme, w.Master().Style().Scaling))
+		w.Close()
+	}
 }
