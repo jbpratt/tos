@@ -8,12 +8,13 @@
 - [ ] Deploy script
 - [ ] Determine proper restart order and script
 - [ ] Handle errors in a more Go like style
-- [ ] Print order properly
 - [ ] Testing
 - [ ] Additional GRPC features
   - [x] Keep alive (TODO: Python client)
   - [ ] Auth
   - [ ] Encryption
+- [ ] Custom item from front
+- [ ] Numpad works, not showing selected number
 
 ### Debugging
 `GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info GODEBUG=http2debug=2`

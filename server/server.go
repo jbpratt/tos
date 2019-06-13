@@ -72,7 +72,7 @@ func (s *server) SubscribeToOrders(req *mookiespb.Empty,
 			log.Printf("Sending order to client: %v\n", o)
 			err := stream.Send(o.(*mookiespb.Order))
 			if err != nil {
-				log.Println(err)
+				return err
 			}
 		}
 	}
@@ -88,7 +88,7 @@ func (s *server) SubscribeToCompleteOrders(req *mookiespb.Empty,
 			log.Printf("Sending order to client: %v\n", o)
 			err := stream.Send(o.(*mookiespb.Order))
 			if err != nil {
-				log.Println(err)
+				return err
 			}
 		}
 	}
@@ -123,6 +123,7 @@ func (s *server) CompleteOrder(ctx context.Context,
 
 func (s *server) ActiveOrders(
 	ctx context.Context, empty *mookiespb.Empty) (*mookiespb.OrdersResponse, error) {
+
 	log.Println("Client has requested active orders")
 	res := &mookiespb.OrdersResponse{
 		Orders: s.orders,
