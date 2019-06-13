@@ -131,9 +131,7 @@ func (l *layout) requestOrders() error {
 func (l *layout) subscribeToOrders() error {
 
 	fmt.Println("Subscribing to orders...")
-	req := &mookiespb.SubscribeToOrderRequest{
-		Request: "send me orders",
-	}
+	req := &mookiespb.Empty{}
 
 	stream, err := l.client.SubscribeToOrders(context.Background(), req)
 	if err != nil {

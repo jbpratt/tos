@@ -62,7 +62,7 @@ func (s *server) SubmitOrder(ctx context.Context,
 	return res, s.LoadData()
 }
 
-func (s *server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
+func (s *server) SubscribeToOrders(req *mookiespb.Empty,
 	stream mookiespb.OrderService_SubscribeToOrdersServer) error {
 
 	log.Printf("Client has subscribed to orders: %v\n", req)
@@ -78,7 +78,7 @@ func (s *server) SubscribeToOrders(req *mookiespb.SubscribeToOrderRequest,
 	}
 }
 
-func (s *server) SubscribeToCompleteOrders(req *mookiespb.SubscribeToOrderRequest,
+func (s *server) SubscribeToCompleteOrders(req *mookiespb.Empty,
 	stream mookiespb.OrderService_SubscribeToCompleteOrdersServer) error {
 
 	log.Printf("Client has subscribed to orders: %v\n", req)

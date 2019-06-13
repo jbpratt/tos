@@ -22,7 +22,7 @@ def run(address):
             Epson = printer.File('/dev/usb/lp0')
             try:
                 for order in order_stub.SubscribeToCompleteOrders(
-                        mookies_pb2.SubscribeToOrderRequest(request='Request')):
+                        mookies_pb2.Empty()):
                     Epson.control('LF')
                     Epson.set(font='a', height=2, align='center')
                     Epson.image(logo())

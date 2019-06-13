@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='mookiespb',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\rmookies.proto\x12\tmookiespb\"|\n\x04Item\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\x05\x12\r\n\x05price\x18\x03 \x01(\x02\x12\x12\n\ncategoryID\x18\x04 \x01(\x05\x12\x13\n\x0borderItemID\x18\x05 \x01(\x05\x12\"\n\x07options\x18\x06 \x03(\x0b\x32\x11.mookiespb.Option\"C\n\x06Option\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\x05\x12\r\n\x05price\x18\x03 \x01(\x02\x12\x10\n\x08selected\x18\x04 \x01(\x08\"D\n\x08\x43\x61tegory\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\x05\x12\x1e\n\x05items\x18\x03 \x03(\x0b\x32\x0f.mookiespb.Item\"/\n\x04Menu\x12\'\n\ncategories\x18\x01 \x03(\x0b\x32\x13.mookiespb.Category\"\x8d\x01\n\x05Order\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x1e\n\x05items\x18\x03 \x03(\x0b\x32\x0f.mookiespb.Item\x12\r\n\x05total\x18\x04 \x01(\x02\x12\x0e\n\x06status\x18\x05 \x01(\t\x12\x14\n\x0ctime_ordered\x18\x06 \x01(\t\x12\x15\n\rtime_complete\x18\x07 \x01(\t\"5\n\x12SubmitOrderRequest\x12\x1f\n\x05order\x18\x01 \x01(\x0b\x32\x10.mookiespb.Order\"%\n\x13SubmitOrderResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\"*\n\x17SubscribeToOrderRequest\x12\x0f\n\x07request\x18\x01 \x01(\t\"\"\n\x14\x43ompleteOrderRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"\'\n\x15\x43ompleteOrderResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\" \n\rOrdersRequest\x12\x0f\n\x07request\x18\x01 \x01(\t\"2\n\x0eOrdersResponse\x12 \n\x06orders\x18\x01 \x03(\x0b\x32\x10.mookiespb.Order\"\x07\n\x05\x45mpty2=\n\x0bMenuService\x12.\n\x07GetMenu\x12\x10.mookiespb.Empty\x1a\x0f.mookiespb.Menu\"\x00\x32\x99\x03\n\x0cOrderService\x12N\n\x0bSubmitOrder\x12\x1d.mookiespb.SubmitOrderRequest\x1a\x1e.mookiespb.SubmitOrderResponse\"\x00\x12T\n\rCompleteOrder\x12\x1f.mookiespb.CompleteOrderRequest\x1a .mookiespb.CompleteOrderResponse\"\x00\x12M\n\x11SubscribeToOrders\x12\".mookiespb.SubscribeToOrderRequest\x1a\x10.mookiespb.Order\"\x00\x30\x01\x12U\n\x19SubscribeToCompleteOrders\x12\".mookiespb.SubscribeToOrderRequest\x1a\x10.mookiespb.Order\"\x00\x30\x01\x12=\n\x0c\x41\x63tiveOrders\x12\x10.mookiespb.Empty\x1a\x19.mookiespb.OrdersResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\rmookies.proto\x12\tmookiespb\"|\n\x04Item\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\x05\x12\r\n\x05price\x18\x03 \x01(\x02\x12\x12\n\ncategoryID\x18\x04 \x01(\x05\x12\x13\n\x0borderItemID\x18\x05 \x01(\x05\x12\"\n\x07options\x18\x06 \x03(\x0b\x32\x11.mookiespb.Option\"C\n\x06Option\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\x05\x12\r\n\x05price\x18\x03 \x01(\x02\x12\x10\n\x08selected\x18\x04 \x01(\x08\"D\n\x08\x43\x61tegory\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\x05\x12\x1e\n\x05items\x18\x03 \x03(\x0b\x32\x0f.mookiespb.Item\"/\n\x04Menu\x12\'\n\ncategories\x18\x01 \x03(\x0b\x32\x13.mookiespb.Category\"\x8d\x01\n\x05Order\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x1e\n\x05items\x18\x03 \x03(\x0b\x32\x0f.mookiespb.Item\x12\r\n\x05total\x18\x04 \x01(\x02\x12\x0e\n\x06status\x18\x05 \x01(\t\x12\x14\n\x0ctime_ordered\x18\x06 \x01(\t\x12\x15\n\rtime_complete\x18\x07 \x01(\t\"5\n\x12SubmitOrderRequest\x12\x1f\n\x05order\x18\x01 \x01(\x0b\x32\x10.mookiespb.Order\"%\n\x13SubmitOrderResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\"*\n\x17SubscribeToOrderRequest\x12\x0f\n\x07request\x18\x01 \x01(\t\"\"\n\x14\x43ompleteOrderRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"\'\n\x15\x43ompleteOrderResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\" \n\rOrdersRequest\x12\x0f\n\x07request\x18\x01 \x01(\t\"2\n\x0eOrdersResponse\x12 \n\x06orders\x18\x01 \x03(\x0b\x32\x10.mookiespb.Order\"\x07\n\x05\x45mpty2=\n\x0bMenuService\x12.\n\x07GetMenu\x12\x10.mookiespb.Empty\x1a\x0f.mookiespb.Menu\"\x00\x32\xf5\x02\n\x0cOrderService\x12N\n\x0bSubmitOrder\x12\x1d.mookiespb.SubmitOrderRequest\x1a\x1e.mookiespb.SubmitOrderResponse\"\x00\x12T\n\rCompleteOrder\x12\x1f.mookiespb.CompleteOrderRequest\x1a .mookiespb.CompleteOrderResponse\"\x00\x12;\n\x11SubscribeToOrders\x12\x10.mookiespb.Empty\x1a\x10.mookiespb.Order\"\x00\x30\x01\x12\x43\n\x19SubscribeToCompleteOrders\x12\x10.mookiespb.Empty\x1a\x10.mookiespb.Order\"\x00\x30\x01\x12=\n\x0c\x41\x63tiveOrders\x12\x10.mookiespb.Empty\x1a\x19.mookiespb.OrdersResponse\"\x00\x62\x06proto3')
 )
 
 
@@ -678,7 +678,7 @@ _ORDERSERVICE = _descriptor.ServiceDescriptor(
   index=1,
   serialized_options=None,
   serialized_start=860,
-  serialized_end=1269,
+  serialized_end=1233,
   methods=[
   _descriptor.MethodDescriptor(
     name='SubmitOrder',
@@ -703,7 +703,7 @@ _ORDERSERVICE = _descriptor.ServiceDescriptor(
     full_name='mookiespb.OrderService.SubscribeToOrders',
     index=2,
     containing_service=None,
-    input_type=_SUBSCRIBETOORDERREQUEST,
+    input_type=_EMPTY,
     output_type=_ORDER,
     serialized_options=None,
   ),
@@ -712,7 +712,7 @@ _ORDERSERVICE = _descriptor.ServiceDescriptor(
     full_name='mookiespb.OrderService.SubscribeToCompleteOrders',
     index=3,
     containing_service=None,
-    input_type=_SUBSCRIBETOORDERREQUEST,
+    input_type=_EMPTY,
     output_type=_ORDER,
     serialized_options=None,
   ),
