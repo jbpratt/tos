@@ -219,12 +219,36 @@ func (l *layout) itemOptionPopup(w *nucular.Window) {
 	}
 }
 
+func (l *layout) settings(w *nucular.Window) {
+	w.Row(25).Dynamic(1)
+	newtheme := l.Theme
+	if w.OptionText("Default Theme", newtheme == nstyle.DefaultTheme) {
+		newtheme = nstyle.DefaultTheme
+	}
+	if w.OptionText("White Theme", newtheme == nstyle.WhiteTheme) {
+		newtheme = nstyle.WhiteTheme
+	}
+	if w.OptionText("Red Theme", newtheme == nstyle.RedTheme) {
+		newtheme = nstyle.RedTheme
+	}
+	if w.OptionText("Dark Theme", newtheme == nstyle.DarkTheme) {
+		newtheme = nstyle.DarkTheme
+	}
+	if newtheme != l.Theme {
+		l.Theme = newtheme
+		w.Master().SetStyle(nstyle.FromTheme(l.Theme, w.Master().Style().Scaling))
+		w.Close()
+	}
+}
+
 func (l *layout) overviewLayout(w *nucular.Window) {
 	l.keybindings(w)
 	w.Row(30).Ratio(0.1, 0.8, 0.1)
 	w.Spacing(1)
 	w.Label(time.Now().Format("3:04PM"), "CC")
-	w.Spacing(1)
+	if w.Button(label.T("settings"), false) {
+		w.Master().PopupOpen("Select options:", nucular.WindowMovable, rect.Rect{200, 100, 230, 200}, true, l.settings)
+	}
 	// creates a row of height 20 with 1 column
 	w.Row(20).Dynamic(1)
 	// puts this text in the column with alignment x:left - y:center
