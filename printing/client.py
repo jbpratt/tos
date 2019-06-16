@@ -2,6 +2,7 @@ import sys
 import os
 
 import grpc
+from py_grpc_prometheus.prometheus_client_interceptor import PromClientInterceptor
 import argparse
 from escpos import printer 
 
@@ -10,6 +11,7 @@ import mookies_pb2_grpc
 
 
 GRAPHICS_PATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'assets')) 
+metrics_port = 9002
 
 def logo():
     image = GRAPHICS_PATH + '/logo-small.png'
@@ -18,8 +20,9 @@ def logo():
 def run(address, crt):
     with open(crt, 'rb') as f:
         creds = grpc.ssl_channel_credentials(f.read())
-    with grpc.secure_channel(address, creds) as channel:
+    with grpc.intercept_channel(grpc.secure_channel(address, creds), PromClientInterceptor()) as channel:
         order_stub = mookies_pb2_grpc.OrderServiceStub(channel)
+        start_http_server(metrics_port)
         print('connected')
         try: 
             Epson = printer.File('/dev/usb/lp0')
