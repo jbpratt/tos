@@ -14,6 +14,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 )
 
@@ -24,6 +25,8 @@ var (
 	listen = flag.String("listen", ":50051", "listen address")
 	dbp    = flag.String("database", "./mookies.db", "database to use")
 	lpDev  = flag.String("p", "/dev/usb/lp0", "Printer dev file")
+	crt    = flag.String("crt", "server.crt", "TLS cert to use")
+	key    = flag.String("key", "server.key", "TLS key to use")
 	kasp   = keepalive.ServerParameters{Time: 5 * time.Second}
 )
 
@@ -158,6 +161,12 @@ func NewServer(db *sqlx.DB) (*server, error) {
 
 func main() {
 	flag.Parse()
+
+	creds, err := credentials.NewServerTLSFromFile(*crt, *key)
+	if err != nil {
+		log.Fatalf("Could not load server/key paid: %s", err)
+	}
+
 	lis, err := net.Listen("tcp", *listen)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v\n", err)
@@ -174,7 +183,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	s := grpc.NewServer(grpc.KeepaliveParams(kasp))
+	s := grpc.NewServer(grpc.KeepaliveParams(kasp), grpc.Creds(creds))
 	mookiespb.RegisterMenuServiceServer(s, server)
 	mookiespb.RegisterOrderServiceServer(s, server)
 	if err := s.Serve(lis); err != nil {

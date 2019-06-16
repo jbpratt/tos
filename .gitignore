@@ -2,3 +2,4 @@
 bin/
 printing/__pycache__/
 vendor/
+*.key

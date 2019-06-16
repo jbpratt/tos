@@ -20,6 +20,7 @@ import (
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"golang.org/x/mobile/event/key"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 )
 
@@ -93,16 +94,23 @@ var (
 		Timeout:             time.Second,
 		PermitWithoutStream: true,
 	}
+
+	addr = flag.String("addr", "msever:50051", "server to dial")
+	cert = flag.String("cert", "server.crt", "cert to use")
 )
 
 func main() {
-	addr := flag.String("addr", "msever:50051", "server to dial")
 	flag.Parse()
-	cc, err := grpc.Dial(*addr, grpc.WithInsecure(), grpc.WithKeepaliveParams(kacp))
+	creds, err := credentials.NewClientTLSFromFile(*cert, "")
+	if err != nil {
+		log.Fatal(err)
+	}
+	cc, err := grpc.Dial(*addr, grpc.WithTransportCredentials(creds), grpc.WithKeepaliveParams(kacp))
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
 	}
 	defer cc.Close()
+
 	l := newLayout()
 	l.client.MenuClient = mookiespb.NewMenuServiceClient(cc)
 	l.client.OrderClient = mookiespb.NewOrderServiceClient(cc)

@@ -19,6 +19,7 @@ import (
 
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 )
 
@@ -70,13 +71,19 @@ var (
 		Timeout:             time.Second,
 		PermitWithoutStream: true,
 	}
-	wnd nucular.MasterWindow
+
+	addr = flag.String("addr", "mserver:50051", "server address to dial")
+	cert = flag.String("cert", "server.crt", "cert to use")
+	wnd  nucular.MasterWindow
 )
 
 func main() {
-	addr := flag.String("addr", "mserver:50051", "server address to dial")
 	flag.Parse()
-	cc, err := grpc.Dial(*addr, grpc.WithInsecure(), grpc.WithKeepaliveParams(kacp))
+	creds, err := credentials.NewClientTLSFromFile(*cert, "")
+	if err != nil {
+		log.Fatal(err)
+	}
+	cc, err := grpc.Dial(*addr, grpc.WithTransportCredentials(creds), grpc.WithKeepaliveParams(kacp))
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
 	}
