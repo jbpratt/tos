@@ -6,13 +6,17 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 	"time"
 
 	"github.com/cskr/pubsub"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/jbpratt78/mookies-tos/data"
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
@@ -22,12 +26,16 @@ const topicOrder = "orders"
 const topicComplete = "complete"
 
 var (
-	listen = flag.String("listen", ":50051", "listen address")
-	dbp    = flag.String("database", "./mookies.db", "database to use")
-	lpDev  = flag.String("p", "/dev/usb/lp0", "Printer dev file")
-	crt    = flag.String("crt", "server.crt", "TLS cert to use")
-	key    = flag.String("key", "server.key", "TLS key to use")
-	kasp   = keepalive.ServerParameters{Time: 5 * time.Second}
+	reg = prometheus.NewRegistry()
+
+	grpcMetrics = grpc_prometheus.NewServerMetrics()
+	promAddr    = flag.String("prom", ":9001", "Port to run metrics HTTP server")
+	listen      = flag.String("listen", ":50051", "listen address")
+	dbp         = flag.String("database", "./mookies.db", "database to use")
+	lpDev       = flag.String("p", "/dev/usb/lp0", "Printer dev file")
+	crt         = flag.String("crt", "server.crt", "TLS cert to use")
+	key         = flag.String("key", "server.key", "TLS key to use")
+	kasp        = keepalive.ServerParameters{Time: 5 * time.Second}
 )
 
 type server struct {
@@ -183,9 +191,26 @@ func main() {
 		log.Fatal(err)
 	}
 
-	s := grpc.NewServer(grpc.KeepaliveParams(kasp), grpc.Creds(creds))
+	httpServer := &http.Server{
+		Handler: promhttp.HandlerFor(reg, promhttp.HandlerOpts{}),
+		Addr:    *promAddr,
+	}
+
+	s := grpc.NewServer(
+		grpc.KeepaliveParams(kasp),
+		grpc.Creds(creds),
+	)
 	mookiespb.RegisterMenuServiceServer(s, server)
 	mookiespb.RegisterOrderServiceServer(s, server)
+
+	grpcMetrics.InitializeMetrics(s)
+
+	go func() {
+		if err := httpServer.ListenAndServe(); err != nil {
+			log.Fatal("Unable to start a http server.")
+		}
+	}()
+
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
