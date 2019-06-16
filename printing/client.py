@@ -15,9 +15,12 @@ def logo():
     image = GRAPHICS_PATH + '/logo-small.png'
     return image
 
-def run(address):
-    with grpc.insecure_channel(address) as channel:
+def run(address, crt):
+    with open(crt, 'rb') as f:
+        creds = grpc.ssl_channel_credentials(f.read())
+    with grpc.secure_channel(address, creds) as channel:
         order_stub = mookies_pb2_grpc.OrderServiceStub(channel)
+        print('connected')
         try: 
             Epson = printer.File('/dev/usb/lp0')
             try:
@@ -42,8 +45,10 @@ if __name__ == '__main__':
         parser = argparse.ArgumentParser()
         parser.add_argument(
                 '--address', type=str, default='localhost:50051', help='server address to dial')
+        parser.add_argument(
+                '--crt', type=str, default='server.crt', help='cert to use when dialing')
         args = parser.parse_args()
-        run(args.address)
+        run(args.address, args.crt)
     except KeyboardInterrupt:
         print('Interrupted')
         try:
