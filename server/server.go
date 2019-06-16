@@ -18,7 +18,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 )
 
@@ -26,8 +25,7 @@ const topicOrder = "orders"
 const topicComplete = "complete"
 
 var (
-	reg = prometheus.NewRegistry()
-
+	reg         = prometheus.NewRegistry()
 	grpcMetrics = grpc_prometheus.NewServerMetrics()
 	promAddr    = flag.String("prom", ":9001", "Port to run metrics HTTP server")
 	listen      = flag.String("listen", ":50051", "listen address")
@@ -170,10 +168,10 @@ func NewServer(db *sqlx.DB) (*server, error) {
 func main() {
 	flag.Parse()
 
-	creds, err := credentials.NewServerTLSFromFile(*crt, *key)
+	/*creds, err := credentials.NewServerTLSFromFile(*crt, *key)
 	if err != nil {
 		log.Fatalf("Could not load server/key paid: %s", err)
-	}
+	}*/
 
 	lis, err := net.Listen("tcp", *listen)
 	if err != nil {
@@ -198,7 +196,7 @@ func main() {
 
 	s := grpc.NewServer(
 		grpc.KeepaliveParams(kasp),
-		grpc.Creds(creds),
+		/*grpc.Creds(creds),*/
 	)
 	mookiespb.RegisterMenuServiceServer(s, server)
 	mookiespb.RegisterOrderServiceServer(s, server)

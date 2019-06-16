@@ -19,7 +19,6 @@ import (
 
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 )
 
@@ -79,11 +78,13 @@ var (
 
 func main() {
 	flag.Parse()
-	creds, err := credentials.NewClientTLSFromFile(*cert, "")
+	/*creds, err := credentials.NewClientTLSFromFile(*cert, "")
 	if err != nil {
 		log.Fatal(err)
-	}
-	cc, err := grpc.Dial(*addr, grpc.WithTransportCredentials(creds), grpc.WithKeepaliveParams(kacp))
+	}*/
+	cc, err := grpc.Dial(*addr,
+		/*grpc.WithTransportCredentials(creds),*/
+		grpc.WithKeepaliveParams(kacp))
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
 	}

@@ -9,3 +9,11 @@ services:
     - --config.file=/etc/prometheus/prometheus.yml
     volumes:
     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+    - grpcserver
+  grpcserver:
+    container_name: grpcserver
+    build: ./server
+    ports:
+      - "50051:50051"
+      - "9001:9001"

@@ -22,3 +22,7 @@ back: dep protofiles/mookies.pb.go
 
 clean:
 	@rm $(SERVER_OUT) $(FRONT_CLIENT_OUT) $(BACK_CLIENT_OUT)
+
+start: back 
+	@docker-compose up -d
+	rm -rf ./bin/server

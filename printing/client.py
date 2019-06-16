@@ -1,11 +1,12 @@
 import sys
 import os
 
-import grpc
+from prometheus_client import start_http_server
 from py_grpc_prometheus.prometheus_client_interceptor import PromClientInterceptor
-import argparse
 from escpos import printer 
 
+import grpc
+import argparse
 import mookies_pb2
 import mookies_pb2_grpc
 
@@ -20,12 +21,12 @@ def logo():
 def run(address, crt):
     with open(crt, 'rb') as f:
         creds = grpc.ssl_channel_credentials(f.read())
-    with grpc.intercept_channel(grpc.secure_channel(address, creds), PromClientInterceptor()) as channel:
+    with grpc.intercept_channel(grpc.insecure_channel(address, options=[]), PromClientInterceptor()) as channel:
         order_stub = mookies_pb2_grpc.OrderServiceStub(channel)
         start_http_server(metrics_port)
         print('connected')
         try: 
-            Epson = printer.File('/dev/usb/lp0')
+            #Epson = printer.File('/dev/usb/lp0')
             try:
                 for order in order_stub.SubscribeToCompleteOrders(
                         mookies_pb2.Empty()):
@@ -47,7 +48,7 @@ if __name__ == '__main__':
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument(
-                '--address', type=str, default='localhost:50051', help='server address to dial')
+                '--address', type=str, default='mserver:50051', help='server address to dial')
         parser.add_argument(
                 '--crt', type=str, default='server.crt', help='cert to use when dialing')
         args = parser.parse_args()
