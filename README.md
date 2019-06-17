@@ -14,7 +14,7 @@
   - [ ] Auth
   - [ ] Encryption
 - [ ] Custom item from front
-- [ ] Prometheus for server and clients
+- [x] Prometheus for server and clients
 - [ ] Numpad works, not showing selected number
 
 ### Debugging

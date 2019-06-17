@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"strings"
 	"time"
 
@@ -15,7 +16,11 @@ import (
 	"github.com/aarzilli/nucular/rect"
 	"github.com/aarzilli/nucular/style"
 	nstyle "github.com/aarzilli/nucular/style"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/mobile/event/key"
+
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 
 	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
 	"google.golang.org/grpc"
@@ -82,13 +87,29 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}*/
+	reg := prometheus.NewRegistry()
+	grpcMetrics := grpc_prometheus.NewClientMetrics()
+	reg.MustRegister(grpcMetrics)
 	cc, err := grpc.Dial(*addr,
 		/*grpc.WithTransportCredentials(creds),*/
+		grpc.WithInsecure(),
+		grpc.WithStreamInterceptor(grpcMetrics.StreamClientInterceptor()),
 		grpc.WithKeepaliveParams(kacp))
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
 	}
 	defer cc.Close()
+
+	httpServer := &http.Server{
+		Handler: promhttp.HandlerFor(reg, promhttp.HandlerOpts{}),
+		Addr:    fmt.Sprintf("0.0.0.0:%d", 9004)}
+
+	// Start your http server for prometheus.
+	go func() {
+		if err := httpServer.ListenAndServe(); err != nil {
+			log.Fatal("Unable to start a http server.")
+		}
+	}()
 
 	l := newLayout()
 	l.client = mookiespb.NewOrderServiceClient(cc)
