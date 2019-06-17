@@ -19,8 +19,7 @@ def logo():
     return image
 
 def run(address, crt):
-    with open(crt, 'rb') as f:
-        creds = grpc.ssl_channel_credentials(f.read())
+
     with grpc.intercept_channel(grpc.insecure_channel(address, options=[('grpc.keepalive_time_ms', 10000)]), PromClientInterceptor()) as channel:
         order_stub = mookies_pb2_grpc.OrderServiceStub(channel)
         start_http_server(metrics_port)
@@ -48,7 +47,7 @@ if __name__ == '__main__':
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument(
-                '--address', type=str, default='mserver:50051', help='server address to dial')
+                '--address', type=str, default='localhost:50051', help='server address to dial')
         parser.add_argument(
                 '--crt', type=str, default='server.crt', help='cert to use when dialing')
         args = parser.parse_args()

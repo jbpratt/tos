@@ -9,7 +9,8 @@ global:
 # Here it's Prometheus itself.
 scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-  - job_name: 'grpcserver'
+  - job_name: 'mookies-server'
     scrape_interval: 1s
     static_configs:
       - targets: ['localhost:9001', 'localhost:9002']
+  - job_name: 'mookies-front'

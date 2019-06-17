@@ -20,3 +20,9 @@ services:
       - "50051:50051"
       - "9001:9001"
     network_mode: "host"
+  grpcprinter:
+    container_name: grpcprinter
+    build: ./printing
+    ports:
+      - "9002:9002"
+    network_mode: "host"
