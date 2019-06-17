@@ -1,7 +1,7 @@
 package data
 
 import (
-	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
+	mookiespb "github.com/jbpratt78/tos/protofiles"
 )
 
 var Menu = []*mookiespb.Category{

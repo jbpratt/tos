@@ -11,8 +11,8 @@ import (
 
 	"github.com/cskr/pubsub"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/jbpratt78/mookies-tos/data"
-	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
+	"github.com/jbpratt78/tos/data"
+	mookiespb "github.com/jbpratt78/tos/protofiles"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/prometheus/client_golang/prometheus"

@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"log"
 
-	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
+	mookiespb "github.com/jbpratt78/tos/protofiles"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )

@@ -22,7 +22,7 @@ import (
 
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 
-	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
+	mookiespb "github.com/jbpratt78/tos/protofiles"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 )

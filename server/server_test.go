@@ -5,7 +5,7 @@ import (
 	"time"
 
 	sqlmock "github.com/DATA-DOG/go-sqlmock"
-	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
+	mookiespb "github.com/jbpratt78/tos/protofiles"
 	"github.com/jmoiron/sqlx"
 )
 

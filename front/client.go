@@ -18,7 +18,7 @@ import (
 	"github.com/aarzilli/nucular/rect"
 	"github.com/aarzilli/nucular/style"
 	nstyle "github.com/aarzilli/nucular/style"
-	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
+	mookiespb "github.com/jbpratt78/tos/protofiles"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
