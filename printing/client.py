@@ -21,7 +21,7 @@ def logo():
 def run(address, crt):
     with open(crt, 'rb') as f:
         creds = grpc.ssl_channel_credentials(f.read())
-    with grpc.intercept_channel(grpc.insecure_channel(address, options=[]), PromClientInterceptor()) as channel:
+    with grpc.intercept_channel(grpc.insecure_channel(address, options=[('grpc.keepalive_time_ms', 10000)]), PromClientInterceptor()) as channel:
         order_stub = mookies_pb2_grpc.OrderServiceStub(channel)
         start_http_server(metrics_port)
         print('connected')

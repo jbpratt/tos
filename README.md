@@ -10,10 +10,11 @@
 - [ ] Handle errors in a more Go like style
 - [ ] Testing
 - [ ] Additional GRPC features
-  - [x] Keep alive (TODO: Python client)
+  - [x] Keep alive
   - [ ] Auth
   - [ ] Encryption
 - [ ] Custom item from front
+- [ ] Prometheus for server and clients
 - [ ] Numpad works, not showing selected number
 
 ### Debugging
