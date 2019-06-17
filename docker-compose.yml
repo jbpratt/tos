@@ -1,4 +1,5 @@
 version: '3.2'
+
 services:
   prometheus:
     image: prom/prometheus:latest
@@ -11,9 +12,11 @@ services:
     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     depends_on:
     - grpcserver
+    network_mode: "host"
   grpcserver:
     container_name: grpcserver
     build: ./server
     ports:
       - "50051:50051"
       - "9001:9001"
+    network_mode: "host"
