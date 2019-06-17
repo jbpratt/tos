@@ -165,6 +165,10 @@ func NewServer(db *sqlx.DB) (*server, error) {
 	return server, nil
 }
 
+func init() {
+	reg.MustRegister(grpcMetrics)
+}
+
 func main() {
 	flag.Parse()
 
@@ -196,6 +200,8 @@ func main() {
 
 	s := grpc.NewServer(
 		grpc.KeepaliveParams(kasp),
+		grpc.StreamInterceptor(grpcMetrics.StreamServerInterceptor()),
+		grpc.UnaryInterceptor(grpcMetrics.UnaryServerInterceptor()),
 		/*grpc.Creds(creds),*/
 	)
 	mookiespb.RegisterMenuServiceServer(s, server)
