@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -11,7 +10,7 @@ import (
 
 	"github.com/cskr/pubsub"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/jbpratt78/tos/data"
+	"github.com/jbpratt78/tos/database"
 	mookiespb "github.com/jbpratt78/tos/protofiles"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
@@ -37,10 +36,20 @@ var (
 )
 
 type server struct {
-	db     *sqlx.DB
-	orders []*mookiespb.Order
-	menu   *mookiespb.Menu
-	ps     *pubsub.PubSub
+	service *database.Service
+	orders  []*mookiespb.Order
+	menu    *mookiespb.Menu
+	ps      *pubsub.PubSub
+}
+
+type DBService interface {
+	SeedData() error
+	SubmitOrder(o *mookiespb.Order) error
+	GetMenu() (*mookiespb.Menu, error)
+	GetOrders() ([]*mookiespb.Order, error)
+	CompleteOrder(id int32) error
+	// CreateItem() error
+	// DeleteItem() error
 }
 
 func (s *server) GetMenu(ctx context.Context, empty *mookiespb.Empty) (*mookiespb.Menu, error) {
@@ -57,7 +66,7 @@ func (s *server) SubmitOrder(ctx context.Context,
 	// expecting it to be right id
 	o.Status = "active"
 
-	err := submitOrder(s.db, o)
+	err := s.service.SubmitOrder(o)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +128,7 @@ func (s *server) CompleteOrder(ctx context.Context,
 		}
 	}
 
-	err := completeOrder(s.db, req.GetId())
+	err := s.service.CompleteOrder(req.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -141,13 +150,13 @@ func (s *server) ActiveOrders(
 }
 
 func (s *server) LoadData() error {
-	menu, err := getMenu(s.db)
+	menu, err := s.service.GetMenu()
 	if err != nil {
 		return err
 	}
 	s.menu = menu
 
-	orders, err := getOrders(s.db)
+	orders, err := s.service.GetOrders()
 	s.orders = orders
 
 	log.Println("Menu and orders have been successfully queried")
@@ -155,7 +164,8 @@ func (s *server) LoadData() error {
 }
 
 func NewServer(db *sqlx.DB) (*server, error) {
-	server := &server{db: db}
+	service := NewService(db)
+	server := &server{service: service}
 	server.ps = pubsub.New(0)
 	err := server.LoadData()
 	//err = seedData(s.db)
@@ -163,6 +173,11 @@ func NewServer(db *sqlx.DB) (*server, error) {
 		return nil, err
 	}
 	return server, nil
+}
+
+func NewService(db *sqlx.DB) *database.Service {
+	service := &database.Service{db}
+	return service
 }
 
 func init() {
@@ -218,189 +233,4 @@ func main() {
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
-}
-
-func seedData(db *sqlx.DB) error {
-	tx, err := db.Begin()
-	if err != nil {
-		return err
-	}
-
-	for i, category := range data.Menu {
-		_, err := tx.Exec("INSERT INTO categories (name) VALUES (?)", category.GetName())
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-		for _, item := range category.GetItems() {
-			result, err := tx.Exec(
-				"INSERT INTO items (name, price, category_id) VALUES (?,?,?)",
-				item.GetName(), item.GetPrice(), i+1)
-			if err != nil {
-				tx.Rollback()
-				return err
-			}
-			itemid, _ := result.LastInsertId()
-			for _, option := range item.GetOptions() {
-				res, err := tx.Exec(
-					"INSERT INTO options (name, price, selected) VALUES (?,?,?)",
-					option.GetName(), option.GetPrice(), option.GetSelected())
-				if err != nil {
-					tx.Rollback()
-					return err
-				}
-				optionid, _ := res.LastInsertId()
-				_, err = tx.Exec(
-					"INSERT INTO item_options (item_id, option_id) VALUES (?,?)",
-					itemid, optionid)
-				if err != nil {
-					tx.Rollback()
-					return err
-				}
-			}
-		}
-	}
-
-	if err = tx.Commit(); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func submitOrder(db *sqlx.DB, o *mookiespb.Order) error {
-	tx, err := db.Begin()
-	if err != nil {
-		return err
-	}
-	res, err := tx.Exec(
-		"INSERT INTO orders (name, total, status, time_ordered, time_complete) VALUES (?, ?, ?, ?, ?)",
-		o.GetName(), o.GetTotal(), o.GetStatus(), time.Now().Format("2006-01-02 15:04:05"), "")
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	id, err := res.LastInsertId()
-	if err != nil {
-		return err
-	}
-
-	o.Id = int32(id)
-	for _, item := range o.GetItems() {
-		res, err := tx.Exec(
-			"INSERT INTO order_items (item_id, order_id) VALUES (?, ?)",
-			item.GetId(), o.GetId())
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-		orderItemID, _ := res.LastInsertId()
-		item.OrderItemID = int32(orderItemID)
-
-		for _, option := range item.GetOptions() {
-			if option.GetSelected() {
-				res, err = tx.Exec(
-					"INSERT INTO order_item_option (order_item_id, option_id) VALUES (?, ?)",
-					orderItemID, option.GetId(),
-				)
-
-				if err != nil {
-					tx.Rollback()
-					return err
-				}
-			}
-		}
-	}
-	if err = tx.Commit(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func getMenu(db *sqlx.DB) (*mookiespb.Menu, error) {
-	var categories []*mookiespb.Category
-	menu := &mookiespb.Menu{
-		Categories: categories,
-	}
-	err := db.Select(&menu.Categories, "SELECT * from categories")
-	for _, category := range menu.GetCategories() {
-		err = db.Select(&category.Items,
-			fmt.Sprintf("SELECT * FROM items WHERE category_id = %v", category.GetId()))
-		if err != nil {
-			return nil, err
-		}
-		for _, item := range category.GetItems() {
-			err = db.Select(&item.Options, fmt.Sprintf(
-				`
-				SELECT name,price,selected,options.id 
-				FROM options JOIN item_options as io ON options.id = io.option_id 
-				WHERE item_id = %d`, item.GetId()))
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-	return menu, nil
-}
-
-func getOrders(db *sqlx.DB) ([]*mookiespb.Order, error) {
-	var orders []*mookiespb.Order
-	err := db.Select(&orders,
-		"SELECT * FROM orders WHERE status = 'active'")
-	if err != nil {
-		return nil, err
-	}
-	for _, order := range orders {
-		err = db.Select(&order.Items, fmt.Sprintf(
-			`
-			SELECT name,price,items.id,order_items.id as order_item_id
-			FROM items JOIN order_items ON items.id = order_items.item_id 
-			WHERE order_id = %d`, order.GetId()))
-		if err != nil {
-			return nil, err
-		}
-		for _, item := range order.GetItems() {
-			err = db.Select(&item.Options, fmt.Sprintf(
-				`
-				SELECT options.name,options.price 
-				FROM order_item_option AS oio CROSS JOIN order_items
-				CROSS JOIN options WHERE order_item_id = order_items.id
-				AND oio.option_id = options.id 
-				AND order_id = %d
-				AND item_id = %d
-				AND order_item_id = %d`, order.GetId(), item.GetId(), item.GetOrderItemID()))
-			if err != nil {
-				return nil, err
-			}
-			for _, option := range item.GetOptions() {
-				option.Selected = true
-			}
-		}
-	}
-	return orders, nil
-}
-
-func completeOrder(db *sqlx.DB, id int32) error {
-	tx, err := db.Begin()
-	if err != nil {
-		return err
-	}
-	if _, err := tx.Exec(
-		"UPDATE orders SET status = ? WHERE id = ?", "complete", id); err != nil {
-		tx.Rollback()
-		return err
-	}
-	if _, err = tx.Exec(
-		"UPDATE orders SET time_complete = ? WHERE id = ?",
-		time.Now().Format("2006-01-02 15:04:05"), id); err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	if err = tx.Commit(); err != nil {
-		tx.Rollback()
-		return err
-	}
-	return nil
 }
