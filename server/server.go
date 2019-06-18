@@ -26,13 +26,12 @@ const topicComplete = "complete"
 var (
 	reg         = prometheus.NewRegistry()
 	grpcMetrics = grpc_prometheus.NewServerMetrics()
+	kasp        = keepalive.ServerParameters{Time: 5 * time.Second}
 	promAddr    = flag.String("prom", ":9001", "Port to run metrics HTTP server")
 	listen      = flag.String("listen", ":50051", "listen address")
 	dbp         = flag.String("database", "./mookies.db", "database to use")
-	lpDev       = flag.String("p", "/dev/usb/lp0", "Printer dev file")
 	crt         = flag.String("crt", "server.crt", "TLS cert to use")
 	key         = flag.String("key", "server.key", "TLS key to use")
-	kasp        = keepalive.ServerParameters{Time: 5 * time.Second}
 )
 
 type server struct {

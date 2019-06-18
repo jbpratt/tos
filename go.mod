@@ -4,6 +4,7 @@ go 1.12
 
 require (
 	github.com/cskr/pubsub v1.0.2
+	github.com/golang/mock v1.3.1
 	github.com/golang/protobuf v1.3.1
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/jmoiron/sqlx v1.2.0
