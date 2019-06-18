@@ -3,7 +3,6 @@ module github.com/jbpratt78/tos
 go 1.12
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.3.3
 	github.com/cskr/pubsub v1.0.2
 	github.com/golang/protobuf v1.3.1
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0

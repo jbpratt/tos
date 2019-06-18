@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -10,9 +11,8 @@ import (
 
 	"github.com/cskr/pubsub"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/jbpratt78/tos/database"
+	"github.com/jbpratt78/tos/models"
 	mookiespb "github.com/jbpratt78/tos/protofiles"
-	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -36,20 +36,10 @@ var (
 )
 
 type server struct {
-	service *database.Service
-	orders  []*mookiespb.Order
-	menu    *mookiespb.Menu
-	ps      *pubsub.PubSub
-}
-
-type DBService interface {
-	SeedData() error
-	SubmitOrder(o *mookiespb.Order) error
-	GetMenu() (*mookiespb.Menu, error)
-	GetOrders() ([]*mookiespb.Order, error)
-	CompleteOrder(id int32) error
-	// CreateItem() error
-	// DeleteItem() error
+	services *models.Services
+	orders   []*mookiespb.Order
+	menu     *mookiespb.Menu
+	ps       *pubsub.PubSub
 }
 
 func (s *server) GetMenu(ctx context.Context, empty *mookiespb.Empty) (*mookiespb.Menu, error) {
@@ -66,7 +56,7 @@ func (s *server) SubmitOrder(ctx context.Context,
 	// expecting it to be right id
 	o.Status = "active"
 
-	err := s.service.SubmitOrder(o)
+	err := s.services.Order.SubmitOrder(o)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +118,7 @@ func (s *server) CompleteOrder(ctx context.Context,
 		}
 	}
 
-	err := s.service.CompleteOrder(req.GetId())
+	err := s.services.Order.CompleteOrder(req.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -150,34 +140,46 @@ func (s *server) ActiveOrders(
 }
 
 func (s *server) LoadData() error {
-	menu, err := s.service.GetMenu()
+	menu, err := s.services.Menu.GetMenu()
 	if err != nil {
 		return err
 	}
 	s.menu = menu
 
-	orders, err := s.service.GetOrders()
+	orders, err := s.services.Order.GetOrders()
+	if err != nil {
+		return err
+	}
 	s.orders = orders
 
-	log.Println("Menu and orders have been successfully queried")
 	return nil
 }
 
-func NewServer(db *sqlx.DB) (*server, error) {
-	service := NewService(db)
-	server := &server{service: service}
-	server.ps = pubsub.New(0)
-	err := server.LoadData()
-	//err = seedData(s.db)
+func NewServer() (*server, error) {
+	services, err := NewServices()
+	if err != nil {
+		return nil, err
+	}
+	server := &server{services: services, ps: pubsub.New(0)}
+	//err = server.services.Menu.SeedMenu()
+	err = server.LoadData()
 	if err != nil {
 		return nil, err
 	}
 	return server, nil
 }
 
-func NewService(db *sqlx.DB) *database.Service {
-	service := &database.Service{db}
-	return service
+func NewServices() (*models.Services, error) {
+	services, err := models.NewServices(
+		models.WithSqlite(*dbp),
+		models.WithMenu(),
+		models.WithOrder(),
+	)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("%+v", services)
+	return services, nil
 }
 
 func init() {
@@ -198,15 +200,11 @@ func main() {
 	}
 	log.Printf("Listening on %q...\n", *listen)
 
-	db, err := sqlx.Open("sqlite3", *dbp)
-	if err != nil {
-		log.Fatalf("Failed to open DB: %v\n", err)
-	}
-	defer db.Close()
-	server, err := NewServer(db)
+	server, err := NewServer()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer server.services.Close()
 
 	httpServer := &http.Server{
 		Handler: promhttp.HandlerFor(reg, promhttp.HandlerOpts{}),
