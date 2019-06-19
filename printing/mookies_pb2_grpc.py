@@ -5,8 +5,8 @@ import mookies_pb2 as mookies__pb2
 
 
 class MenuServiceStub(object):
-  # missing associated documentation comment in .proto file
-  pass
+  """All unary requests
+  """
 
   def __init__(self, channel):
     """Constructor.
@@ -19,15 +19,63 @@ class MenuServiceStub(object):
         request_serializer=mookies__pb2.Empty.SerializeToString,
         response_deserializer=mookies__pb2.Menu.FromString,
         )
+    self.CreateMenuItem = channel.unary_unary(
+        '/mookiespb.MenuService/CreateMenuItem',
+        request_serializer=mookies__pb2.CreateMenuItemRequest.SerializeToString,
+        response_deserializer=mookies__pb2.CreateMenuItemResponse.FromString,
+        )
+    self.UpdateMenuItem = channel.unary_unary(
+        '/mookiespb.MenuService/UpdateMenuItem',
+        request_serializer=mookies__pb2.UpdateMenuItemRequest.SerializeToString,
+        response_deserializer=mookies__pb2.UpdateMenuItemResponse.FromString,
+        )
+    self.DeleteMenuItem = channel.unary_unary(
+        '/mookiespb.MenuService/DeleteMenuItem',
+        request_serializer=mookies__pb2.DeleteMenuItemRequest.SerializeToString,
+        response_deserializer=mookies__pb2.DeleteMenuItemResponse.FromString,
+        )
+    self.CreateMenuItemOption = channel.unary_unary(
+        '/mookiespb.MenuService/CreateMenuItemOption',
+        request_serializer=mookies__pb2.CreateMenuItemOptionRequest.SerializeToString,
+        response_deserializer=mookies__pb2.CreateMenuItemOptionResponse.FromString,
+        )
 
 
 class MenuServiceServicer(object):
-  # missing associated documentation comment in .proto file
-  pass
+  """All unary requests
+  """
 
   def GetMenu(self, request, context):
-    """Unary get menu
-    """
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def CreateMenuItem(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def UpdateMenuItem(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def DeleteMenuItem(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def CreateMenuItemOption(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
@@ -39,6 +87,26 @@ def add_MenuServiceServicer_to_server(servicer, server):
           servicer.GetMenu,
           request_deserializer=mookies__pb2.Empty.FromString,
           response_serializer=mookies__pb2.Menu.SerializeToString,
+      ),
+      'CreateMenuItem': grpc.unary_unary_rpc_method_handler(
+          servicer.CreateMenuItem,
+          request_deserializer=mookies__pb2.CreateMenuItemRequest.FromString,
+          response_serializer=mookies__pb2.CreateMenuItemResponse.SerializeToString,
+      ),
+      'UpdateMenuItem': grpc.unary_unary_rpc_method_handler(
+          servicer.UpdateMenuItem,
+          request_deserializer=mookies__pb2.UpdateMenuItemRequest.FromString,
+          response_serializer=mookies__pb2.UpdateMenuItemResponse.SerializeToString,
+      ),
+      'DeleteMenuItem': grpc.unary_unary_rpc_method_handler(
+          servicer.DeleteMenuItem,
+          request_deserializer=mookies__pb2.DeleteMenuItemRequest.FromString,
+          response_serializer=mookies__pb2.DeleteMenuItemResponse.SerializeToString,
+      ),
+      'CreateMenuItemOption': grpc.unary_unary_rpc_method_handler(
+          servicer.CreateMenuItemOption,
+          request_deserializer=mookies__pb2.CreateMenuItemOptionRequest.FromString,
+          response_serializer=mookies__pb2.CreateMenuItemOptionResponse.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

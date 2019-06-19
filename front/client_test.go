@@ -12,10 +12,6 @@ import (
 	mookiespb "github.com/jbpratt78/tos/protofiles"
 )
 
-var order = &mookiespb.Order{}
-var menu = &mookiespb.Menu{}
-var empty = &mookiespb.Empty{}
-
 func TestGetMenu(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -24,8 +20,8 @@ func TestGetMenu(t *testing.T) {
 
 	mMenuClient.EXPECT().GetMenu(
 		gomock.Any(),
-		empty,
-	).Return(menu, nil)
+		&mookiespb.Empty{},
+	).Return(&mookiespb.Menu{}, nil)
 
 	if err := testGetMenu(mMenuClient); err != nil {
 		t.Fatalf("Test failed: %v", err)
@@ -60,13 +56,62 @@ func TestSubmitOrder(t *testing.T) {
 	}
 }
 
+func TestCreateMenuItem(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mMenuClient := mpb.NewMockMenuServiceClient(ctrl)
+
+	item := &mookiespb.Item{
+		Name: "Create item test", Price: 695,
+	}
+
+	req := &mookiespb.CreateMenuItemRequest{Item: item}
+
+	mMenuClient.EXPECT().CreateMenuItem(
+		gomock.Any(),
+		req,
+	).Return(&mookiespb.CreateMenuItemResponse{Result: "Item has been created"}, nil)
+
+	if err := testCreateMenuItem(mMenuClient); err != nil {
+		t.Fatalf("Test failed: %v", err)
+	}
+
+}
+
+func TestDeleteMenuItem(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mMenuClient := mpb.NewMockMenuServiceClient(ctrl)
+
+	req := &mookiespb.DeleteMenuItemRequest{Id: 123}
+
+	mMenuClient.EXPECT().DeleteMenuItem(
+		gomock.Any(),
+		req,
+	).Return(&mookiespb.DeleteMenuItemResponse{Result: "Item was deleted"}, nil)
+
+	if err := testDeleteMenuItem(mMenuClient); err != nil {
+		t.Fatalf("Test failed: %v", err)
+	}
+}
+
+func TestUpdateMenuItem(t *testing.T) {
+	t.Fatal("error: not implemented")
+}
+
+func TestAddOptionToItem(t *testing.T) {
+	t.Fatal("error: not implemented")
+}
+
 func testGetMenu(client mookiespb.MenuServiceClient) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	want := menu
+	want := &mookiespb.Menu{}
 
-	req := empty
+	req := &mookiespb.Empty{}
 	got, err := client.GetMenu(ctx, req)
 	if err != nil {
 		return err
@@ -105,6 +150,46 @@ func testSubmitOrder(client mookiespb.OrderServiceClient) error {
 
 	if !proto.Equal(got, want) {
 		return fmt.Errorf("SubmitOrder() = %v, want %v", got, want)
+	}
+
+	return nil
+}
+
+func testCreateMenuItem(client mookiespb.MenuServiceClient) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	want := &mookiespb.CreateMenuItemResponse{Result: "Item has been created"}
+	req := &mookiespb.CreateMenuItemRequest{
+		Item: &mookiespb.Item{Name: "Create item test", Price: 695},
+	}
+
+	got, err := client.CreateMenuItem(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	if !proto.Equal(got, want) {
+		return fmt.Errorf("CreateMenuItem() = %v, want %v", got, want)
+	}
+
+	return nil
+}
+
+func testDeleteMenuItem(client mookiespb.MenuServiceClient) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	want := &mookiespb.DeleteMenuItemResponse{Result: "Item was deleted"}
+	req := &mookiespb.DeleteMenuItemRequest{Id: 123}
+
+	got, err := client.DeleteMenuItem(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	if !proto.Equal(got, want) {
+		return fmt.Errorf("DeleteMenuItem() = %v, want %v", got, want)
 	}
 
 	return nil

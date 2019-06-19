@@ -74,9 +74,49 @@ message Empty {
 
 }
 
+message CreateMenuItemRequest {
+  Item item = 1;
+}
+
+message CreateMenuItemResponse {
+  string result = 1;
+}
+
+message UpdateMenuItemRequest {
+  Item item = 1;
+}
+
+message UpdateMenuItemResponse {
+  string result = 1;
+}
+
+message DeleteMenuItemRequest {
+  int32 id = 1;
+}
+
+message DeleteMenuItemResponse {
+  string result = 1;
+}
+
+message CreateMenuItemOptionRequest {
+  Option option = 1;
+}
+
+message CreateMenuItemOptionResponse {
+  string result = 1;
+}
+
+// All unary requests
 service MenuService{
-  // Unary get menu
   rpc GetMenu(Empty) returns (Menu) {};
+
+  rpc CreateMenuItem(CreateMenuItemRequest) returns (CreateMenuItemResponse) {};
+
+  rpc UpdateMenuItem(UpdateMenuItemRequest) returns (UpdateMenuItemResponse) {};
+
+  rpc DeleteMenuItem(DeleteMenuItemRequest) returns (DeleteMenuItemResponse) {};
+
+  rpc CreateMenuItemOption(CreateMenuItemOptionRequest) returns (CreateMenuItemOptionResponse) {};
 }
 
 service OrderService {
