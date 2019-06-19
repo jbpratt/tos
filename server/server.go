@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -178,7 +177,6 @@ func NewServices() (*models.Services, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("%+v", services)
 	return services, nil
 }
 

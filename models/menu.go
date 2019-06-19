@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"sync"
 
 	mookiespb "github.com/jbpratt78/tos/protofiles"
 	"github.com/jmoiron/sqlx"
@@ -25,15 +26,18 @@ type menuService struct {
 }
 
 type menuDB struct {
+	sync.RWMutex
 	db *sqlx.DB
 }
 
 func NewMenuService(db *sqlx.DB) MenuService {
-	mdb := &menuDB{db}
+	mdb := &menuDB{db: db}
 	return &menuService{mdb}
 }
 
 func (m *menuDB) SeedMenu() error {
+	m.Lock()
+	defer m.Unlock()
 	tx, err := m.db.Begin()
 	if err != nil {
 		return err
@@ -82,6 +86,8 @@ func (m *menuDB) SeedMenu() error {
 }
 
 func (m *menuDB) GetMenu() (*mookiespb.Menu, error) {
+	m.RLock()
+	defer m.RUnlock()
 	var categories []*mookiespb.Category
 	menu := &mookiespb.Menu{
 		Categories: categories,

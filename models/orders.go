@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	mookiespb "github.com/jbpratt78/tos/protofiles"
@@ -25,15 +26,18 @@ type orderService struct {
 }
 
 type orderDB struct {
+	sync.RWMutex
 	db *sqlx.DB
 }
 
 func NewOrderService(db *sqlx.DB) OrderService {
-	odb := &orderDB{db}
+	odb := &orderDB{db: db}
 	return &orderService{odb}
 }
 
 func (o *orderDB) SubmitOrder(order *mookiespb.Order) error {
+	o.Lock()
+	defer o.Unlock()
 	tx, err := o.db.Begin()
 	if err != nil {
 		return err
@@ -84,6 +88,8 @@ func (o *orderDB) SubmitOrder(order *mookiespb.Order) error {
 }
 
 func (o *orderDB) GetOrders() ([]*mookiespb.Order, error) {
+	o.RLock()
+	defer o.RUnlock()
 	var orders []*mookiespb.Order
 	err := o.db.Select(&orders,
 		"SELECT * FROM orders WHERE status = 'active'")
@@ -121,6 +127,8 @@ func (o *orderDB) GetOrders() ([]*mookiespb.Order, error) {
 }
 
 func (o *orderDB) CompleteOrder(id int32) error {
+	o.Lock()
+	defer o.Unlock()
 	tx, err := o.db.Begin()
 	if err != nil {
 		return err
