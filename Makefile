@@ -6,7 +6,7 @@ SERVER_PKG_BUILD := "${PKG}/server"
 FRONT_CLIENT_PKG_BUILD := "${PKG}/front"
 BACK_CLIENT_PKG_BUILD := "${PKG}/kitchen"
 
-all: server front back
+all: test server front back
 
 dep: ## Get the dependencies
 	@go get -u
@@ -22,6 +22,9 @@ back: dep protofiles/mookies.pb.go
 
 clean:
 	@rm $(SERVER_OUT) $(FRONT_CLIENT_OUT) $(BACK_CLIENT_OUT)
+
+test:
+	@go test ./...
 
 start: back 
 	@docker-compose up -d
