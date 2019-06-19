@@ -25,6 +25,7 @@ import (
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"golang.org/x/mobile/event/key"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 )
 
@@ -99,24 +100,35 @@ var (
 		PermitWithoutStream: true,
 	}
 
-	addr = flag.String("addr", "msever:50051", "server to dial")
-	cert = flag.String("cert", "server.crt", "cert to use")
+	tls    = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
+	caFile = flag.String("ca_file", "", "The file containning the CA root cert file")
+	addr   = flag.String("addr", "msever:50051", "server to dial")
 )
 
 func main() {
 	flag.Parse()
-	/*creds, err := credentials.NewClientTLSFromFile(*cert, "")
-	if err != nil {
-		log.Fatal(err)
-	}*/
+	var opts []grpc.DialOption
+	if *tls {
+		creds, err := credentials.NewClientTLSFromFile(*caFile, "")
+		if err != nil {
+			log.Fatal(err)
+		}
+		opts = append(opts, grpc.WithTransportCredentials(creds))
+
+	} else {
+		opts = append(opts, grpc.WithInsecure())
+	}
+
 	reg := prometheus.NewRegistry()
 	grpcMetrics := grpc_prometheus.NewClientMetrics()
 	reg.MustRegister(grpcMetrics)
-	cc, err := grpc.Dial(*addr,
-		/*grpc.WithTransportCredentials(creds),*/
-		grpc.WithInsecure(),
+
+	opts = append(opts,
 		grpc.WithUnaryInterceptor(grpcMetrics.UnaryClientInterceptor()),
-		grpc.WithKeepaliveParams(kacp))
+		grpc.WithKeepaliveParams(kacp),
+	)
+
+	cc, err := grpc.Dial(*addr, opts...)
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
 	}

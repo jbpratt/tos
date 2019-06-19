@@ -24,6 +24,7 @@ import (
 
 	mookiespb "github.com/jbpratt78/tos/protofiles"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 )
 
@@ -76,25 +77,37 @@ var (
 		PermitWithoutStream: true,
 	}
 
-	addr = flag.String("addr", "mserver:50051", "server address to dial")
-	cert = flag.String("cert", "server.crt", "cert to use")
-	wnd  nucular.MasterWindow
+	tls    = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
+	caFile = flag.String("ca_file", "", "The file containning the CA root cert file")
+	addr   = flag.String("addr", "mserver:50051", "server address to dial")
+	wnd    nucular.MasterWindow
 )
 
 func main() {
 	flag.Parse()
-	/*creds, err := credentials.NewClientTLSFromFile(*cert, "")
-	if err != nil {
-		log.Fatal(err)
-	}*/
+	var opts []grpc.DialOption
+	if *tls {
+		creds, err := credentials.NewClientTLSFromFile(*caFile, "")
+		if err != nil {
+			log.Fatal(err)
+		}
+		opts = append(opts, grpc.WithTransportCredentials(creds))
+
+	} else {
+		opts = append(opts, grpc.WithInsecure())
+	}
+
 	reg := prometheus.NewRegistry()
 	grpcMetrics := grpc_prometheus.NewClientMetrics()
 	reg.MustRegister(grpcMetrics)
-	cc, err := grpc.Dial(*addr,
-		/*grpc.WithTransportCredentials(creds),*/
-		grpc.WithInsecure(),
+
+	opts = append(opts,
 		grpc.WithStreamInterceptor(grpcMetrics.StreamClientInterceptor()),
-		grpc.WithKeepaliveParams(kacp))
+		grpc.WithUnaryInterceptor(grpcMetrics.UnaryClientInterceptor()),
+		grpc.WithKeepaliveParams(kacp),
+	)
+
+	cc, err := grpc.Dial(*addr, opts...)
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
 	}

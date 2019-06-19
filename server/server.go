@@ -17,6 +17,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 )
 
@@ -30,6 +31,7 @@ var (
 	promAddr    = flag.String("prom", ":9001", "Port to run metrics HTTP server")
 	listen      = flag.String("listen", ":50051", "listen address")
 	dbp         = flag.String("database", "./mookies.db", "database to use")
+	tls         = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
 	crt         = flag.String("crt", "server.crt", "TLS cert to use")
 	key         = flag.String("key", "server.key", "TLS key to use")
 )
@@ -52,7 +54,6 @@ func (s *server) SubmitOrder(ctx context.Context,
 
 	log.Println("An order was received")
 	o := req.GetOrder()
-	// expecting it to be right id
 	o.Status = "active"
 
 	err := s.services.Order.SubmitOrder(o)
@@ -188,16 +189,25 @@ func init() {
 func main() {
 	flag.Parse()
 
-	/*creds, err := credentials.NewServerTLSFromFile(*crt, *key)
-	if err != nil {
-		log.Fatalf("Could not load server/key paid: %s", err)
-	}*/
-
 	lis, err := net.Listen("tcp", *listen)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v\n", err)
 	}
 	log.Printf("Listening on %q...\n", *listen)
+
+	var opts []grpc.ServerOption
+	if *tls {
+		creds, err := credentials.NewServerTLSFromFile(*crt, *key)
+		if err != nil {
+			log.Fatalf("Could not load server/key pair: %s", err)
+		}
+		opts = []grpc.ServerOption{grpc.Creds(creds)}
+	}
+
+	opts = append(opts,
+		grpc.KeepaliveParams(kasp),
+		grpc.StreamInterceptor(grpcMetrics.StreamServerInterceptor()),
+		grpc.UnaryInterceptor(grpcMetrics.UnaryServerInterceptor()))
 
 	server, err := NewServer()
 	if err != nil {
@@ -210,12 +220,8 @@ func main() {
 		Addr:    *promAddr,
 	}
 
-	s := grpc.NewServer(
-		grpc.KeepaliveParams(kasp),
-		grpc.StreamInterceptor(grpcMetrics.StreamServerInterceptor()),
-		grpc.UnaryInterceptor(grpcMetrics.UnaryServerInterceptor()),
-		/*grpc.Creds(creds),*/
-	)
+	s := grpc.NewServer(opts...)
+
 	mookiespb.RegisterMenuServiceServer(s, server)
 	mookiespb.RegisterOrderServiceServer(s, server)
 
