@@ -20,7 +20,7 @@ require (
 	golang.org/x/image v0.0.0-20190618124811-92942e4437e2 // indirect
 	golang.org/x/mobile v0.0.0-20190607214518-6fa95d984e88
 	golang.org/x/net v0.0.0-20190619014844-b5b0513f8c1b // indirect
-	golang.org/x/sys v0.0.0-20190618155005-516e3c20635f // indirect
+	golang.org/x/sys v0.0.0-20190620070143-6f217b454f45 // indirect
 	google.golang.org/appengine v1.6.1 // indirect
 	google.golang.org/genproto v0.0.0-20190611190212-a7e196e89fd3 // indirect
 	google.golang.org/grpc v1.21.1

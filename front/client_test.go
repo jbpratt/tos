@@ -98,11 +98,41 @@ func TestDeleteMenuItem(t *testing.T) {
 }
 
 func TestUpdateMenuItem(t *testing.T) {
-	t.Fatal("error: not implemented")
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mMenuClient := mpb.NewMockMenuServiceClient(ctrl)
+	req := &mookiespb.UpdateMenuItemRequest{
+		Item: &mookiespb.Item{},
+	}
+
+	mMenuClient.EXPECT().UpdateMenuItem(
+		gomock.Any(),
+		req,
+	).Return(&mookiespb.UpdateMenuItemResponse{Result: "Item was updated"}, nil)
+
+	if err := testUpdateMenuItem(mMenuClient); err != nil {
+		t.Fatalf("Test failed: %v", err)
+	}
 }
 
-func TestAddOptionToItem(t *testing.T) {
-	t.Fatal("error: not implemented")
+func TestCreateOptionToItem(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mMenuClient := mpb.NewMockMenuServiceClient(ctrl)
+	req := &mookiespb.CreateMenuItemOptionRequest{
+		Option: &mookiespb.Option{},
+	}
+
+	mMenuClient.EXPECT().CreateMenuItemOption(
+		gomock.Any(),
+		req,
+	).Return(&mookiespb.CreateMenuItemOptionResponse{Result: "Option was added"}, nil)
+
+	if err := testCreateMenuItemOption(mMenuClient); err != nil {
+		t.Fatalf("Test failed: %v", err)
+	}
 }
 
 func testGetMenu(client mookiespb.MenuServiceClient) error {
@@ -190,6 +220,48 @@ func testDeleteMenuItem(client mookiespb.MenuServiceClient) error {
 
 	if !proto.Equal(got, want) {
 		return fmt.Errorf("DeleteMenuItem() = %v, want %v", got, want)
+	}
+
+	return nil
+}
+
+func testUpdateMenuItem(client mookiespb.MenuServiceClient) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	want := &mookiespb.UpdateMenuItemResponse{Result: "Item was updated"}
+	req := &mookiespb.UpdateMenuItemRequest{
+		Item: &mookiespb.Item{},
+	}
+
+	got, err := client.UpdateMenuItem(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	if !proto.Equal(got, want) {
+		return fmt.Errorf("UpdateMenuItemRequest() = %v, want %v", got, want)
+	}
+
+	return nil
+}
+
+func testCreateMenuItemOption(client mookiespb.MenuServiceClient) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	want := &mookiespb.CreateMenuItemOptionResponse{Result: "Option was added"}
+	req := &mookiespb.CreateMenuItemOptionRequest{
+		Option: &mookiespb.Option{},
+	}
+
+	got, err := client.CreateMenuItemOption(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	if !proto.Equal(got, want) {
+		return fmt.Errorf("CreateMenuItemOption() = %v, want %v", got, want)
 	}
 
 	return nil

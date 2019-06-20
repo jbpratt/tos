@@ -6,7 +6,7 @@ SERVER_PKG_BUILD := "${PKG}/server"
 FRONT_CLIENT_PKG_BUILD := "${PKG}/front"
 BACK_CLIENT_PKG_BUILD := "${PKG}/kitchen"
 
-all: test server front back
+all: server front back
 
 dep: ## Get the dependencies
 	@go get -u
