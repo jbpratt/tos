@@ -102,7 +102,7 @@ var (
 
 	tls    = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
 	caFile = flag.String("ca_file", "", "The file containning the CA root cert file")
-	addr   = flag.String("addr", "mserver:50051", "server to dial")
+	addr   = flag.String("addr", "server:50051", "server to dial")
 )
 
 func main() {

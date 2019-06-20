@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"log"
 	"net"
@@ -17,8 +16,10 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
+	"google.golang.org/grpc/status"
 )
 
 const topicOrder = "orders"
@@ -52,25 +53,25 @@ func (s *server) GetMenu(ctx context.Context, empty *mookiespb.Empty) (*mookiesp
 func (s *server) CreateMenuItem(ctx context.Context,
 	req *mookiespb.CreateMenuItemRequest) (*mookiespb.CreateMenuItemResponse, error) {
 
-	return nil, errors.New("not implemented")
+	return nil, status.Error(codes.Unimplemented, "not implemented")
 }
 
 func (s *server) UpdateMenuItem(ctx context.Context,
 	req *mookiespb.UpdateMenuItemRequest) (*mookiespb.UpdateMenuItemResponse, error) {
 
-	return nil, errors.New("not implemented")
+	return nil, status.Error(codes.Unimplemented, "not implemented")
 }
 
 func (s *server) DeleteMenuItem(ctx context.Context,
 	req *mookiespb.DeleteMenuItemRequest) (*mookiespb.DeleteMenuItemResponse, error) {
 
-	return nil, errors.New("not implemented")
+	return nil, status.Error(codes.Unimplemented, "not implemented")
 }
 
 func (s *server) CreateMenuItemOption(ctx context.Context,
 	req *mookiespb.CreateMenuItemOptionRequest) (*mookiespb.CreateMenuItemOptionResponse, error) {
 
-	return nil, errors.New("not implemented")
+	return nil, status.Error(codes.Unimplemented, "not implemented")
 }
 
 func (s *server) SubmitOrder(ctx context.Context,

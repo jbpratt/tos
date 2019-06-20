@@ -16,6 +16,8 @@
 - [ ] Custom item from front
 - [x] Prometheus for server and clients
 - [ ] Numpad works, not showing selected number
+- [ ] Docker: mount printer device
+- [ ] Optional TLS for python client
 
 ### Debugging
 `GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info GODEBUG=http2debug=2`
