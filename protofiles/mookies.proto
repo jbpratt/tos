@@ -50,10 +50,6 @@ message SubmitOrderResponse {
   string result = 1;
 }
 
-message SubscribeToOrderRequest {
-  string request = 1;
-}
-
 message CompleteOrderRequest {
   int32 id = 1;
 }

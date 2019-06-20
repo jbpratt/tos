@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='mookiespb',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\rmookies.proto\x12\tmookiespb\"|\n\x04Item\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\x05\x12\r\n\x05price\x18\x03 \x01(\x02\x12\x12\n\ncategoryID\x18\x04 \x01(\x05\x12\x13\n\x0borderItemID\x18\x05 \x01(\x05\x12\"\n\x07options\x18\x06 \x03(\x0b\x32\x11.mookiespb.Option\"C\n\x06Option\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\x05\x12\r\n\x05price\x18\x03 \x01(\x02\x12\x10\n\x08selected\x18\x04 \x01(\x08\"D\n\x08\x43\x61tegory\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\x05\x12\x1e\n\x05items\x18\x03 \x03(\x0b\x32\x0f.mookiespb.Item\"/\n\x04Menu\x12\'\n\ncategories\x18\x01 \x03(\x0b\x32\x13.mookiespb.Category\"\x8d\x01\n\x05Order\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x1e\n\x05items\x18\x03 \x03(\x0b\x32\x0f.mookiespb.Item\x12\r\n\x05total\x18\x04 \x01(\x02\x12\x0e\n\x06status\x18\x05 \x01(\t\x12\x14\n\x0ctime_ordered\x18\x06 \x01(\t\x12\x15\n\rtime_complete\x18\x07 \x01(\t\"5\n\x12SubmitOrderRequest\x12\x1f\n\x05order\x18\x01 \x01(\x0b\x32\x10.mookiespb.Order\"%\n\x13SubmitOrderResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\"*\n\x17SubscribeToOrderRequest\x12\x0f\n\x07request\x18\x01 \x01(\t\"\"\n\x14\x43ompleteOrderRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"\'\n\x15\x43ompleteOrderResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\" \n\rOrdersRequest\x12\x0f\n\x07request\x18\x01 \x01(\t\"2\n\x0eOrdersResponse\x12 \n\x06orders\x18\x01 \x03(\x0b\x32\x10.mookiespb.Order\"\x07\n\x05\x45mpty\"6\n\x15\x43reateMenuItemRequest\x12\x1d\n\x04item\x18\x01 \x01(\x0b\x32\x0f.mookiespb.Item\"(\n\x16\x43reateMenuItemResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\"6\n\x15UpdateMenuItemRequest\x12\x1d\n\x04item\x18\x01 \x01(\x0b\x32\x0f.mookiespb.Item\"(\n\x16UpdateMenuItemResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\"#\n\x15\x44\x65leteMenuItemRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"(\n\x16\x44\x65leteMenuItemResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\"@\n\x1b\x43reateMenuItemOptionRequest\x12!\n\x06option\x18\x01 \x01(\x0b\x32\x11.mookiespb.Option\".\n\x1c\x43reateMenuItemOptionResponse\x12\x0e\n\x06result\x18\x01 \x01(\t2\xb3\x03\n\x0bMenuService\x12.\n\x07GetMenu\x12\x10.mookiespb.Empty\x1a\x0f.mookiespb.Menu\"\x00\x12W\n\x0e\x43reateMenuItem\x12 .mookiespb.CreateMenuItemRequest\x1a!.mookiespb.CreateMenuItemResponse\"\x00\x12W\n\x0eUpdateMenuItem\x12 .mookiespb.UpdateMenuItemRequest\x1a!.mookiespb.UpdateMenuItemResponse\"\x00\x12W\n\x0e\x44\x65leteMenuItem\x12 .mookiespb.DeleteMenuItemRequest\x1a!.mookiespb.DeleteMenuItemResponse\"\x00\x12i\n\x14\x43reateMenuItemOption\x12&.mookiespb.CreateMenuItemOptionRequest\x1a\'.mookiespb.CreateMenuItemOptionResponse\"\x00\x32\xf5\x02\n\x0cOrderService\x12N\n\x0bSubmitOrder\x12\x1d.mookiespb.SubmitOrderRequest\x1a\x1e.mookiespb.SubmitOrderResponse\"\x00\x12T\n\rCompleteOrder\x12\x1f.mookiespb.CompleteOrderRequest\x1a .mookiespb.CompleteOrderResponse\"\x00\x12;\n\x11SubscribeToOrders\x12\x10.mookiespb.Empty\x1a\x10.mookiespb.Order\"\x00\x30\x01\x12\x43\n\x19SubscribeToCompleteOrders\x12\x10.mookiespb.Empty\x1a\x10.mookiespb.Order\"\x00\x30\x01\x12=\n\x0c\x41\x63tiveOrders\x12\x10.mookiespb.Empty\x1a\x19.mookiespb.OrdersResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\rmookies.proto\x12\tmookiespb\"|\n\x04Item\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\x05\x12\r\n\x05price\x18\x03 \x01(\x02\x12\x12\n\ncategoryID\x18\x04 \x01(\x05\x12\x13\n\x0borderItemID\x18\x05 \x01(\x05\x12\"\n\x07options\x18\x06 \x03(\x0b\x32\x11.mookiespb.Option\"C\n\x06Option\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\x05\x12\r\n\x05price\x18\x03 \x01(\x02\x12\x10\n\x08selected\x18\x04 \x01(\x08\"D\n\x08\x43\x61tegory\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\x05\x12\x1e\n\x05items\x18\x03 \x03(\x0b\x32\x0f.mookiespb.Item\"/\n\x04Menu\x12\'\n\ncategories\x18\x01 \x03(\x0b\x32\x13.mookiespb.Category\"\x8d\x01\n\x05Order\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x1e\n\x05items\x18\x03 \x03(\x0b\x32\x0f.mookiespb.Item\x12\r\n\x05total\x18\x04 \x01(\x02\x12\x0e\n\x06status\x18\x05 \x01(\t\x12\x14\n\x0ctime_ordered\x18\x06 \x01(\t\x12\x15\n\rtime_complete\x18\x07 \x01(\t\"5\n\x12SubmitOrderRequest\x12\x1f\n\x05order\x18\x01 \x01(\x0b\x32\x10.mookiespb.Order\"%\n\x13SubmitOrderResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\"\"\n\x14\x43ompleteOrderRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"\'\n\x15\x43ompleteOrderResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\" \n\rOrdersRequest\x12\x0f\n\x07request\x18\x01 \x01(\t\"2\n\x0eOrdersResponse\x12 \n\x06orders\x18\x01 \x03(\x0b\x32\x10.mookiespb.Order\"\x07\n\x05\x45mpty\"6\n\x15\x43reateMenuItemRequest\x12\x1d\n\x04item\x18\x01 \x01(\x0b\x32\x0f.mookiespb.Item\"(\n\x16\x43reateMenuItemResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\"6\n\x15UpdateMenuItemRequest\x12\x1d\n\x04item\x18\x01 \x01(\x0b\x32\x0f.mookiespb.Item\"(\n\x16UpdateMenuItemResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\"#\n\x15\x44\x65leteMenuItemRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"(\n\x16\x44\x65leteMenuItemResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\"@\n\x1b\x43reateMenuItemOptionRequest\x12!\n\x06option\x18\x01 \x01(\x0b\x32\x11.mookiespb.Option\".\n\x1c\x43reateMenuItemOptionResponse\x12\x0e\n\x06result\x18\x01 \x01(\t2\xb3\x03\n\x0bMenuService\x12.\n\x07GetMenu\x12\x10.mookiespb.Empty\x1a\x0f.mookiespb.Menu\"\x00\x12W\n\x0e\x43reateMenuItem\x12 .mookiespb.CreateMenuItemRequest\x1a!.mookiespb.CreateMenuItemResponse\"\x00\x12W\n\x0eUpdateMenuItem\x12 .mookiespb.UpdateMenuItemRequest\x1a!.mookiespb.UpdateMenuItemResponse\"\x00\x12W\n\x0e\x44\x65leteMenuItem\x12 .mookiespb.DeleteMenuItemRequest\x1a!.mookiespb.DeleteMenuItemResponse\"\x00\x12i\n\x14\x43reateMenuItemOption\x12&.mookiespb.CreateMenuItemOptionRequest\x1a\'.mookiespb.CreateMenuItemOptionResponse\"\x00\x32\xf5\x02\n\x0cOrderService\x12N\n\x0bSubmitOrder\x12\x1d.mookiespb.SubmitOrderRequest\x1a\x1e.mookiespb.SubmitOrderResponse\"\x00\x12T\n\rCompleteOrder\x12\x1f.mookiespb.CompleteOrderRequest\x1a .mookiespb.CompleteOrderResponse\"\x00\x12;\n\x11SubscribeToOrders\x12\x10.mookiespb.Empty\x1a\x10.mookiespb.Order\"\x00\x30\x01\x12\x43\n\x19SubscribeToCompleteOrders\x12\x10.mookiespb.Empty\x1a\x10.mookiespb.Order\"\x00\x30\x01\x12=\n\x0c\x41\x63tiveOrders\x12\x10.mookiespb.Empty\x1a\x19.mookiespb.OrdersResponse\"\x00\x62\x06proto3')
 )
 
 
@@ -355,37 +355,6 @@ _SUBMITORDERRESPONSE = _descriptor.Descriptor(
 )
 
 
-_SUBSCRIBETOORDERREQUEST = _descriptor.Descriptor(
-  name='SubscribeToOrderRequest',
-  full_name='mookiespb.SubscribeToOrderRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='request', full_name='mookiespb.SubscribeToOrderRequest.request', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=580,
-  serialized_end=622,
-)
-
-
 _COMPLETEORDERREQUEST = _descriptor.Descriptor(
   name='CompleteOrderRequest',
   full_name='mookiespb.CompleteOrderRequest',
@@ -412,8 +381,8 @@ _COMPLETEORDERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=624,
-  serialized_end=658,
+  serialized_start=580,
+  serialized_end=614,
 )
 
 
@@ -443,8 +412,8 @@ _COMPLETEORDERRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=660,
-  serialized_end=699,
+  serialized_start=616,
+  serialized_end=655,
 )
 
 
@@ -474,8 +443,8 @@ _ORDERSREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=701,
-  serialized_end=733,
+  serialized_start=657,
+  serialized_end=689,
 )
 
 
@@ -505,8 +474,8 @@ _ORDERSRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=735,
-  serialized_end=785,
+  serialized_start=691,
+  serialized_end=741,
 )
 
 
@@ -529,8 +498,8 @@ _EMPTY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=787,
-  serialized_end=794,
+  serialized_start=743,
+  serialized_end=750,
 )
 
 
@@ -560,8 +529,8 @@ _CREATEMENUITEMREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=796,
-  serialized_end=850,
+  serialized_start=752,
+  serialized_end=806,
 )
 
 
@@ -591,8 +560,8 @@ _CREATEMENUITEMRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=852,
-  serialized_end=892,
+  serialized_start=808,
+  serialized_end=848,
 )
 
 
@@ -622,8 +591,8 @@ _UPDATEMENUITEMREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=894,
-  serialized_end=948,
+  serialized_start=850,
+  serialized_end=904,
 )
 
 
@@ -653,8 +622,8 @@ _UPDATEMENUITEMRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=950,
-  serialized_end=990,
+  serialized_start=906,
+  serialized_end=946,
 )
 
 
@@ -684,8 +653,8 @@ _DELETEMENUITEMREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=992,
-  serialized_end=1027,
+  serialized_start=948,
+  serialized_end=983,
 )
 
 
@@ -715,8 +684,8 @@ _DELETEMENUITEMRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1029,
-  serialized_end=1069,
+  serialized_start=985,
+  serialized_end=1025,
 )
 
 
@@ -746,8 +715,8 @@ _CREATEMENUITEMOPTIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1071,
-  serialized_end=1135,
+  serialized_start=1027,
+  serialized_end=1091,
 )
 
 
@@ -777,8 +746,8 @@ _CREATEMENUITEMOPTIONRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1137,
-  serialized_end=1183,
+  serialized_start=1093,
+  serialized_end=1139,
 )
 
 _ITEM.fields_by_name['options'].message_type = _OPTION
@@ -797,7 +766,6 @@ DESCRIPTOR.message_types_by_name['Menu'] = _MENU
 DESCRIPTOR.message_types_by_name['Order'] = _ORDER
 DESCRIPTOR.message_types_by_name['SubmitOrderRequest'] = _SUBMITORDERREQUEST
 DESCRIPTOR.message_types_by_name['SubmitOrderResponse'] = _SUBMITORDERRESPONSE
-DESCRIPTOR.message_types_by_name['SubscribeToOrderRequest'] = _SUBSCRIBETOORDERREQUEST
 DESCRIPTOR.message_types_by_name['CompleteOrderRequest'] = _COMPLETEORDERREQUEST
 DESCRIPTOR.message_types_by_name['CompleteOrderResponse'] = _COMPLETEORDERRESPONSE
 DESCRIPTOR.message_types_by_name['OrdersRequest'] = _ORDERSREQUEST
@@ -861,13 +829,6 @@ SubmitOrderResponse = _reflection.GeneratedProtocolMessageType('SubmitOrderRespo
   # @@protoc_insertion_point(class_scope:mookiespb.SubmitOrderResponse)
   ))
 _sym_db.RegisterMessage(SubmitOrderResponse)
-
-SubscribeToOrderRequest = _reflection.GeneratedProtocolMessageType('SubscribeToOrderRequest', (_message.Message,), dict(
-  DESCRIPTOR = _SUBSCRIBETOORDERREQUEST,
-  __module__ = 'mookies_pb2'
-  # @@protoc_insertion_point(class_scope:mookiespb.SubscribeToOrderRequest)
-  ))
-_sym_db.RegisterMessage(SubscribeToOrderRequest)
 
 CompleteOrderRequest = _reflection.GeneratedProtocolMessageType('CompleteOrderRequest', (_message.Message,), dict(
   DESCRIPTOR = _COMPLETEORDERREQUEST,
@@ -968,8 +929,8 @@ _MENUSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=1186,
-  serialized_end=1621,
+  serialized_start=1142,
+  serialized_end=1577,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetMenu',
@@ -1028,8 +989,8 @@ _ORDERSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=1,
   serialized_options=None,
-  serialized_start=1624,
-  serialized_end=1997,
+  serialized_start=1580,
+  serialized_end=1953,
   methods=[
   _descriptor.MethodDescriptor(
     name='SubmitOrder',
