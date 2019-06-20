@@ -107,6 +107,8 @@ func main() {
 		grpc.WithKeepaliveParams(kacp),
 	)
 
+	fmt.Println("Attempting to dial", addr)
+
 	cc, err := grpc.Dial(*addr, opts...)
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
