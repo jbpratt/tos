@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 
@@ -10,8 +11,9 @@ import (
 
 type MenuDB interface {
 	SeedMenu() error
-	// CreateItem() error
-	// DeleteItem() error
+	CreateMenuItem(*mookiespb.Item) error
+	// DeleteMenuItem() error
+	// CreateMenuItemOption() error
 	GetMenu() (*mookiespb.Menu, error)
 }
 
@@ -38,6 +40,7 @@ func NewMenuService(db *sqlx.DB) MenuService {
 func (m *menuDB) SeedMenu() error {
 	m.Lock()
 	defer m.Unlock()
+
 	tx, err := m.db.Begin()
 	if err != nil {
 		return err
@@ -111,4 +114,38 @@ func (m *menuDB) GetMenu() (*mookiespb.Menu, error) {
 		}
 	}
 	return menu, nil
+}
+
+// need to reload
+func (m *menuDB) CreateMenuItem(item *mookiespb.Item) error {
+	m.Lock()
+	defer m.Unlock()
+
+	_, err := m.db.Exec(
+		"INSERT INTO items (name, price, category_id) VALUES (?,?,?)",
+		item.GetName(), item.GetPrice(), item.GetCategoryID())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *menuDB) DeleteMenuItem(id int32) error {
+	m.Lock()
+	defer m.Unlock()
+
+	res, err := m.db.Exec(
+		"DELETE FROM items WHERE id = ?", id)
+
+	aff, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if aff == 0 {
+		return errors.New("ID not found")
+	}
+
+	return nil
 }

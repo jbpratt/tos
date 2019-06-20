@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"log"
 	"net"
@@ -46,6 +47,30 @@ func (s *server) GetMenu(ctx context.Context, empty *mookiespb.Empty) (*mookiesp
 	log.Println("Client has requested the menu")
 	res := s.menu
 	return res, nil
+}
+
+func (s *server) CreateMenuItem(ctx context.Context,
+	req *mookiespb.CreateMenuItemRequest) (*mookiespb.CreateMenuItemResponse, error) {
+
+	return nil, errors.New("not implemented")
+}
+
+func (s *server) UpdateMenuItem(ctx context.Context,
+	req *mookiespb.UpdateMenuItemRequest) (*mookiespb.UpdateMenuItemResponse, error) {
+
+	return nil, errors.New("not implemented")
+}
+
+func (s *server) DeleteMenuItem(ctx context.Context,
+	req *mookiespb.DeleteMenuItemRequest) (*mookiespb.DeleteMenuItemResponse, error) {
+
+	return nil, errors.New("not implemented")
+}
+
+func (s *server) CreateMenuItemOption(ctx context.Context,
+	req *mookiespb.CreateMenuItemOptionRequest) (*mookiespb.CreateMenuItemOptionResponse, error) {
+
+	return nil, errors.New("not implemented")
 }
 
 func (s *server) SubmitOrder(ctx context.Context,
