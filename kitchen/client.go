@@ -25,6 +25,7 @@ import (
 	mookiespb "github.com/jbpratt78/tos/protofiles"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/keepalive"
 )
 
 type layout struct {
@@ -70,10 +71,10 @@ func newLayout() (l *layout) {
 }
 
 var (
-	kacp = keepalive.clientparameters{
-		time:                60 * time.second,
-		timeout:             time.second,
-		permitwithoutstream: true,
+	kacp = keepalive.ClientParameters{
+		Time:                60 * time.Second,
+		Timeout:             time.Second,
+		PermitWithoutStream: true,
 	}
 
 	tls    = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
