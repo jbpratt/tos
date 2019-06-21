@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"strings"
 	"time"
 
@@ -15,9 +16,13 @@ import (
 	"github.com/aarzilli/nucular/rect"
 	"github.com/aarzilli/nucular/style"
 	nstyle "github.com/aarzilli/nucular/style"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/mobile/event/key"
 
-	mookiespb "github.com/jbpratt78/mookies-tos/protofiles"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+
+	mookiespb "github.com/jbpratt78/tos/protofiles"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
@@ -72,22 +77,54 @@ var (
 		PermitWithoutStream: true,
 	}
 
-	addr = flag.String("addr", "mserver:50051", "server address to dial")
-	cert = flag.String("cert", "server.crt", "cert to use")
-	wnd  nucular.MasterWindow
+	tls    = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
+	caFile = flag.String("ca_file", "", "The file containning the CA root cert file")
+	addr   = flag.String("addr", "server:50051", "server address to dial")
+	wnd    nucular.MasterWindow
 )
 
 func main() {
 	flag.Parse()
-	creds, err := credentials.NewClientTLSFromFile(*cert, "")
-	if err != nil {
-		log.Fatal(err)
+	var opts []grpc.DialOption
+	if *tls {
+		creds, err := credentials.NewClientTLSFromFile(*caFile, "")
+		if err != nil {
+			log.Fatal(err)
+		}
+		opts = append(opts, grpc.WithTransportCredentials(creds))
+
+	} else {
+		opts = append(opts, grpc.WithInsecure())
 	}
-	cc, err := grpc.Dial(*addr, grpc.WithTransportCredentials(creds), grpc.WithKeepaliveParams(kacp))
+
+	reg := prometheus.NewRegistry()
+	grpcMetrics := grpc_prometheus.NewClientMetrics()
+	reg.MustRegister(grpcMetrics)
+
+	opts = append(opts,
+		grpc.WithStreamInterceptor(grpcMetrics.StreamClientInterceptor()),
+		grpc.WithUnaryInterceptor(grpcMetrics.UnaryClientInterceptor()),
+		grpc.WithKeepaliveParams(kacp),
+	)
+
+	fmt.Println("Attempting to dial", addr)
+
+	cc, err := grpc.Dial(*addr, opts...)
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
 	}
 	defer cc.Close()
+
+	httpServer := &http.Server{
+		Handler: promhttp.HandlerFor(reg, promhttp.HandlerOpts{}),
+		Addr:    fmt.Sprintf("0.0.0.0:%d", 9004)}
+
+	// Start your http server for prometheus.
+	go func() {
+		if err := httpServer.ListenAndServe(); err != nil {
+			log.Fatal("Unable to start a http server.")
+		}
+	}()
 
 	l := newLayout()
 	l.client = mookiespb.NewOrderServiceClient(cc)

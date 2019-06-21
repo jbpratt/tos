@@ -1,4 +1,4 @@
-PKG := "github.com/jbpratt78/mookies-tos"
+PKG := "github.com/jbpratt78/tos"
 SERVER_OUT := "bin/server"
 FRONT_CLIENT_OUT := "bin/front"
 BACK_CLIENT_OUT := "bin/kitchen"
@@ -22,3 +22,17 @@ back: dep protofiles/mookies.pb.go
 
 clean:
 	@rm $(SERVER_OUT) $(FRONT_CLIENT_OUT) $(BACK_CLIENT_OUT)
+
+test:
+	@go test ./...
+
+start: back 
+	@docker-compose up -d
+	rm -rf ./bin/server
+
+gen:
+	protoc protofiles/mookies.proto --go_out=plugins=grpc:.
+	protoc-go-inject-tag -input=protofiles/mookies.pb.go
+	python3 -m grpc_tools.protoc -I protofiles/ --python_out=printing/ \
+		--grpc_python_out=printing/ protofiles/mookies.proto
+	mockgen -source=protofiles/mookies.pb.go > mock/proto_mock.go

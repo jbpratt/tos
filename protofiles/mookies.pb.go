@@ -429,45 +429,6 @@ func (m *SubmitOrderResponse) GetResult() string {
 	return ""
 }
 
-type SubscribeToOrderRequest struct {
-	Request              string   `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *SubscribeToOrderRequest) Reset()         { *m = SubscribeToOrderRequest{} }
-func (m *SubscribeToOrderRequest) String() string { return proto.CompactTextString(m) }
-func (*SubscribeToOrderRequest) ProtoMessage()    {}
-func (*SubscribeToOrderRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{7}
-}
-
-func (m *SubscribeToOrderRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SubscribeToOrderRequest.Unmarshal(m, b)
-}
-func (m *SubscribeToOrderRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SubscribeToOrderRequest.Marshal(b, m, deterministic)
-}
-func (m *SubscribeToOrderRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SubscribeToOrderRequest.Merge(m, src)
-}
-func (m *SubscribeToOrderRequest) XXX_Size() int {
-	return xxx_messageInfo_SubscribeToOrderRequest.Size(m)
-}
-func (m *SubscribeToOrderRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_SubscribeToOrderRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SubscribeToOrderRequest proto.InternalMessageInfo
-
-func (m *SubscribeToOrderRequest) GetRequest() string {
-	if m != nil {
-		return m.Request
-	}
-	return ""
-}
-
 type CompleteOrderRequest struct {
 	Id                   int32    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -479,7 +440,7 @@ func (m *CompleteOrderRequest) Reset()         { *m = CompleteOrderRequest{} }
 func (m *CompleteOrderRequest) String() string { return proto.CompactTextString(m) }
 func (*CompleteOrderRequest) ProtoMessage()    {}
 func (*CompleteOrderRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{8}
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{7}
 }
 
 func (m *CompleteOrderRequest) XXX_Unmarshal(b []byte) error {
@@ -518,7 +479,7 @@ func (m *CompleteOrderResponse) Reset()         { *m = CompleteOrderResponse{} }
 func (m *CompleteOrderResponse) String() string { return proto.CompactTextString(m) }
 func (*CompleteOrderResponse) ProtoMessage()    {}
 func (*CompleteOrderResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{9}
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{8}
 }
 
 func (m *CompleteOrderResponse) XXX_Unmarshal(b []byte) error {
@@ -557,7 +518,7 @@ func (m *OrdersRequest) Reset()         { *m = OrdersRequest{} }
 func (m *OrdersRequest) String() string { return proto.CompactTextString(m) }
 func (*OrdersRequest) ProtoMessage()    {}
 func (*OrdersRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{10}
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{9}
 }
 
 func (m *OrdersRequest) XXX_Unmarshal(b []byte) error {
@@ -596,7 +557,7 @@ func (m *OrdersResponse) Reset()         { *m = OrdersResponse{} }
 func (m *OrdersResponse) String() string { return proto.CompactTextString(m) }
 func (*OrdersResponse) ProtoMessage()    {}
 func (*OrdersResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{11}
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{10}
 }
 
 func (m *OrdersResponse) XXX_Unmarshal(b []byte) error {
@@ -634,7 +595,7 @@ func (m *Empty) Reset()         { *m = Empty{} }
 func (m *Empty) String() string { return proto.CompactTextString(m) }
 func (*Empty) ProtoMessage()    {}
 func (*Empty) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{12}
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{11}
 }
 
 func (m *Empty) XXX_Unmarshal(b []byte) error {
@@ -655,6 +616,318 @@ func (m *Empty) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Empty proto.InternalMessageInfo
 
+type CreateMenuItemRequest struct {
+	Item                 *Item    `protobuf:"bytes,1,opt,name=item,proto3" json:"item,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CreateMenuItemRequest) Reset()         { *m = CreateMenuItemRequest{} }
+func (m *CreateMenuItemRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateMenuItemRequest) ProtoMessage()    {}
+func (*CreateMenuItemRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{12}
+}
+
+func (m *CreateMenuItemRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateMenuItemRequest.Unmarshal(m, b)
+}
+func (m *CreateMenuItemRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateMenuItemRequest.Marshal(b, m, deterministic)
+}
+func (m *CreateMenuItemRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateMenuItemRequest.Merge(m, src)
+}
+func (m *CreateMenuItemRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateMenuItemRequest.Size(m)
+}
+func (m *CreateMenuItemRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateMenuItemRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateMenuItemRequest proto.InternalMessageInfo
+
+func (m *CreateMenuItemRequest) GetItem() *Item {
+	if m != nil {
+		return m.Item
+	}
+	return nil
+}
+
+type CreateMenuItemResponse struct {
+	Result               string   `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CreateMenuItemResponse) Reset()         { *m = CreateMenuItemResponse{} }
+func (m *CreateMenuItemResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateMenuItemResponse) ProtoMessage()    {}
+func (*CreateMenuItemResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{13}
+}
+
+func (m *CreateMenuItemResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateMenuItemResponse.Unmarshal(m, b)
+}
+func (m *CreateMenuItemResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateMenuItemResponse.Marshal(b, m, deterministic)
+}
+func (m *CreateMenuItemResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateMenuItemResponse.Merge(m, src)
+}
+func (m *CreateMenuItemResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateMenuItemResponse.Size(m)
+}
+func (m *CreateMenuItemResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateMenuItemResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateMenuItemResponse proto.InternalMessageInfo
+
+func (m *CreateMenuItemResponse) GetResult() string {
+	if m != nil {
+		return m.Result
+	}
+	return ""
+}
+
+type UpdateMenuItemRequest struct {
+	Item                 *Item    `protobuf:"bytes,1,opt,name=item,proto3" json:"item,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *UpdateMenuItemRequest) Reset()         { *m = UpdateMenuItemRequest{} }
+func (m *UpdateMenuItemRequest) String() string { return proto.CompactTextString(m) }
+func (*UpdateMenuItemRequest) ProtoMessage()    {}
+func (*UpdateMenuItemRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{14}
+}
+
+func (m *UpdateMenuItemRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UpdateMenuItemRequest.Unmarshal(m, b)
+}
+func (m *UpdateMenuItemRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UpdateMenuItemRequest.Marshal(b, m, deterministic)
+}
+func (m *UpdateMenuItemRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateMenuItemRequest.Merge(m, src)
+}
+func (m *UpdateMenuItemRequest) XXX_Size() int {
+	return xxx_messageInfo_UpdateMenuItemRequest.Size(m)
+}
+func (m *UpdateMenuItemRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdateMenuItemRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UpdateMenuItemRequest proto.InternalMessageInfo
+
+func (m *UpdateMenuItemRequest) GetItem() *Item {
+	if m != nil {
+		return m.Item
+	}
+	return nil
+}
+
+type UpdateMenuItemResponse struct {
+	Result               string   `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *UpdateMenuItemResponse) Reset()         { *m = UpdateMenuItemResponse{} }
+func (m *UpdateMenuItemResponse) String() string { return proto.CompactTextString(m) }
+func (*UpdateMenuItemResponse) ProtoMessage()    {}
+func (*UpdateMenuItemResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{15}
+}
+
+func (m *UpdateMenuItemResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UpdateMenuItemResponse.Unmarshal(m, b)
+}
+func (m *UpdateMenuItemResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UpdateMenuItemResponse.Marshal(b, m, deterministic)
+}
+func (m *UpdateMenuItemResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateMenuItemResponse.Merge(m, src)
+}
+func (m *UpdateMenuItemResponse) XXX_Size() int {
+	return xxx_messageInfo_UpdateMenuItemResponse.Size(m)
+}
+func (m *UpdateMenuItemResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdateMenuItemResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UpdateMenuItemResponse proto.InternalMessageInfo
+
+func (m *UpdateMenuItemResponse) GetResult() string {
+	if m != nil {
+		return m.Result
+	}
+	return ""
+}
+
+type DeleteMenuItemRequest struct {
+	Id                   int32    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeleteMenuItemRequest) Reset()         { *m = DeleteMenuItemRequest{} }
+func (m *DeleteMenuItemRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteMenuItemRequest) ProtoMessage()    {}
+func (*DeleteMenuItemRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{16}
+}
+
+func (m *DeleteMenuItemRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteMenuItemRequest.Unmarshal(m, b)
+}
+func (m *DeleteMenuItemRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteMenuItemRequest.Marshal(b, m, deterministic)
+}
+func (m *DeleteMenuItemRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteMenuItemRequest.Merge(m, src)
+}
+func (m *DeleteMenuItemRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteMenuItemRequest.Size(m)
+}
+func (m *DeleteMenuItemRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteMenuItemRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteMenuItemRequest proto.InternalMessageInfo
+
+func (m *DeleteMenuItemRequest) GetId() int32 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+type DeleteMenuItemResponse struct {
+	Result               string   `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeleteMenuItemResponse) Reset()         { *m = DeleteMenuItemResponse{} }
+func (m *DeleteMenuItemResponse) String() string { return proto.CompactTextString(m) }
+func (*DeleteMenuItemResponse) ProtoMessage()    {}
+func (*DeleteMenuItemResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{17}
+}
+
+func (m *DeleteMenuItemResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteMenuItemResponse.Unmarshal(m, b)
+}
+func (m *DeleteMenuItemResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteMenuItemResponse.Marshal(b, m, deterministic)
+}
+func (m *DeleteMenuItemResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteMenuItemResponse.Merge(m, src)
+}
+func (m *DeleteMenuItemResponse) XXX_Size() int {
+	return xxx_messageInfo_DeleteMenuItemResponse.Size(m)
+}
+func (m *DeleteMenuItemResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteMenuItemResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteMenuItemResponse proto.InternalMessageInfo
+
+func (m *DeleteMenuItemResponse) GetResult() string {
+	if m != nil {
+		return m.Result
+	}
+	return ""
+}
+
+type CreateMenuItemOptionRequest struct {
+	Option               *Option  `protobuf:"bytes,1,opt,name=option,proto3" json:"option,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CreateMenuItemOptionRequest) Reset()         { *m = CreateMenuItemOptionRequest{} }
+func (m *CreateMenuItemOptionRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateMenuItemOptionRequest) ProtoMessage()    {}
+func (*CreateMenuItemOptionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{18}
+}
+
+func (m *CreateMenuItemOptionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateMenuItemOptionRequest.Unmarshal(m, b)
+}
+func (m *CreateMenuItemOptionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateMenuItemOptionRequest.Marshal(b, m, deterministic)
+}
+func (m *CreateMenuItemOptionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateMenuItemOptionRequest.Merge(m, src)
+}
+func (m *CreateMenuItemOptionRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateMenuItemOptionRequest.Size(m)
+}
+func (m *CreateMenuItemOptionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateMenuItemOptionRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateMenuItemOptionRequest proto.InternalMessageInfo
+
+func (m *CreateMenuItemOptionRequest) GetOption() *Option {
+	if m != nil {
+		return m.Option
+	}
+	return nil
+}
+
+type CreateMenuItemOptionResponse struct {
+	Result               string   `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CreateMenuItemOptionResponse) Reset()         { *m = CreateMenuItemOptionResponse{} }
+func (m *CreateMenuItemOptionResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateMenuItemOptionResponse) ProtoMessage()    {}
+func (*CreateMenuItemOptionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{19}
+}
+
+func (m *CreateMenuItemOptionResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateMenuItemOptionResponse.Unmarshal(m, b)
+}
+func (m *CreateMenuItemOptionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateMenuItemOptionResponse.Marshal(b, m, deterministic)
+}
+func (m *CreateMenuItemOptionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateMenuItemOptionResponse.Merge(m, src)
+}
+func (m *CreateMenuItemOptionResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateMenuItemOptionResponse.Size(m)
+}
+func (m *CreateMenuItemOptionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateMenuItemOptionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateMenuItemOptionResponse proto.InternalMessageInfo
+
+func (m *CreateMenuItemOptionResponse) GetResult() string {
+	if m != nil {
+		return m.Result
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*Item)(nil), "mookiespb.Item")
 	proto.RegisterType((*Option)(nil), "mookiespb.Option")
@@ -663,55 +936,71 @@ func init() {
 	proto.RegisterType((*Order)(nil), "mookiespb.Order")
 	proto.RegisterType((*SubmitOrderRequest)(nil), "mookiespb.SubmitOrderRequest")
 	proto.RegisterType((*SubmitOrderResponse)(nil), "mookiespb.SubmitOrderResponse")
-	proto.RegisterType((*SubscribeToOrderRequest)(nil), "mookiespb.SubscribeToOrderRequest")
 	proto.RegisterType((*CompleteOrderRequest)(nil), "mookiespb.CompleteOrderRequest")
 	proto.RegisterType((*CompleteOrderResponse)(nil), "mookiespb.CompleteOrderResponse")
 	proto.RegisterType((*OrdersRequest)(nil), "mookiespb.OrdersRequest")
 	proto.RegisterType((*OrdersResponse)(nil), "mookiespb.OrdersResponse")
 	proto.RegisterType((*Empty)(nil), "mookiespb.Empty")
+	proto.RegisterType((*CreateMenuItemRequest)(nil), "mookiespb.CreateMenuItemRequest")
+	proto.RegisterType((*CreateMenuItemResponse)(nil), "mookiespb.CreateMenuItemResponse")
+	proto.RegisterType((*UpdateMenuItemRequest)(nil), "mookiespb.UpdateMenuItemRequest")
+	proto.RegisterType((*UpdateMenuItemResponse)(nil), "mookiespb.UpdateMenuItemResponse")
+	proto.RegisterType((*DeleteMenuItemRequest)(nil), "mookiespb.DeleteMenuItemRequest")
+	proto.RegisterType((*DeleteMenuItemResponse)(nil), "mookiespb.DeleteMenuItemResponse")
+	proto.RegisterType((*CreateMenuItemOptionRequest)(nil), "mookiespb.CreateMenuItemOptionRequest")
+	proto.RegisterType((*CreateMenuItemOptionResponse)(nil), "mookiespb.CreateMenuItemOptionResponse")
 }
 
 func init() { proto.RegisterFile("protofiles/mookies.proto", fileDescriptor_a42f9bdfdd6c12cf) }
 
 var fileDescriptor_a42f9bdfdd6c12cf = []byte{
-	// 580 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x54, 0xc1, 0x6e, 0xd3, 0x40,
-	0x10, 0xad, 0xdd, 0xd8, 0x69, 0xc7, 0x6d, 0xa1, 0xdb, 0x02, 0xdb, 0x48, 0x14, 0xb3, 0x88, 0x2a,
-	0x08, 0x91, 0xa2, 0xf4, 0x46, 0xe9, 0x01, 0xb5, 0x08, 0xf5, 0x00, 0x91, 0x9c, 0x72, 0x05, 0x25,
-	0xce, 0x80, 0x56, 0xc4, 0x59, 0xe3, 0x5d, 0x57, 0xea, 0x57, 0xf1, 0x1b, 0xfc, 0x10, 0x77, 0xe4,
-	0xb1, 0x1d, 0x36, 0x49, 0xa3, 0x46, 0xe2, 0xe6, 0x99, 0x79, 0x6f, 0xe6, 0xed, 0x9b, 0x49, 0x80,
-	0xa7, 0x99, 0x32, 0xea, 0x9b, 0x1c, 0xa3, 0x3e, 0x4e, 0x94, 0xfa, 0x21, 0x51, 0x77, 0x28, 0xc5,
-	0x36, 0xab, 0x30, 0x1d, 0x8a, 0x5f, 0x0e, 0x34, 0x2e, 0x0d, 0x26, 0x8c, 0x41, 0x63, 0x32, 0x48,
-	0x90, 0x3b, 0xa1, 0xd3, 0xde, 0x8c, 0xe8, 0x9b, 0xed, 0x80, 0x2b, 0x47, 0xdc, 0x0d, 0x9d, 0xb6,
-	0x17, 0xb9, 0x72, 0xc4, 0xf6, 0xc1, 0x4b, 0x33, 0x19, 0x23, 0x5f, 0x0f, 0x9d, 0xb6, 0x1b, 0x95,
-	0x01, 0x3b, 0x04, 0x88, 0x07, 0x06, 0xbf, 0xab, 0xec, 0xe6, 0xf2, 0x82, 0x37, 0x08, 0x6d, 0x65,
-	0x58, 0x08, 0x81, 0xca, 0x46, 0x98, 0x15, 0x63, 0x2e, 0x2f, 0xb8, 0x47, 0x00, 0x3b, 0xc5, 0x5e,
-	0x42, 0x53, 0xa5, 0x46, 0xaa, 0x89, 0xe6, 0x7e, 0xb8, 0xde, 0x0e, 0xba, 0xbb, 0x9d, 0xa9, 0xc2,
-	0x4e, 0x8f, 0x2a, 0x51, 0x8d, 0x10, 0x5f, 0xc0, 0x2f, 0x53, 0xff, 0x21, 0xb9, 0x05, 0x1b, 0x1a,
-	0xc7, 0x18, 0x1b, 0x1c, 0x91, 0xe0, 0x8d, 0x68, 0x1a, 0x8b, 0xcf, 0xb0, 0x71, 0x5e, 0x89, 0x5f,
-	0x69, 0xc2, 0x73, 0xf0, 0xa4, 0xc1, 0x44, 0xf3, 0x75, 0x92, 0x7e, 0xcf, 0x92, 0x5e, 0x3c, 0x2f,
-	0x2a, 0xab, 0xe2, 0x14, 0x1a, 0x1f, 0x71, 0x92, 0xb3, 0x93, 0xa9, 0x5b, 0x12, 0x35, 0x77, 0x88,
-	0xb3, 0x67, 0x71, 0xea, 0xd9, 0x91, 0x05, 0x13, 0xbf, 0x1d, 0xf0, 0x7a, 0x85, 0x61, 0xd5, 0x74,
-	0x67, 0x3a, 0xbd, 0x56, 0xe8, 0x5a, 0x0a, 0x57, 0x53, 0x54, 0x58, 0x63, 0x94, 0x19, 0x8c, 0xc9,
-	0x01, 0x37, 0x2a, 0x03, 0xf6, 0x10, 0x7c, 0x6d, 0x06, 0x26, 0xd7, 0xb4, 0xa8, 0xcd, 0xa8, 0x8a,
-	0xd8, 0x53, 0xd8, 0x32, 0x32, 0xc1, 0xaf, 0xb4, 0x37, 0x1c, 0x71, 0x9f, 0xaa, 0x41, 0x91, 0xeb,
-	0x95, 0x29, 0xf6, 0x0c, 0xb6, 0x09, 0x12, 0xab, 0x24, 0x1d, 0xa3, 0x41, 0xde, 0x24, 0x0c, 0xf1,
-	0xce, 0xab, 0x9c, 0x78, 0x0b, 0xac, 0x9f, 0x0f, 0x13, 0x69, 0x88, 0x15, 0xe1, 0xcf, 0x1c, 0xb5,
-	0x61, 0x47, 0xe0, 0x51, 0x63, 0x7a, 0x59, 0xd0, 0xbd, 0x6f, 0xef, 0x9f, 0x70, 0x65, 0x59, 0xbc,
-	0x82, 0xbd, 0x19, 0xb6, 0x4e, 0xd5, 0x44, 0x63, 0x21, 0x3a, 0x43, 0x9d, 0x8f, 0x4d, 0xb5, 0xa9,
-	0x2a, 0x12, 0x27, 0xf0, 0xa8, 0x9f, 0x0f, 0x75, 0x9c, 0xc9, 0x21, 0x5e, 0xa9, 0x99, 0x89, 0x1c,
-	0x9a, 0x59, 0xf9, 0x59, 0x71, 0xea, 0x50, 0x1c, 0xc1, 0x7e, 0xad, 0x76, 0x86, 0x31, 0x67, 0xbd,
-	0x38, 0x86, 0x07, 0x73, 0xb8, 0x3b, 0xd4, 0xbc, 0x80, 0x6d, 0x02, 0xea, 0xbb, 0x35, 0xbc, 0x81,
-	0x9d, 0x1a, 0x5a, 0x35, 0x6d, 0x83, 0x4f, 0x16, 0xd4, 0x37, 0xb3, 0x68, 0x51, 0x55, 0x17, 0x4d,
-	0xf0, 0xde, 0x27, 0xa9, 0xb9, 0xe9, 0x9e, 0x41, 0x50, 0x9c, 0x5c, 0x1f, 0xb3, 0xeb, 0xe2, 0xe8,
-	0x3b, 0xd0, 0xfc, 0x80, 0x86, 0x8e, 0xd0, 0x26, 0x13, 0xb6, 0x65, 0x1f, 0x49, 0x01, 0x11, 0x6b,
-	0xdd, 0x3f, 0x2e, 0x6c, 0x51, 0xe7, 0xba, 0xc1, 0x27, 0x08, 0x2c, 0xf3, 0xd9, 0x63, 0x8b, 0xb2,
-	0xb8, 0xd2, 0xd6, 0xe1, 0xb2, 0x72, 0xf9, 0x20, 0xb1, 0xc6, 0xae, 0x60, 0x7b, 0xc6, 0x40, 0xf6,
-	0xc4, 0xfe, 0x1d, 0xdc, 0xb2, 0x82, 0x56, 0xb8, 0x1c, 0x30, 0xed, 0x7a, 0x0a, 0xbb, 0xf3, 0x3b,
-	0xd7, 0xb7, 0x3c, 0x78, 0xc1, 0x3f, 0xb1, 0xf6, 0xda, 0x61, 0xe7, 0x70, 0x60, 0x91, 0x67, 0x46,
-	0xac, 0xde, 0xe4, 0x0c, 0xb6, 0xde, 0xc5, 0x46, 0x5e, 0x2f, 0xe7, 0x1d, 0xcc, 0xf3, 0xf4, 0xbf,
-	0x07, 0x0c, 0x7d, 0xfa, 0x93, 0x3e, 0xf9, 0x1b, 0x00, 0x00, 0xff, 0xff, 0xc6, 0x4f, 0xb8, 0xa7,
-	0xc0, 0x05, 0x00, 0x00,
+	// 733 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x56, 0x4f, 0x4f, 0xdb, 0x4e,
+	0x10, 0xc5, 0x49, 0xec, 0xc0, 0x04, 0xf8, 0xfd, 0x58, 0x08, 0x32, 0x69, 0x4b, 0xcd, 0xa2, 0x42,
+	0x50, 0xd5, 0x80, 0x82, 0xd4, 0x43, 0xa1, 0x87, 0x2a, 0x54, 0x2d, 0x87, 0x16, 0xc9, 0x80, 0x7a,
+	0x6b, 0x95, 0x3f, 0xd3, 0xca, 0x6a, 0x1c, 0xbb, 0xde, 0x0d, 0x12, 0x9f, 0xaa, 0x87, 0x7e, 0x89,
+	0x7e, 0xa1, 0xde, 0x2b, 0x8f, 0xd7, 0xe9, 0xda, 0x71, 0x08, 0x12, 0x37, 0xef, 0xce, 0x9b, 0xf7,
+	0x66, 0xe6, 0x6d, 0x46, 0x01, 0x3b, 0x8c, 0x02, 0x19, 0x7c, 0xf5, 0x86, 0x28, 0x0e, 0xfd, 0x20,
+	0xf8, 0xee, 0xa1, 0x68, 0xd1, 0x15, 0x5b, 0x52, 0xc7, 0xb0, 0xc7, 0x7f, 0x1a, 0x50, 0x39, 0x97,
+	0xe8, 0x33, 0x06, 0x95, 0x51, 0xd7, 0x47, 0xdb, 0x70, 0x8c, 0xe6, 0x92, 0x4b, 0xdf, 0x6c, 0x15,
+	0x4a, 0xde, 0xc0, 0x2e, 0x39, 0x46, 0xd3, 0x74, 0x4b, 0xde, 0x80, 0x6d, 0x80, 0x19, 0x46, 0x5e,
+	0x1f, 0xed, 0xb2, 0x63, 0x34, 0x4b, 0x6e, 0x72, 0x60, 0xdb, 0x00, 0xfd, 0xae, 0xc4, 0x6f, 0x41,
+	0x74, 0x7b, 0x7e, 0x66, 0x57, 0x08, 0xad, 0xdd, 0x30, 0x07, 0x6a, 0x41, 0x34, 0xc0, 0x28, 0x96,
+	0x39, 0x3f, 0xb3, 0x4d, 0x02, 0xe8, 0x57, 0xec, 0x39, 0x54, 0x83, 0x50, 0x7a, 0xc1, 0x48, 0xd8,
+	0x96, 0x53, 0x6e, 0xd6, 0xda, 0x6b, 0xad, 0x49, 0x85, 0xad, 0x0b, 0x8a, 0xb8, 0x29, 0x82, 0x7f,
+	0x06, 0x2b, 0xb9, 0x7a, 0x40, 0xc9, 0x0d, 0x58, 0x14, 0x38, 0xc4, 0xbe, 0xc4, 0x01, 0x15, 0xbc,
+	0xe8, 0x4e, 0xce, 0xfc, 0x1a, 0x16, 0x3b, 0xaa, 0xf8, 0x7b, 0x29, 0x3c, 0x03, 0xd3, 0x93, 0xe8,
+	0x0b, 0xbb, 0x4c, 0xa5, 0xff, 0xa7, 0x95, 0x1e, 0xb7, 0xe7, 0x26, 0x51, 0x7e, 0x02, 0x95, 0x0f,
+	0x38, 0x1a, 0xb3, 0xe3, 0xc9, 0xb4, 0x3c, 0x14, 0xb6, 0x41, 0x39, 0xeb, 0x5a, 0x4e, 0xaa, 0xed,
+	0x6a, 0x30, 0xfe, 0xdb, 0x00, 0xf3, 0x22, 0x1e, 0x98, 0x52, 0x37, 0x26, 0xea, 0x69, 0x85, 0x25,
+	0xad, 0xc2, 0xfb, 0x55, 0x14, 0x8f, 0x46, 0x06, 0xb2, 0x3b, 0xa4, 0x09, 0x94, 0xdc, 0xe4, 0xc0,
+	0x36, 0xc1, 0x12, 0xb2, 0x2b, 0xc7, 0x82, 0x8c, 0x5a, 0x72, 0xd5, 0x89, 0xed, 0xc0, 0xb2, 0xf4,
+	0x7c, 0xfc, 0x42, 0xbe, 0xe1, 0xc0, 0xb6, 0x28, 0x5a, 0x8b, 0xef, 0x2e, 0x92, 0x2b, 0xb6, 0x0b,
+	0x2b, 0x04, 0xe9, 0x07, 0x7e, 0x38, 0x44, 0x89, 0x76, 0x95, 0x30, 0x94, 0xd7, 0x51, 0x77, 0xfc,
+	0x14, 0xd8, 0xe5, 0xb8, 0xe7, 0x7b, 0x92, 0xb2, 0x5c, 0xfc, 0x31, 0x46, 0x21, 0xd9, 0x1e, 0x98,
+	0x44, 0x4c, 0x9d, 0xd5, 0xda, 0xff, 0xeb, 0xfe, 0x13, 0x2e, 0x09, 0xf3, 0x17, 0xb0, 0x9e, 0xc9,
+	0x16, 0x61, 0x30, 0x12, 0x18, 0x17, 0x1d, 0xa1, 0x18, 0x0f, 0xa5, 0x72, 0x4a, 0x9d, 0xf8, 0x1e,
+	0x6c, 0xa4, 0xc2, 0x19, 0xb9, 0xdc, 0x14, 0xf9, 0x21, 0xd4, 0x73, 0xb8, 0x39, 0xc4, 0x07, 0xb0,
+	0x42, 0x40, 0x91, 0x32, 0xda, 0x50, 0x8d, 0x92, 0x4f, 0x85, 0x4c, 0x8f, 0xfc, 0x15, 0xac, 0xa6,
+	0x50, 0x45, 0xda, 0x04, 0x8b, 0xba, 0x49, 0xed, 0x9f, 0xee, 0x56, 0xc5, 0x79, 0x15, 0xcc, 0xb7,
+	0x7e, 0x28, 0x6f, 0xf9, 0x29, 0xd4, 0x3b, 0x11, 0x76, 0x25, 0xc6, 0x6f, 0x88, 0x4c, 0x54, 0xba,
+	0xbb, 0x50, 0x89, 0xdd, 0x54, 0x73, 0x9b, 0xb2, 0x9a, 0x82, 0xfc, 0x08, 0x36, 0xf3, 0xd9, 0x73,
+	0xfa, 0x3b, 0x85, 0xfa, 0x75, 0x38, 0x78, 0x80, 0x5e, 0x3e, 0x7b, 0x8e, 0xde, 0x3e, 0xd4, 0xcf,
+	0x30, 0x1e, 0x7f, 0x5e, 0x2f, 0xef, 0xd4, 0x11, 0x6c, 0xe6, 0x81, 0x73, 0xa8, 0xdf, 0xc3, 0xa3,
+	0x6c, 0xf3, 0x6a, 0xa1, 0x28, 0x81, 0x03, 0xb0, 0x92, 0xcd, 0xa2, 0x5a, 0x2a, 0x58, 0x3d, 0x0a,
+	0xc0, 0x5f, 0xc2, 0xe3, 0x62, 0xa6, 0xbb, 0x2b, 0x68, 0xff, 0x2a, 0x43, 0x2d, 0x4e, 0xb9, 0xc4,
+	0xe8, 0x26, 0xde, 0x3e, 0x2d, 0xa8, 0xbe, 0x43, 0x49, 0xdb, 0x40, 0xb7, 0x9e, 0x9c, 0x6e, 0xe8,
+	0x23, 0x8d, 0x21, 0x7c, 0x81, 0x7d, 0x82, 0xd5, 0xac, 0x2e, 0x73, 0xf4, 0x85, 0x51, 0xf4, 0x2e,
+	0x1a, 0x3b, 0x77, 0x20, 0x92, 0x72, 0x13, 0xe2, 0xac, 0x4f, 0x19, 0xe2, 0xc2, 0x07, 0x90, 0x21,
+	0x2e, 0x36, 0x39, 0x21, 0xce, 0xba, 0x94, 0x21, 0x2e, 0x74, 0x3a, 0x43, 0x5c, 0x6c, 0x31, 0x5f,
+	0x60, 0x1e, 0x6c, 0x14, 0x59, 0xc0, 0xf6, 0x66, 0xb6, 0x9b, 0x71, 0xbb, 0xb1, 0x3f, 0x17, 0x97,
+	0x4a, 0xb5, 0xff, 0x94, 0x60, 0x99, 0x7e, 0x8d, 0xa9, 0x6d, 0x1f, 0xa1, 0xa6, 0xed, 0x1e, 0xf6,
+	0x44, 0xa3, 0x9a, 0xde, 0x68, 0x8d, 0xed, 0x59, 0xe1, 0x49, 0x2f, 0x57, 0xb0, 0x92, 0x59, 0x3a,
+	0xec, 0xa9, 0x5e, 0x5c, 0xc1, 0xda, 0x6a, 0x38, 0xb3, 0x01, 0x13, 0xd6, 0x13, 0x58, 0xbb, 0x1c,
+	0xf7, 0x44, 0x3f, 0xf2, 0x7a, 0x78, 0x15, 0x24, 0x9b, 0xa7, 0xe0, 0x99, 0x4d, 0xed, 0x1c, 0xbe,
+	0x70, 0x64, 0xb0, 0x0e, 0x6c, 0x69, 0xc9, 0x19, 0x89, 0xfb, 0x93, 0xbc, 0x86, 0xe5, 0x37, 0x7d,
+	0xe9, 0xdd, 0xcc, 0xce, 0xdb, 0xca, 0xe7, 0x89, 0x7f, 0x0d, 0xf4, 0x2c, 0xfa, 0x8f, 0x72, 0xfc,
+	0x37, 0x00, 0x00, 0xff, 0xff, 0x9c, 0x65, 0xfe, 0x9b, 0xbf, 0x08, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -726,8 +1015,11 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MenuServiceClient interface {
-	// Unary get menu
 	GetMenu(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Menu, error)
+	CreateMenuItem(ctx context.Context, in *CreateMenuItemRequest, opts ...grpc.CallOption) (*CreateMenuItemResponse, error)
+	UpdateMenuItem(ctx context.Context, in *UpdateMenuItemRequest, opts ...grpc.CallOption) (*UpdateMenuItemResponse, error)
+	DeleteMenuItem(ctx context.Context, in *DeleteMenuItemRequest, opts ...grpc.CallOption) (*DeleteMenuItemResponse, error)
+	CreateMenuItemOption(ctx context.Context, in *CreateMenuItemOptionRequest, opts ...grpc.CallOption) (*CreateMenuItemOptionResponse, error)
 }
 
 type menuServiceClient struct {
@@ -747,10 +1039,49 @@ func (c *menuServiceClient) GetMenu(ctx context.Context, in *Empty, opts ...grpc
 	return out, nil
 }
 
+func (c *menuServiceClient) CreateMenuItem(ctx context.Context, in *CreateMenuItemRequest, opts ...grpc.CallOption) (*CreateMenuItemResponse, error) {
+	out := new(CreateMenuItemResponse)
+	err := c.cc.Invoke(ctx, "/mookiespb.MenuService/CreateMenuItem", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *menuServiceClient) UpdateMenuItem(ctx context.Context, in *UpdateMenuItemRequest, opts ...grpc.CallOption) (*UpdateMenuItemResponse, error) {
+	out := new(UpdateMenuItemResponse)
+	err := c.cc.Invoke(ctx, "/mookiespb.MenuService/UpdateMenuItem", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *menuServiceClient) DeleteMenuItem(ctx context.Context, in *DeleteMenuItemRequest, opts ...grpc.CallOption) (*DeleteMenuItemResponse, error) {
+	out := new(DeleteMenuItemResponse)
+	err := c.cc.Invoke(ctx, "/mookiespb.MenuService/DeleteMenuItem", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *menuServiceClient) CreateMenuItemOption(ctx context.Context, in *CreateMenuItemOptionRequest, opts ...grpc.CallOption) (*CreateMenuItemOptionResponse, error) {
+	out := new(CreateMenuItemOptionResponse)
+	err := c.cc.Invoke(ctx, "/mookiespb.MenuService/CreateMenuItemOption", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MenuServiceServer is the server API for MenuService service.
 type MenuServiceServer interface {
-	// Unary get menu
 	GetMenu(context.Context, *Empty) (*Menu, error)
+	CreateMenuItem(context.Context, *CreateMenuItemRequest) (*CreateMenuItemResponse, error)
+	UpdateMenuItem(context.Context, *UpdateMenuItemRequest) (*UpdateMenuItemResponse, error)
+	DeleteMenuItem(context.Context, *DeleteMenuItemRequest) (*DeleteMenuItemResponse, error)
+	CreateMenuItemOption(context.Context, *CreateMenuItemOptionRequest) (*CreateMenuItemOptionResponse, error)
 }
 
 // UnimplementedMenuServiceServer can be embedded to have forward compatible implementations.
@@ -759,6 +1090,18 @@ type UnimplementedMenuServiceServer struct {
 
 func (*UnimplementedMenuServiceServer) GetMenu(ctx context.Context, req *Empty) (*Menu, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMenu not implemented")
+}
+func (*UnimplementedMenuServiceServer) CreateMenuItem(ctx context.Context, req *CreateMenuItemRequest) (*CreateMenuItemResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateMenuItem not implemented")
+}
+func (*UnimplementedMenuServiceServer) UpdateMenuItem(ctx context.Context, req *UpdateMenuItemRequest) (*UpdateMenuItemResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMenuItem not implemented")
+}
+func (*UnimplementedMenuServiceServer) DeleteMenuItem(ctx context.Context, req *DeleteMenuItemRequest) (*DeleteMenuItemResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMenuItem not implemented")
+}
+func (*UnimplementedMenuServiceServer) CreateMenuItemOption(ctx context.Context, req *CreateMenuItemOptionRequest) (*CreateMenuItemOptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateMenuItemOption not implemented")
 }
 
 func RegisterMenuServiceServer(s *grpc.Server, srv MenuServiceServer) {
@@ -783,6 +1126,78 @@ func _MenuService_GetMenu_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MenuService_CreateMenuItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateMenuItemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MenuServiceServer).CreateMenuItem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mookiespb.MenuService/CreateMenuItem",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MenuServiceServer).CreateMenuItem(ctx, req.(*CreateMenuItemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MenuService_UpdateMenuItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMenuItemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MenuServiceServer).UpdateMenuItem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mookiespb.MenuService/UpdateMenuItem",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MenuServiceServer).UpdateMenuItem(ctx, req.(*UpdateMenuItemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MenuService_DeleteMenuItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMenuItemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MenuServiceServer).DeleteMenuItem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mookiespb.MenuService/DeleteMenuItem",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MenuServiceServer).DeleteMenuItem(ctx, req.(*DeleteMenuItemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MenuService_CreateMenuItemOption_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateMenuItemOptionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MenuServiceServer).CreateMenuItemOption(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mookiespb.MenuService/CreateMenuItemOption",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MenuServiceServer).CreateMenuItemOption(ctx, req.(*CreateMenuItemOptionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _MenuService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "mookiespb.MenuService",
 	HandlerType: (*MenuServiceServer)(nil),
@@ -790,6 +1205,22 @@ var _MenuService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMenu",
 			Handler:    _MenuService_GetMenu_Handler,
+		},
+		{
+			MethodName: "CreateMenuItem",
+			Handler:    _MenuService_CreateMenuItem_Handler,
+		},
+		{
+			MethodName: "UpdateMenuItem",
+			Handler:    _MenuService_UpdateMenuItem_Handler,
+		},
+		{
+			MethodName: "DeleteMenuItem",
+			Handler:    _MenuService_DeleteMenuItem_Handler,
+		},
+		{
+			MethodName: "CreateMenuItemOption",
+			Handler:    _MenuService_CreateMenuItemOption_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -1,15 +1,18 @@
-# my global config
 global:
-  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
-
+  scrape_interval:     15s 
   external_labels:
-    monitor: 'codelab-monitor'
+    monitor: 'mookies-monitor'
 
-# A scrape configuration containing exactly one endpoint to scrape:
-# Here it's Prometheus itself.
 scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-  - job_name: 'grpcserver'
+  - job_name: 'mookies-server'
     scrape_interval: 1s
     static_configs:
-      - targets: ['localhost:9001']
+      - targets: ['localhost:9001', 'localhost:9002']
+  - job_name: 'mookies-front'
+    scrape_interval: 1s
+    static_configs:
+      - targets: ['localhost:9003']
+  - job_name: 'mookies-kitchen'
+    scrape_interval: 1s
+    static_configs:
+      - targets: ['localhost:9004']

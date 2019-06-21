@@ -1,0 +1,6 @@
+prometheus_client==0.3.0
+py_grpc_prometheus==0.1.2
+python_escpos==2.2.0
+grpcio==1.21.1
+escpos==1.6
+protobuf==3.8.0

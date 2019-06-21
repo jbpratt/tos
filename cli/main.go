@@ -14,7 +14,7 @@
 
 package main
 
-import "github.com/jbpratt78/mookies-tos/cli/cmd"
+import "github.com/jbpratt78/tos/cli/cmd"
 
 func main() {
 	cmd.Execute()
