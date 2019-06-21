@@ -50,6 +50,9 @@ type layout struct {
 	// Popup
 	PSelect []bool
 
+	//item creation
+	catID int32
+
 	Error error
 
 	// Layout
@@ -186,6 +189,8 @@ func (l *layout) doSubmitOrderRequest(order *mookiespb.Order) {
 	l.debug("Response from SubmitOrder: %v\n", res.GetResult())
 }
 
+// TODO write function to create menuItem
+
 func (l *layout) basicDemo(w *nucular.Window) {
 	l.overviewLayout(w)
 }
@@ -254,6 +259,30 @@ func (l *layout) itemOptionPopup(w *nucular.Window) {
 			}
 		}
 		w.Close()
+	}
+	if w.Button(label.T("Cancel"), false) {
+		l.CurrentItem = nil
+		w.Close()
+	}
+}
+
+func (l *layout) customItemOptionPopup(w *nucular.Window) {
+	item := &mookiespb.Item{}
+	item.Id = l.catID
+
+	w.Row(30).Static(w.Bounds.W-90, 10, 83)
+	l.CustomOptionNameEditor.Edit(w)
+	w.Label("$", "CC")
+	l.CustomOptionPriceEditor.Edit(w)
+	w.Row(30).Dynamic(1)
+	if w.Button(label.T("ADD"), false) {
+		price := string(l.CustomOptionPriceEditor.Buffer)
+		if s, err := strconv.ParseFloat(price, 32); err == nil && len(l.CustomOptionNameEditor.Buffer) >= 1 {
+			item.Name = string(l.CustomOptionNameEditor.Buffer)
+			item.Price = float32(s * 100)
+			// TODO: call item creation function here
+			w.Close()
+		}
 	}
 	if w.Button(label.T("Cancel"), false) {
 		l.CurrentItem = nil
@@ -341,6 +370,14 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 						}
 					}
 					newRow++
+				}
+				if newRow == 4 {
+					newRow = 0
+					sw.Row(100).Dynamic(4)
+				}
+				if sw.Button(label.T(wrapText("Create new item", int(float64(sw.Bounds.W)/4.0/8.0))), false) {
+					l.catID = category.Id
+					w.Master().PopupOpen("Create new Item:", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{(w.Bounds.W / 2) - 115, 100, 230, (5 * 40) + 140}, true, l.customItemOptionPopup)
 				}
 				sw.TreePop()
 			}
