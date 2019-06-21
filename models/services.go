@@ -38,14 +38,22 @@ func WithSqlite(path string) ServicesConfig {
 
 func WithMenu() ServicesConfig {
 	return func(s *Services) error {
-		s.Menu = NewMenuService(s.db)
+		menu, err := NewMenuService(s.db)
+		if err != nil {
+			return err
+		}
+		s.Menu = menu
 		return nil
 	}
 }
 
 func WithOrder() ServicesConfig {
 	return func(s *Services) error {
-		s.Order = NewOrderService(s.db)
+		order, err := NewOrderService(s.db)
+		if err != nil {
+			return err
+		}
+		s.Order = order
 		return nil
 	}
 }

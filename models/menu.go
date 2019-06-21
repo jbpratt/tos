@@ -12,7 +12,7 @@ import (
 type MenuDB interface {
 	SeedMenu() error
 	CreateMenuItem(*mookiespb.Item) error
-	// DeleteMenuItem() error
+	DeleteMenuItem(int32) error
 	// CreateMenuItemOption() error
 	GetMenu() (*mookiespb.Menu, error)
 }
@@ -32,9 +32,45 @@ type menuDB struct {
 	db *sqlx.DB
 }
 
-func NewMenuService(db *sqlx.DB) MenuService {
+const menuSchema = `
+CREATE TABLE IF NOT EXISTS categories (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS items (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  price DECIMAL NOT NULL,
+  category_id INTEGER NOT NULL, 
+  CONSTRAINT fk_categories
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+
+CREATE TABLE IF NOT EXISTS options (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  price DECIMAL NOT NULL,
+  selected BOOLEAN NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS item_options (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  item_id INTEGER NOT NULL,
+  option_id INTEGER NOT NULL,
+  FOREIGN KEY (item_id) REFERENCES items(id),
+  FOREIGN KEY (option_id) REFERENCES options(id)
+);
+`
+
+func NewMenuService(db *sqlx.DB) (MenuService, error) {
+	_, err := db.Exec(menuSchema)
+	if err != nil {
+		return nil, err
+	}
+
 	mdb := &menuDB{db: db}
-	return &menuService{mdb}
+	return &menuService{mdb}, nil
 }
 
 func (m *menuDB) SeedMenu() error {
