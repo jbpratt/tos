@@ -266,9 +266,17 @@ func (l *layout) itemOptionPopup(w *nucular.Window) {
 	}
 }
 
-func (l *layout) customItemOptionPopup(w *nucular.Window) {
+func (l *layout) newMenuItemPopup(w *nucular.Window) {
 	item := &mookiespb.Item{}
-	item.Id = l.catID
+
+	var catList []string
+
+	for _, cat := range l.menu.GetCategories() {
+		catList = append(catList, cat.GetName())
+	}
+
+	w.Row(30).Dynamic(1)
+	l.catID = int32(w.ComboSimple(catList, int(l.catID), 30))
 
 	w.Row(30).Static(w.Bounds.W-90, 10, 83)
 	l.CustomOptionNameEditor.Edit(w)
@@ -280,6 +288,8 @@ func (l *layout) customItemOptionPopup(w *nucular.Window) {
 		if s, err := strconv.ParseFloat(price, 32); err == nil && len(l.CustomOptionNameEditor.Buffer) >= 1 {
 			item.Name = string(l.CustomOptionNameEditor.Buffer)
 			item.Price = float32(s * 100)
+			item.CategoryID = l.catID
+			fmt.Printf("added item %v with price $ %v in category %v.", item.Name, item.Price/100, item.CategoryID)
 			// TODO: call item creation function here
 			w.Close()
 		}
@@ -376,8 +386,8 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 					sw.Row(100).Dynamic(4)
 				}
 				if sw.Button(label.T(wrapText("Create new item", int(float64(sw.Bounds.W)/4.0/8.0))), false) {
-					l.catID = category.Id
-					w.Master().PopupOpen("Create new Item:", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{(w.Bounds.W / 2) - 115, 100, 230, (5 * 40) + 140}, true, l.customItemOptionPopup)
+					l.catID = category.Id - 1
+					w.Master().PopupOpen("Create new Item:", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{(w.Bounds.W / 2) - 115, 100, 230, (5 * 40) + 140}, true, l.newMenuItemPopup)
 				}
 				sw.TreePop()
 			}
