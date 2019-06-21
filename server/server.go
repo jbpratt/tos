@@ -35,8 +35,8 @@ var (
 	listen   = flag.String("listen", ":50051", "listen address")
 	dbp      = flag.String("database", "./mookies.db", "database to use")
 	tls      = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
-	crt      = flag.String("crt", "server.crt", "TLS cert to use")
-	key      = flag.String("key", "server.key", "TLS key to use")
+	crt      = flag.String("crt", "cert/server.crt", "TLS cert to use")
+	key      = flag.String("key", "cert/server.key", "TLS key to use")
 )
 
 type server struct {

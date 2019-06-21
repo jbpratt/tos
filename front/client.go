@@ -103,16 +103,16 @@ var (
 		PermitWithoutStream: true,
 	}
 
-	tls    = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
-	caFile = flag.String("ca_file", "", "The file containning the CA root cert file")
-	addr   = flag.String("addr", "server:50051", "server to dial")
+	tls  = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
+	cert = flag.String("cert", "cert/server.crt", "The file containing the CA root cert file")
+	addr = flag.String("addr", "server:50051", "server to dial")
 )
 
 func main() {
 	flag.Parse()
 	var opts []grpc.DialOption
 	if *tls {
-		creds, err := credentials.NewClientTLSFromFile(*caFile, "")
+		creds, err := credentials.NewClientTLSFromFile(*cert, "")
 		if err != nil {
 			log.Fatal(err)
 		}

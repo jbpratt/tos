@@ -17,6 +17,8 @@ services:
     container_name: grpcserver
     build: ./server
     restart: always
+    volumes:
+      - ./cert/:/src/cert/
     ports:
       - "50051:50051"
       - "9001:9001"
