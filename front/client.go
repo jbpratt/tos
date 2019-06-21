@@ -98,7 +98,7 @@ type client struct {
 
 var (
 	kacp = keepalive.ClientParameters{
-		Time:                10 * time.Second,
+		Time:                60 * time.Second,
 		Timeout:             time.Second,
 		PermitWithoutStream: true,
 	}

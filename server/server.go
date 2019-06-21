@@ -29,8 +29,7 @@ var (
 	reg         = prometheus.NewRegistry()
 	grpcMetrics = grpc_prometheus.NewServerMetrics()
 	kasp        = keepalive.ServerParameters{
-		Time:              5 * time.Second,
-		MaxConnectionIdle: 5 * time.Minute,
+		Time: 60 * time.Second,
 	}
 	promAddr = flag.String("prom", ":9001", "Port to run metrics HTTP server")
 	listen   = flag.String("listen", ":50051", "listen address")
@@ -56,7 +55,17 @@ func (s *server) GetMenu(ctx context.Context, empty *mookiespb.Empty) (*mookiesp
 func (s *server) CreateMenuItem(ctx context.Context,
 	req *mookiespb.CreateMenuItemRequest) (*mookiespb.CreateMenuItemResponse, error) {
 
-	return nil, status.Error(codes.Unimplemented, "not implemented")
+	i := req.GetItem()
+	err := s.services.Menu.CreateMenuItem(i)
+	if err != nil {
+		return nil, err
+	}
+
+	res := &mookiespb.CreateMenuItemResponse{
+		Result: "success",
+	}
+
+	return res, s.LoadData()
 }
 
 func (s *server) UpdateMenuItem(ctx context.Context,
@@ -233,6 +242,12 @@ func main() {
 
 	opts = append(opts,
 		grpc.KeepaliveParams(kasp),
+		grpc.KeepaliveEnforcementPolicy(
+			keepalive.EnforcementPolicy{
+				MinTime:             10 * time.Second,
+				PermitWithoutStream: true,
+			},
+		),
 		grpc.StreamInterceptor(grpcMetrics.StreamServerInterceptor()),
 		grpc.UnaryInterceptor(grpcMetrics.UnaryServerInterceptor()))
 
