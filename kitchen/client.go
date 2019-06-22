@@ -6,8 +6,9 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"log"
+	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -25,6 +26,7 @@ import (
 	mookiespb "github.com/jbpratt78/tos/protofiles"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/keepalive"
 )
 
@@ -47,9 +49,6 @@ type layout struct {
 	// debug
 	DebugEnabled bool
 	DebugStrings []string
-
-	// Popup
-	PSelect []bool
 
 	Theme  nstyle.Theme
 	client mookiespb.OrderServiceClient
@@ -81,7 +80,14 @@ var (
 	cert = flag.String("cert", "cert/server.crt", "The file containing the CA root cert file")
 	addr = flag.String("addr", "server:50051", "server address to dial")
 	wnd  nucular.MasterWindow
+
+	log grpclog.LoggerV2
 )
+
+func init() {
+	log = grpclog.NewLoggerV2(os.Stdout, ioutil.Discard, ioutil.Discard)
+	grpclog.SetLoggerV2(log)
+}
 
 func main() {
 	flag.Parse()
@@ -106,8 +112,6 @@ func main() {
 		grpc.WithUnaryInterceptor(grpcMetrics.UnaryClientInterceptor()),
 		grpc.WithKeepaliveParams(kacp),
 	)
-
-	fmt.Println("Attempting to dial", addr)
 
 	cc, err := grpc.Dial(*addr, opts...)
 	if err != nil {
@@ -144,7 +148,7 @@ func main() {
 
 func (l *layout) completeOrder(order *mookiespb.Order, i int) error {
 	id := order.GetId()
-	fmt.Println("Starting complete order request...")
+	log.Infoln("Starting complete order request...")
 	// take this order req in as param
 	req := &mookiespb.CompleteOrderRequest{
 		Id: id,
@@ -153,7 +157,7 @@ func (l *layout) completeOrder(order *mookiespb.Order, i int) error {
 	if err != nil {
 		return err
 	}
-	log.Printf("Response from CompleteOrder: %v\n", res.GetResponse())
+	log.Infof("Response from CompleteOrder: %v\n", res.GetResponse())
 
 	l.Orders = append(l.Orders[:i], l.Orders[i+1:]...)
 	// so we have the option for an undo button if the order was dismissed too early
@@ -169,13 +173,13 @@ func (l *layout) requestOrders() error {
 		return err
 	}
 	l.Orders = res.GetOrders()
-	log.Printf("Response from Orders: %v\n", l.Orders)
+	log.Infof("Response from Orders: %v\n", l.Orders)
 	return nil
 }
 
 func (l *layout) subscribeToOrders() error {
 
-	fmt.Println("Subscribing to orders...")
+	log.Infoln("Subscribing to orders...")
 	req := &mookiespb.Empty{}
 
 	stream, err := l.client.SubscribeToOrders(context.Background(), req)
@@ -193,7 +197,7 @@ func (l *layout) subscribeToOrders() error {
 			return nil
 		}
 		l.Orders = append(l.Orders, order)
-		log.Printf("Received order: %v\n", order)
+		log.Infof("Received order: %v\n", order)
 		wnd.Changed()
 	}
 	return nil
@@ -292,7 +296,7 @@ func (l *layout) basicDemo(w *nucular.Window) {
 
 func (l *layout) debug(message string, v ...interface{}) {
 	msg := fmt.Sprintf(message, v...)
-	log.Printf(msg)
+	log.Infof(msg)
 	// append to debug slice
 	l.DebugStrings = append(l.DebugStrings, msg)
 }
@@ -333,17 +337,17 @@ func (l *layout) keybindings(w *nucular.Window) {
 			case (e.Code == key.CodeKeypad9 || e.Code == key.Code9):
 				l.addToCompleteOrderIndex(9)
 			case (e.Code == key.CodeKeypadFullStop || e.Code == key.CodeDeleteBackspace):
-				fmt.Println("delete pressed")
+				log.Infoln("delete pressed")
 				l.resetCompleteOrderIndex()
 			case (e.Code == key.CodeKeypadEnter || e.Code == key.CodeReturnEnter):
 				index := l.CompleteOrderIndex - 1
-				fmt.Printf("enter pressed with index %v\n", index)
+				log.Infof("enter pressed with index %v\n", index)
 				if index >= len(l.Orders) || index < 0 {
 					// TODO add popup
-					fmt.Println("no order at that index")
+					log.Infoln("no order at that index")
 					l.resetCompleteOrderIndex()
 				} else {
-					fmt.Println("calling complete")
+					log.Infoln("calling complete")
 					order := l.Orders[index]
 					l.completeOrder(order, index)
 					l.resetCompleteOrderIndex()

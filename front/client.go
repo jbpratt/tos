@@ -5,9 +5,10 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"log"
+	"io/ioutil"
 	"math"
 	"net/http"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -26,6 +27,7 @@ import (
 	"golang.org/x/mobile/event/key"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/keepalive"
 )
 
@@ -106,7 +108,14 @@ var (
 	tls  = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
 	cert = flag.String("cert", "cert/server.crt", "The file containing the CA root cert file")
 	addr = flag.String("addr", "server:50051", "server to dial")
+
+	log grpclog.LoggerV2
 )
+
+func init() {
+	log = grpclog.NewLoggerV2(os.Stdout, ioutil.Discard, ioutil.Discard)
+	grpclog.SetLoggerV2(log)
+}
 
 func main() {
 	flag.Parse()
@@ -130,9 +139,11 @@ func main() {
 		grpc.WithUnaryInterceptor(grpcMetrics.UnaryClientInterceptor()),
 		grpc.WithKeepaliveParams(kacp),
 	)
-	fmt.Println("Attempting to dial", addr)
 
-	cc, err := grpc.Dial(*addr, opts...)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	cc, err := grpc.DialContext(ctx, *addr, opts...)
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
 	}
@@ -287,7 +298,7 @@ func (l *layout) newMenuItemPopup(w *nucular.Window) {
 			item.Name = string(l.CustomOptionNameEditor.Buffer)
 			item.Price = float32(s * 100)
 			item.CategoryID = l.catID
-			fmt.Printf("added item %v with price $ %v in category %v.", item.Name, item.Price/100, item.CategoryID)
+			log.Infof("added item %v with price $ %v in category %v.", item.Name, item.Price/100, item.CategoryID)
 			// TODO: call item creation function here
 			w.Close()
 		}
@@ -487,7 +498,7 @@ func wrapText(text string, width int) string {
 
 func (l *layout) debug(message string, v ...interface{}) {
 	msg := fmt.Sprintf(message, v...)
-	log.Printf(msg)
+	log.Info(msg)
 	// append to debug slice
 	l.DebugStrings = append(l.DebugStrings, msg)
 }
@@ -522,7 +533,7 @@ func (l *layout) keybindings(w *nucular.Window) {
 				l.DebugEnabled = !l.DebugEnabled
 			case (e.Modifiers == key.ModControl || e.Modifiers == key.ModControl|key.ModShift) && (e.Code == key.CodeZ):
 				// TODO: theme pop up to pick from theme list
-				fmt.Println("pop up theme list")
+				log.Infoln("pop up theme list")
 			case (e.Modifiers == key.ModControl || e.Modifiers == key.ModControl|key.ModShift) && (e.Code == key.CodeEqualSign):
 				mw.Style().Scale(scaling + 0.1)
 			case (e.Modifiers == key.ModControl || e.Modifiers == key.ModControl|key.ModShift) && (e.Code == key.CodeHyphenMinus):
