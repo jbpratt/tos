@@ -59,7 +59,7 @@ func completeOrder(c mookiespb.OrderServiceClient) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return res.GetResult(), nil
+	return res.GetResponse(), nil
 }
 
 func init() {

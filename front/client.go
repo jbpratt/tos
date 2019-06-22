@@ -175,9 +175,7 @@ func (l *layout) doMenuRequest() (*mookiespb.Menu, error) {
 // pass in order as arg
 func (l *layout) doSubmitOrderRequest(order *mookiespb.Order) {
 	l.debug("Starting order request")
-	req := &mookiespb.SubmitOrderRequest{
-		Order: order,
-	}
+	req := order
 
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 	defer cancel()

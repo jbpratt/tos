@@ -37,7 +37,6 @@ var orderCmd = &cobra.Command{
 			log.Fatalf("Failed to dial: %v", err)
 		}
 
-		//menuClient := mookiespb.NewMenuServiceClient(cc)
 		orderClient := mookiespb.NewOrderServiceClient(cc)
 
 		defer cc.Close()
@@ -51,23 +50,21 @@ var orderCmd = &cobra.Command{
 
 func doSubmitOrderRequest(c mookiespb.OrderServiceClient) (string, error) {
 	go fmt.Println("Starting order request")
-	req := &mookiespb.SubmitOrderRequest{
-		Order: &mookiespb.Order{
-			Name: name,
-			Items: []*mookiespb.Item{
-				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Options: []*mookiespb.Option{
-					{Name: "pickles", Price: 0, Selected: true, Id: 1},
-				}},
-			},
-			Total: 495,
+	req := &mookiespb.Order{
+		Name: name,
+		Items: []*mookiespb.Item{
+			{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Options: []*mookiespb.Option{
+				{Name: "pickles", Price: 0, Selected: true, Id: 1},
+			}},
 		},
+		Total: 495,
 	}
 
 	res, err := c.SubmitOrder(context.Background(), req)
 	if err != nil {
 		return "", err
 	}
-	return res.GetResult(), nil
+	return res.GetResponse(), nil
 }
 
 func init() {
