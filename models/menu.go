@@ -60,8 +60,7 @@ CREATE TABLE IF NOT EXISTS item_options (
   option_id INTEGER NOT NULL,
   FOREIGN KEY (item_id) REFERENCES items(id),
   FOREIGN KEY (option_id) REFERENCES options(id)
-);
-`
+);`
 
 func NewMenuService(db *sqlx.DB) (MenuService, error) {
 	_, err := db.Exec(menuSchema)
@@ -157,9 +156,14 @@ func (m *menuDB) CreateMenuItem(item *mookiespb.Item) error {
 	m.Lock()
 	defer m.Unlock()
 
-	_, err := m.db.Exec(
+	res, err := m.db.Exec(
 		"INSERT INTO items (name, price, category_id) VALUES (?,?,?)",
 		item.GetName(), item.GetPrice(), item.GetCategoryID())
+	if err != nil {
+		return err
+	}
+
+	_, err = res.LastInsertId()
 	if err != nil {
 		return err
 	}
