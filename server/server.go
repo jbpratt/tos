@@ -3,21 +3,24 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
 	"net"
 	"net/http"
 	"time"
 
 	"github.com/cskr/pubsub"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/jbpratt78/tos/models"
 	mookiespb "github.com/jbpratt78/tos/protofiles"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/status"
 )
@@ -37,6 +40,7 @@ var (
 	tls      = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
 	crt      = flag.String("crt", "cert/server.crt", "TLS cert to use")
 	key      = flag.String("key", "cert/server.key", "TLS key to use")
+	logger   *logrus.Logger
 )
 
 type server struct {
@@ -47,7 +51,7 @@ type server struct {
 }
 
 func (s *server) GetMenu(ctx context.Context, empty *mookiespb.Empty) (*mookiespb.Menu, error) {
-	log.Println("Client has requested the menu")
+	logger.Println("Client has requested the menu")
 	if len(s.menu.GetCategories()) == 0 {
 		return nil, status.Error(codes.NotFound, "menu is empty")
 	}
@@ -94,7 +98,7 @@ func (s *server) CreateMenuItemOption(ctx context.Context,
 func (s *server) SubmitOrder(ctx context.Context,
 	req *mookiespb.Order) (*mookiespb.Response, error) {
 
-	log.Println("An order was received")
+	logger.Println("An order was received")
 	o := req
 	o.Status = "active"
 
@@ -115,11 +119,11 @@ func (s *server) SubmitOrder(ctx context.Context,
 func (s *server) SubscribeToOrders(req *mookiespb.Empty,
 	stream mookiespb.OrderService_SubscribeToOrdersServer) error {
 
-	log.Printf("Client has subscribed to orders: %v\n", req)
+	logger.Printf("Client has subscribed to orders: %v\n", req)
 	ch := s.ps.Sub(topicOrder)
 	for {
 		if o, ok := <-ch; ok {
-			log.Printf("Sending order to client: %v\n", o)
+			logger.Printf("Sending order to client: %v\n", o)
 			err := stream.Send(o.(*mookiespb.Order))
 			if err != nil {
 				return err
@@ -131,11 +135,11 @@ func (s *server) SubscribeToOrders(req *mookiespb.Empty,
 func (s *server) SubscribeToCompleteOrders(req *mookiespb.Empty,
 	stream mookiespb.OrderService_SubscribeToCompleteOrdersServer) error {
 
-	log.Printf("Client has subscribed to orders: %v\n", req)
+	logger.Printf("Client has subscribed to orders: %v\n", req)
 	ch := s.ps.Sub(topicComplete)
 	for {
 		if o, ok := <-ch; ok {
-			log.Printf("Sending order to client: %v\n", o)
+			logger.Printf("Sending order to client: %v\n", o)
 			err := stream.Send(o.(*mookiespb.Order))
 			if err != nil {
 				return err
@@ -151,7 +155,7 @@ func publish(ps *pubsub.PubSub, order *mookiespb.Order, topic string) {
 func (s *server) CompleteOrder(ctx context.Context,
 	req *mookiespb.CompleteOrderRequest) (*mookiespb.Response, error) {
 
-	log.Printf("Client is completing order: %v\n", req)
+	logger.Printf("Client is completing order: %v\n", req)
 	// update order to be complete
 	for _, o := range s.orders {
 		if req.GetId() == o.GetId() {
@@ -174,7 +178,7 @@ func (s *server) CompleteOrder(ctx context.Context,
 func (s *server) ActiveOrders(
 	ctx context.Context, empty *mookiespb.Empty) (*mookiespb.OrdersResponse, error) {
 
-	log.Println("Client has requested active orders")
+	logger.Println("Client has requested active orders")
 	res := &mookiespb.OrdersResponse{
 		Orders: s.orders,
 	}
@@ -224,6 +228,16 @@ func NewServices() (*models.Services, error) {
 }
 
 func init() {
+	logger = logrus.StandardLogger()
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetFormatter(&logrus.TextFormatter{
+		ForceColors:     true,
+		FullTimestamp:   true,
+		TimestampFormat: time.RFC3339Nano,
+		DisableSorting:  true,
+	})
+	// Should only be done from init functions
+	grpclog.SetLoggerV2(grpclog.NewLoggerV2(logger.Out, logger.Out, logger.Out))
 	reg.MustRegister(grpcMetrics)
 }
 
@@ -232,18 +246,20 @@ func main() {
 
 	lis, err := net.Listen("tcp", *listen)
 	if err != nil {
-		log.Fatalf("Failed to listen: %v\n", err)
+		logger.Fatalf("Failed to listen: %v\n", err)
 	}
-	log.Printf("Listening on %q...\n", *listen)
+	logger.Printf("Listening on %q...\n", *listen)
 
 	var opts []grpc.ServerOption
 	if *tls {
 		creds, err := credentials.NewServerTLSFromFile(*crt, *key)
 		if err != nil {
-			log.Fatalf("Could not load server/key pair: %s", err)
+			logger.Fatalf("Could not load server/key pair: %s", err)
 		}
 		opts = []grpc.ServerOption{grpc.Creds(creds)}
 	}
+
+	logrusEntry := logrus.NewEntry(logger)
 
 	opts = append(opts,
 		grpc.KeepaliveParams(kasp),
@@ -253,12 +269,19 @@ func main() {
 				PermitWithoutStream: true,
 			},
 		),
-		grpc.StreamInterceptor(grpcMetrics.StreamServerInterceptor()),
-		grpc.UnaryInterceptor(grpcMetrics.UnaryServerInterceptor()))
+		grpc_middleware.WithStreamServerChain(
+			grpcMetrics.StreamServerInterceptor(),
+			grpc_logrus.StreamServerInterceptor(logrusEntry),
+		),
+		grpc_middleware.WithUnaryServerChain(
+			grpcMetrics.UnaryServerInterceptor(),
+			grpc_logrus.UnaryServerInterceptor(logrusEntry),
+		),
+	)
 
 	server, err := NewServer()
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 	}
 	defer server.services.Close()
 
@@ -276,11 +299,11 @@ func main() {
 
 	go func() {
 		if err := httpServer.ListenAndServe(); err != nil {
-			log.Fatal("Unable to start a http server.")
+			logger.Fatal("Unable to start a http server.")
 		}
 	}()
 
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve: %v", err)
+		logger.Fatalf("Failed to serve: %v", err)
 	}
 }

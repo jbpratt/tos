@@ -16,6 +16,7 @@ require (
 	github.com/golang/protobuf v1.3.1
 	github.com/google/pprof v0.0.0-20190515194954-54271f7e092f // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
+	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/grpc-ecosystem/grpc-gateway v1.9.2 // indirect
 	github.com/jmoiron/sqlx v1.2.0
@@ -31,7 +32,7 @@ require (
 	github.com/prometheus/common v0.6.0 // indirect
 	github.com/rogpeppe/fastuuid v1.1.0 // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible // indirect
-	github.com/sirupsen/logrus v1.4.2 // indirect
+	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
