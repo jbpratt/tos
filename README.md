@@ -4,6 +4,7 @@
 ### Setup
 
 ### TODO:
+- [ ] Client GUI code needs cleaning up
 - [ ] Document and try to solve server not accepting order on restart
 - [ ] Deploy script
 - [ ] Determine proper restart order and script
