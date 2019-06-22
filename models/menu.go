@@ -21,7 +21,7 @@ type MenuService interface {
 	MenuDB
 }
 
-var _ MenuDB = &menuDB{}
+var _ MenuDB = (*menuDB)(nil)
 
 type menuService struct {
 	MenuDB

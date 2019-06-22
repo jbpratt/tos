@@ -48,15 +48,20 @@ type server struct {
 
 func (s *server) GetMenu(ctx context.Context, empty *mookiespb.Empty) (*mookiespb.Menu, error) {
 	log.Println("Client has requested the menu")
-	res := s.menu
-	return res, nil
+	if len(s.menu.GetCategories()) == 0 {
+		return nil, status.Error(codes.NotFound, "menu is empty")
+	}
+	return s.menu, nil
 }
 
 func (s *server) CreateMenuItem(ctx context.Context,
 	req *mookiespb.CreateMenuItemRequest) (*mookiespb.CreateMenuItemResponse, error) {
 
-	i := req.GetItem()
-	err := s.services.Menu.CreateMenuItem(i)
+	if req.GetItem() == nil {
+		return nil, status.Error(codes.InvalidArgument, "no item provided")
+	}
+
+	err := s.services.Menu.CreateMenuItem(req.GetItem())
 	if err != nil {
 		return nil, err
 	}
