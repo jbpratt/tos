@@ -46,7 +46,7 @@ func TestCompleteOrder(t *testing.T) {
 	mOrderClient.EXPECT().CompleteOrder(
 		gomock.Any(),
 		&mookiespb.CompleteOrderRequest{Id: 1},
-	).Return(&mookiespb.CompleteOrderResponse{Result: "Order marked as complete"}, nil)
+	).Return(&mookiespb.Response{Response: "Order marked as complete"}, nil)
 
 	if err := testCompleteOrder(mOrderClient); err != nil {
 		t.Fatalf("Test failed: %v", err)
@@ -89,7 +89,7 @@ func testCompleteOrder(client mookiespb.OrderServiceClient) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	want := &mookiespb.CompleteOrderResponse{Result: "Order marked as complete"}
+	want := &mookiespb.Response{Response: "Order marked as complete"}
 
 	req := &mookiespb.CompleteOrderRequest{Id: 1}
 	got, err := client.CompleteOrder(ctx, req)
