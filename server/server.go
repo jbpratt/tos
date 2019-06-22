@@ -55,47 +55,47 @@ func (s *server) GetMenu(ctx context.Context, empty *mookiespb.Empty) (*mookiesp
 }
 
 func (s *server) CreateMenuItem(ctx context.Context,
-	req *mookiespb.CreateMenuItemRequest) (*mookiespb.CreateMenuItemResponse, error) {
+	req *mookiespb.Item) (*mookiespb.Response, error) {
 
-	if req.GetItem() == nil {
+	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "no item provided")
 	}
 
-	err := s.services.Menu.CreateMenuItem(req.GetItem())
+	err := s.services.Menu.CreateMenuItem(req)
 	if err != nil {
 		return nil, err
 	}
 
-	res := &mookiespb.CreateMenuItemResponse{
-		Result: "success",
+	res := &mookiespb.Response{
+		Response: "success",
 	}
 
 	return res, s.LoadData()
 }
 
 func (s *server) UpdateMenuItem(ctx context.Context,
-	req *mookiespb.UpdateMenuItemRequest) (*mookiespb.UpdateMenuItemResponse, error) {
+	req *mookiespb.Item) (*mookiespb.Response, error) {
 
 	return nil, status.Error(codes.Unimplemented, "not implemented")
 }
 
 func (s *server) DeleteMenuItem(ctx context.Context,
-	req *mookiespb.DeleteMenuItemRequest) (*mookiespb.DeleteMenuItemResponse, error) {
+	req *mookiespb.DeleteMenuItemRequest) (*mookiespb.Response, error) {
 
 	return nil, status.Error(codes.Unimplemented, "not implemented")
 }
 
 func (s *server) CreateMenuItemOption(ctx context.Context,
-	req *mookiespb.CreateMenuItemOptionRequest) (*mookiespb.CreateMenuItemOptionResponse, error) {
+	req *mookiespb.Option) (*mookiespb.Response, error) {
 
 	return nil, status.Error(codes.Unimplemented, "not implemented")
 }
 
 func (s *server) SubmitOrder(ctx context.Context,
-	req *mookiespb.SubmitOrderRequest) (*mookiespb.SubmitOrderResponse, error) {
+	req *mookiespb.Order) (*mookiespb.Response, error) {
 
 	log.Println("An order was received")
-	o := req.GetOrder()
+	o := req
 	o.Status = "active"
 
 	err := s.services.Order.SubmitOrder(o)
@@ -103,8 +103,8 @@ func (s *server) SubmitOrder(ctx context.Context,
 		return nil, err
 	}
 
-	res := &mookiespb.SubmitOrderResponse{
-		Result: "Order has been placed..",
+	res := &mookiespb.Response{
+		Response: "Order has been placed..",
 	}
 
 	go publish(s.ps, o, topicOrder)
@@ -149,7 +149,7 @@ func publish(ps *pubsub.PubSub, order *mookiespb.Order, topic string) {
 }
 
 func (s *server) CompleteOrder(ctx context.Context,
-	req *mookiespb.CompleteOrderRequest) (*mookiespb.CompleteOrderResponse, error) {
+	req *mookiespb.CompleteOrderRequest) (*mookiespb.Response, error) {
 
 	log.Printf("Client is completing order: %v\n", req)
 	// update order to be complete
@@ -164,8 +164,8 @@ func (s *server) CompleteOrder(ctx context.Context,
 	if err != nil {
 		return nil, err
 	}
-	res := &mookiespb.CompleteOrderResponse{
-		Result: "Order marked as complete",
+	res := &mookiespb.Response{
+		Response: "Order marked as complete",
 	}
 
 	return res, s.LoadData()

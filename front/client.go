@@ -186,7 +186,7 @@ func (l *layout) doSubmitOrderRequest(order *mookiespb.Order) {
 	if err != nil {
 		log.Fatalf("Error while submitting order RPC: %v\n", err)
 	}
-	l.debug("Response from SubmitOrder: %v\n", res.GetResult())
+	l.debug("Response from SubmitOrder: %v\n", res.GetResponse())
 }
 
 // TODO write function to create menuItem

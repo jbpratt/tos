@@ -42,20 +42,12 @@ message Order {
   string time_complete = 7;
 } 
   
-message SubmitOrderRequest {
- Order order = 1;
-}
-
-message SubmitOrderResponse {
-  string result = 1;
+message Response {
+  string response = 1;
 }
 
 message CompleteOrderRequest {
   int32 id = 1;
-}
-
-message CompleteOrderResponse {
-  string result = 1;
 }
 
 message OrdersRequest {
@@ -70,65 +62,33 @@ message Empty {
 
 }
 
-message CreateMenuItemRequest {
-  Item item = 1;
-}
-
-message CreateMenuItemResponse {
-  string result = 1;
-}
-
-message UpdateMenuItemRequest {
-  Item item = 1;
-}
-
-message UpdateMenuItemResponse {
-  string result = 1;
-}
-
 message DeleteMenuItemRequest {
   int32 id = 1;
-}
-
-message DeleteMenuItemResponse {
-  string result = 1;
-}
-
-message CreateMenuItemOptionRequest {
-  Option option = 1;
-}
-
-message CreateMenuItemOptionResponse {
-  string result = 1;
 }
 
 // All unary requests
 service MenuService{
   rpc GetMenu(Empty) returns (Menu) {};
 
-  rpc CreateMenuItem(CreateMenuItemRequest) returns (CreateMenuItemResponse) {};
+  rpc CreateMenuItem(Item) returns (Response) {};
 
-  rpc UpdateMenuItem(UpdateMenuItemRequest) returns (UpdateMenuItemResponse) {};
+  rpc UpdateMenuItem(Item) returns (Response) {};
 
-  rpc DeleteMenuItem(DeleteMenuItemRequest) returns (DeleteMenuItemResponse) {};
+  rpc DeleteMenuItem(DeleteMenuItemRequest) returns (Response) {};
 
-  rpc CreateMenuItemOption(CreateMenuItemOptionRequest) returns (CreateMenuItemOptionResponse) {};
+  rpc CreateMenuItemOption(Option) returns (Response) {};
 }
 
 service OrderService {
   // Unary 
-  rpc SubmitOrder(SubmitOrderRequest) returns (SubmitOrderResponse) {};
+  rpc SubmitOrder(Order) returns (Response) {};
 
-  // validate order can be unary
+  rpc ActiveOrders(Empty) returns (OrdersResponse) {};
 
-  // completeorder unary
-  rpc CompleteOrder(CompleteOrderRequest) returns (CompleteOrderResponse) {};
+  rpc CompleteOrder(CompleteOrderRequest) returns (Response) {};
 
   // server streaming
   rpc SubscribeToOrders(Empty) returns (stream Order) {};
 
   rpc SubscribeToCompleteOrders(Empty) returns (stream Order) {};
-  // all active orders
-  rpc ActiveOrders(Empty) returns (OrdersResponse) {};
 }
-

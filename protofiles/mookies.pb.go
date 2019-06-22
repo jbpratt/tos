@@ -351,80 +351,41 @@ func (m *Order) GetTimeComplete() string {
 	return ""
 }
 
-type SubmitOrderRequest struct {
-	Order                *Order   `protobuf:"bytes,1,opt,name=order,proto3" json:"order,omitempty"`
+type Response struct {
+	Response             string   `protobuf:"bytes,1,opt,name=response,proto3" json:"response,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *SubmitOrderRequest) Reset()         { *m = SubmitOrderRequest{} }
-func (m *SubmitOrderRequest) String() string { return proto.CompactTextString(m) }
-func (*SubmitOrderRequest) ProtoMessage()    {}
-func (*SubmitOrderRequest) Descriptor() ([]byte, []int) {
+func (m *Response) Reset()         { *m = Response{} }
+func (m *Response) String() string { return proto.CompactTextString(m) }
+func (*Response) ProtoMessage()    {}
+func (*Response) Descriptor() ([]byte, []int) {
 	return fileDescriptor_a42f9bdfdd6c12cf, []int{5}
 }
 
-func (m *SubmitOrderRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SubmitOrderRequest.Unmarshal(m, b)
+func (m *Response) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Response.Unmarshal(m, b)
 }
-func (m *SubmitOrderRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SubmitOrderRequest.Marshal(b, m, deterministic)
+func (m *Response) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Response.Marshal(b, m, deterministic)
 }
-func (m *SubmitOrderRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SubmitOrderRequest.Merge(m, src)
+func (m *Response) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Response.Merge(m, src)
 }
-func (m *SubmitOrderRequest) XXX_Size() int {
-	return xxx_messageInfo_SubmitOrderRequest.Size(m)
+func (m *Response) XXX_Size() int {
+	return xxx_messageInfo_Response.Size(m)
 }
-func (m *SubmitOrderRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_SubmitOrderRequest.DiscardUnknown(m)
+func (m *Response) XXX_DiscardUnknown() {
+	xxx_messageInfo_Response.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_SubmitOrderRequest proto.InternalMessageInfo
+var xxx_messageInfo_Response proto.InternalMessageInfo
 
-func (m *SubmitOrderRequest) GetOrder() *Order {
+func (m *Response) GetResponse() string {
 	if m != nil {
-		return m.Order
-	}
-	return nil
-}
-
-type SubmitOrderResponse struct {
-	Result               string   `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *SubmitOrderResponse) Reset()         { *m = SubmitOrderResponse{} }
-func (m *SubmitOrderResponse) String() string { return proto.CompactTextString(m) }
-func (*SubmitOrderResponse) ProtoMessage()    {}
-func (*SubmitOrderResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{6}
-}
-
-func (m *SubmitOrderResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SubmitOrderResponse.Unmarshal(m, b)
-}
-func (m *SubmitOrderResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SubmitOrderResponse.Marshal(b, m, deterministic)
-}
-func (m *SubmitOrderResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SubmitOrderResponse.Merge(m, src)
-}
-func (m *SubmitOrderResponse) XXX_Size() int {
-	return xxx_messageInfo_SubmitOrderResponse.Size(m)
-}
-func (m *SubmitOrderResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_SubmitOrderResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SubmitOrderResponse proto.InternalMessageInfo
-
-func (m *SubmitOrderResponse) GetResult() string {
-	if m != nil {
-		return m.Result
+		return m.Response
 	}
 	return ""
 }
@@ -440,7 +401,7 @@ func (m *CompleteOrderRequest) Reset()         { *m = CompleteOrderRequest{} }
 func (m *CompleteOrderRequest) String() string { return proto.CompactTextString(m) }
 func (*CompleteOrderRequest) ProtoMessage()    {}
 func (*CompleteOrderRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{7}
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{6}
 }
 
 func (m *CompleteOrderRequest) XXX_Unmarshal(b []byte) error {
@@ -468,45 +429,6 @@ func (m *CompleteOrderRequest) GetId() int32 {
 	return 0
 }
 
-type CompleteOrderResponse struct {
-	Result               string   `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *CompleteOrderResponse) Reset()         { *m = CompleteOrderResponse{} }
-func (m *CompleteOrderResponse) String() string { return proto.CompactTextString(m) }
-func (*CompleteOrderResponse) ProtoMessage()    {}
-func (*CompleteOrderResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{8}
-}
-
-func (m *CompleteOrderResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CompleteOrderResponse.Unmarshal(m, b)
-}
-func (m *CompleteOrderResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CompleteOrderResponse.Marshal(b, m, deterministic)
-}
-func (m *CompleteOrderResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CompleteOrderResponse.Merge(m, src)
-}
-func (m *CompleteOrderResponse) XXX_Size() int {
-	return xxx_messageInfo_CompleteOrderResponse.Size(m)
-}
-func (m *CompleteOrderResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_CompleteOrderResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CompleteOrderResponse proto.InternalMessageInfo
-
-func (m *CompleteOrderResponse) GetResult() string {
-	if m != nil {
-		return m.Result
-	}
-	return ""
-}
-
 type OrdersRequest struct {
 	Request              string   `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -518,7 +440,7 @@ func (m *OrdersRequest) Reset()         { *m = OrdersRequest{} }
 func (m *OrdersRequest) String() string { return proto.CompactTextString(m) }
 func (*OrdersRequest) ProtoMessage()    {}
 func (*OrdersRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{9}
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{7}
 }
 
 func (m *OrdersRequest) XXX_Unmarshal(b []byte) error {
@@ -557,7 +479,7 @@ func (m *OrdersResponse) Reset()         { *m = OrdersResponse{} }
 func (m *OrdersResponse) String() string { return proto.CompactTextString(m) }
 func (*OrdersResponse) ProtoMessage()    {}
 func (*OrdersResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{10}
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{8}
 }
 
 func (m *OrdersResponse) XXX_Unmarshal(b []byte) error {
@@ -595,7 +517,7 @@ func (m *Empty) Reset()         { *m = Empty{} }
 func (m *Empty) String() string { return proto.CompactTextString(m) }
 func (*Empty) ProtoMessage()    {}
 func (*Empty) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{11}
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{9}
 }
 
 func (m *Empty) XXX_Unmarshal(b []byte) error {
@@ -616,162 +538,6 @@ func (m *Empty) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Empty proto.InternalMessageInfo
 
-type CreateMenuItemRequest struct {
-	Item                 *Item    `protobuf:"bytes,1,opt,name=item,proto3" json:"item,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *CreateMenuItemRequest) Reset()         { *m = CreateMenuItemRequest{} }
-func (m *CreateMenuItemRequest) String() string { return proto.CompactTextString(m) }
-func (*CreateMenuItemRequest) ProtoMessage()    {}
-func (*CreateMenuItemRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{12}
-}
-
-func (m *CreateMenuItemRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateMenuItemRequest.Unmarshal(m, b)
-}
-func (m *CreateMenuItemRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateMenuItemRequest.Marshal(b, m, deterministic)
-}
-func (m *CreateMenuItemRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateMenuItemRequest.Merge(m, src)
-}
-func (m *CreateMenuItemRequest) XXX_Size() int {
-	return xxx_messageInfo_CreateMenuItemRequest.Size(m)
-}
-func (m *CreateMenuItemRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateMenuItemRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CreateMenuItemRequest proto.InternalMessageInfo
-
-func (m *CreateMenuItemRequest) GetItem() *Item {
-	if m != nil {
-		return m.Item
-	}
-	return nil
-}
-
-type CreateMenuItemResponse struct {
-	Result               string   `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *CreateMenuItemResponse) Reset()         { *m = CreateMenuItemResponse{} }
-func (m *CreateMenuItemResponse) String() string { return proto.CompactTextString(m) }
-func (*CreateMenuItemResponse) ProtoMessage()    {}
-func (*CreateMenuItemResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{13}
-}
-
-func (m *CreateMenuItemResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateMenuItemResponse.Unmarshal(m, b)
-}
-func (m *CreateMenuItemResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateMenuItemResponse.Marshal(b, m, deterministic)
-}
-func (m *CreateMenuItemResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateMenuItemResponse.Merge(m, src)
-}
-func (m *CreateMenuItemResponse) XXX_Size() int {
-	return xxx_messageInfo_CreateMenuItemResponse.Size(m)
-}
-func (m *CreateMenuItemResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateMenuItemResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CreateMenuItemResponse proto.InternalMessageInfo
-
-func (m *CreateMenuItemResponse) GetResult() string {
-	if m != nil {
-		return m.Result
-	}
-	return ""
-}
-
-type UpdateMenuItemRequest struct {
-	Item                 *Item    `protobuf:"bytes,1,opt,name=item,proto3" json:"item,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *UpdateMenuItemRequest) Reset()         { *m = UpdateMenuItemRequest{} }
-func (m *UpdateMenuItemRequest) String() string { return proto.CompactTextString(m) }
-func (*UpdateMenuItemRequest) ProtoMessage()    {}
-func (*UpdateMenuItemRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{14}
-}
-
-func (m *UpdateMenuItemRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UpdateMenuItemRequest.Unmarshal(m, b)
-}
-func (m *UpdateMenuItemRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UpdateMenuItemRequest.Marshal(b, m, deterministic)
-}
-func (m *UpdateMenuItemRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UpdateMenuItemRequest.Merge(m, src)
-}
-func (m *UpdateMenuItemRequest) XXX_Size() int {
-	return xxx_messageInfo_UpdateMenuItemRequest.Size(m)
-}
-func (m *UpdateMenuItemRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_UpdateMenuItemRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UpdateMenuItemRequest proto.InternalMessageInfo
-
-func (m *UpdateMenuItemRequest) GetItem() *Item {
-	if m != nil {
-		return m.Item
-	}
-	return nil
-}
-
-type UpdateMenuItemResponse struct {
-	Result               string   `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *UpdateMenuItemResponse) Reset()         { *m = UpdateMenuItemResponse{} }
-func (m *UpdateMenuItemResponse) String() string { return proto.CompactTextString(m) }
-func (*UpdateMenuItemResponse) ProtoMessage()    {}
-func (*UpdateMenuItemResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{15}
-}
-
-func (m *UpdateMenuItemResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UpdateMenuItemResponse.Unmarshal(m, b)
-}
-func (m *UpdateMenuItemResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UpdateMenuItemResponse.Marshal(b, m, deterministic)
-}
-func (m *UpdateMenuItemResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UpdateMenuItemResponse.Merge(m, src)
-}
-func (m *UpdateMenuItemResponse) XXX_Size() int {
-	return xxx_messageInfo_UpdateMenuItemResponse.Size(m)
-}
-func (m *UpdateMenuItemResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_UpdateMenuItemResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UpdateMenuItemResponse proto.InternalMessageInfo
-
-func (m *UpdateMenuItemResponse) GetResult() string {
-	if m != nil {
-		return m.Result
-	}
-	return ""
-}
-
 type DeleteMenuItemRequest struct {
 	Id                   int32    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -783,7 +549,7 @@ func (m *DeleteMenuItemRequest) Reset()         { *m = DeleteMenuItemRequest{} }
 func (m *DeleteMenuItemRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteMenuItemRequest) ProtoMessage()    {}
 func (*DeleteMenuItemRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{16}
+	return fileDescriptor_a42f9bdfdd6c12cf, []int{10}
 }
 
 func (m *DeleteMenuItemRequest) XXX_Unmarshal(b []byte) error {
@@ -811,196 +577,62 @@ func (m *DeleteMenuItemRequest) GetId() int32 {
 	return 0
 }
 
-type DeleteMenuItemResponse struct {
-	Result               string   `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *DeleteMenuItemResponse) Reset()         { *m = DeleteMenuItemResponse{} }
-func (m *DeleteMenuItemResponse) String() string { return proto.CompactTextString(m) }
-func (*DeleteMenuItemResponse) ProtoMessage()    {}
-func (*DeleteMenuItemResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{17}
-}
-
-func (m *DeleteMenuItemResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DeleteMenuItemResponse.Unmarshal(m, b)
-}
-func (m *DeleteMenuItemResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DeleteMenuItemResponse.Marshal(b, m, deterministic)
-}
-func (m *DeleteMenuItemResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteMenuItemResponse.Merge(m, src)
-}
-func (m *DeleteMenuItemResponse) XXX_Size() int {
-	return xxx_messageInfo_DeleteMenuItemResponse.Size(m)
-}
-func (m *DeleteMenuItemResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_DeleteMenuItemResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DeleteMenuItemResponse proto.InternalMessageInfo
-
-func (m *DeleteMenuItemResponse) GetResult() string {
-	if m != nil {
-		return m.Result
-	}
-	return ""
-}
-
-type CreateMenuItemOptionRequest struct {
-	Option               *Option  `protobuf:"bytes,1,opt,name=option,proto3" json:"option,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *CreateMenuItemOptionRequest) Reset()         { *m = CreateMenuItemOptionRequest{} }
-func (m *CreateMenuItemOptionRequest) String() string { return proto.CompactTextString(m) }
-func (*CreateMenuItemOptionRequest) ProtoMessage()    {}
-func (*CreateMenuItemOptionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{18}
-}
-
-func (m *CreateMenuItemOptionRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateMenuItemOptionRequest.Unmarshal(m, b)
-}
-func (m *CreateMenuItemOptionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateMenuItemOptionRequest.Marshal(b, m, deterministic)
-}
-func (m *CreateMenuItemOptionRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateMenuItemOptionRequest.Merge(m, src)
-}
-func (m *CreateMenuItemOptionRequest) XXX_Size() int {
-	return xxx_messageInfo_CreateMenuItemOptionRequest.Size(m)
-}
-func (m *CreateMenuItemOptionRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateMenuItemOptionRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CreateMenuItemOptionRequest proto.InternalMessageInfo
-
-func (m *CreateMenuItemOptionRequest) GetOption() *Option {
-	if m != nil {
-		return m.Option
-	}
-	return nil
-}
-
-type CreateMenuItemOptionResponse struct {
-	Result               string   `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *CreateMenuItemOptionResponse) Reset()         { *m = CreateMenuItemOptionResponse{} }
-func (m *CreateMenuItemOptionResponse) String() string { return proto.CompactTextString(m) }
-func (*CreateMenuItemOptionResponse) ProtoMessage()    {}
-func (*CreateMenuItemOptionResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a42f9bdfdd6c12cf, []int{19}
-}
-
-func (m *CreateMenuItemOptionResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateMenuItemOptionResponse.Unmarshal(m, b)
-}
-func (m *CreateMenuItemOptionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateMenuItemOptionResponse.Marshal(b, m, deterministic)
-}
-func (m *CreateMenuItemOptionResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateMenuItemOptionResponse.Merge(m, src)
-}
-func (m *CreateMenuItemOptionResponse) XXX_Size() int {
-	return xxx_messageInfo_CreateMenuItemOptionResponse.Size(m)
-}
-func (m *CreateMenuItemOptionResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateMenuItemOptionResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CreateMenuItemOptionResponse proto.InternalMessageInfo
-
-func (m *CreateMenuItemOptionResponse) GetResult() string {
-	if m != nil {
-		return m.Result
-	}
-	return ""
-}
-
 func init() {
 	proto.RegisterType((*Item)(nil), "mookiespb.Item")
 	proto.RegisterType((*Option)(nil), "mookiespb.Option")
 	proto.RegisterType((*Category)(nil), "mookiespb.Category")
 	proto.RegisterType((*Menu)(nil), "mookiespb.Menu")
 	proto.RegisterType((*Order)(nil), "mookiespb.Order")
-	proto.RegisterType((*SubmitOrderRequest)(nil), "mookiespb.SubmitOrderRequest")
-	proto.RegisterType((*SubmitOrderResponse)(nil), "mookiespb.SubmitOrderResponse")
+	proto.RegisterType((*Response)(nil), "mookiespb.Response")
 	proto.RegisterType((*CompleteOrderRequest)(nil), "mookiespb.CompleteOrderRequest")
-	proto.RegisterType((*CompleteOrderResponse)(nil), "mookiespb.CompleteOrderResponse")
 	proto.RegisterType((*OrdersRequest)(nil), "mookiespb.OrdersRequest")
 	proto.RegisterType((*OrdersResponse)(nil), "mookiespb.OrdersResponse")
 	proto.RegisterType((*Empty)(nil), "mookiespb.Empty")
-	proto.RegisterType((*CreateMenuItemRequest)(nil), "mookiespb.CreateMenuItemRequest")
-	proto.RegisterType((*CreateMenuItemResponse)(nil), "mookiespb.CreateMenuItemResponse")
-	proto.RegisterType((*UpdateMenuItemRequest)(nil), "mookiespb.UpdateMenuItemRequest")
-	proto.RegisterType((*UpdateMenuItemResponse)(nil), "mookiespb.UpdateMenuItemResponse")
 	proto.RegisterType((*DeleteMenuItemRequest)(nil), "mookiespb.DeleteMenuItemRequest")
-	proto.RegisterType((*DeleteMenuItemResponse)(nil), "mookiespb.DeleteMenuItemResponse")
-	proto.RegisterType((*CreateMenuItemOptionRequest)(nil), "mookiespb.CreateMenuItemOptionRequest")
-	proto.RegisterType((*CreateMenuItemOptionResponse)(nil), "mookiespb.CreateMenuItemOptionResponse")
 }
 
 func init() { proto.RegisterFile("protofiles/mookies.proto", fileDescriptor_a42f9bdfdd6c12cf) }
 
 var fileDescriptor_a42f9bdfdd6c12cf = []byte{
-	// 733 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x56, 0x4f, 0x4f, 0xdb, 0x4e,
-	0x10, 0xc5, 0x49, 0xec, 0xc0, 0x04, 0xf8, 0xfd, 0x58, 0x08, 0x32, 0x69, 0x4b, 0xcd, 0xa2, 0x42,
-	0x50, 0xd5, 0x80, 0x82, 0xd4, 0x43, 0xa1, 0x87, 0x2a, 0x54, 0x2d, 0x87, 0x16, 0xc9, 0x80, 0x7a,
-	0x6b, 0x95, 0x3f, 0xd3, 0xca, 0x6a, 0x1c, 0xbb, 0xde, 0x0d, 0x12, 0x9f, 0xaa, 0x87, 0x7e, 0x89,
-	0x7e, 0xa1, 0xde, 0x2b, 0x8f, 0xd7, 0xe9, 0xda, 0x71, 0x08, 0x12, 0x37, 0xef, 0xce, 0x9b, 0xf7,
-	0x66, 0xe6, 0x6d, 0x46, 0x01, 0x3b, 0x8c, 0x02, 0x19, 0x7c, 0xf5, 0x86, 0x28, 0x0e, 0xfd, 0x20,
-	0xf8, 0xee, 0xa1, 0x68, 0xd1, 0x15, 0x5b, 0x52, 0xc7, 0xb0, 0xc7, 0x7f, 0x1a, 0x50, 0x39, 0x97,
-	0xe8, 0x33, 0x06, 0x95, 0x51, 0xd7, 0x47, 0xdb, 0x70, 0x8c, 0xe6, 0x92, 0x4b, 0xdf, 0x6c, 0x15,
-	0x4a, 0xde, 0xc0, 0x2e, 0x39, 0x46, 0xd3, 0x74, 0x4b, 0xde, 0x80, 0x6d, 0x80, 0x19, 0x46, 0x5e,
-	0x1f, 0xed, 0xb2, 0x63, 0x34, 0x4b, 0x6e, 0x72, 0x60, 0xdb, 0x00, 0xfd, 0xae, 0xc4, 0x6f, 0x41,
-	0x74, 0x7b, 0x7e, 0x66, 0x57, 0x08, 0xad, 0xdd, 0x30, 0x07, 0x6a, 0x41, 0x34, 0xc0, 0x28, 0x96,
-	0x39, 0x3f, 0xb3, 0x4d, 0x02, 0xe8, 0x57, 0xec, 0x39, 0x54, 0x83, 0x50, 0x7a, 0xc1, 0x48, 0xd8,
-	0x96, 0x53, 0x6e, 0xd6, 0xda, 0x6b, 0xad, 0x49, 0x85, 0xad, 0x0b, 0x8a, 0xb8, 0x29, 0x82, 0x7f,
-	0x06, 0x2b, 0xb9, 0x7a, 0x40, 0xc9, 0x0d, 0x58, 0x14, 0x38, 0xc4, 0xbe, 0xc4, 0x01, 0x15, 0xbc,
-	0xe8, 0x4e, 0xce, 0xfc, 0x1a, 0x16, 0x3b, 0xaa, 0xf8, 0x7b, 0x29, 0x3c, 0x03, 0xd3, 0x93, 0xe8,
-	0x0b, 0xbb, 0x4c, 0xa5, 0xff, 0xa7, 0x95, 0x1e, 0xb7, 0xe7, 0x26, 0x51, 0x7e, 0x02, 0x95, 0x0f,
-	0x38, 0x1a, 0xb3, 0xe3, 0xc9, 0xb4, 0x3c, 0x14, 0xb6, 0x41, 0x39, 0xeb, 0x5a, 0x4e, 0xaa, 0xed,
-	0x6a, 0x30, 0xfe, 0xdb, 0x00, 0xf3, 0x22, 0x1e, 0x98, 0x52, 0x37, 0x26, 0xea, 0x69, 0x85, 0x25,
-	0xad, 0xc2, 0xfb, 0x55, 0x14, 0x8f, 0x46, 0x06, 0xb2, 0x3b, 0xa4, 0x09, 0x94, 0xdc, 0xe4, 0xc0,
-	0x36, 0xc1, 0x12, 0xb2, 0x2b, 0xc7, 0x82, 0x8c, 0x5a, 0x72, 0xd5, 0x89, 0xed, 0xc0, 0xb2, 0xf4,
-	0x7c, 0xfc, 0x42, 0xbe, 0xe1, 0xc0, 0xb6, 0x28, 0x5a, 0x8b, 0xef, 0x2e, 0x92, 0x2b, 0xb6, 0x0b,
-	0x2b, 0x04, 0xe9, 0x07, 0x7e, 0x38, 0x44, 0x89, 0x76, 0x95, 0x30, 0x94, 0xd7, 0x51, 0x77, 0xfc,
-	0x14, 0xd8, 0xe5, 0xb8, 0xe7, 0x7b, 0x92, 0xb2, 0x5c, 0xfc, 0x31, 0x46, 0x21, 0xd9, 0x1e, 0x98,
-	0x44, 0x4c, 0x9d, 0xd5, 0xda, 0xff, 0xeb, 0xfe, 0x13, 0x2e, 0x09, 0xf3, 0x17, 0xb0, 0x9e, 0xc9,
-	0x16, 0x61, 0x30, 0x12, 0x18, 0x17, 0x1d, 0xa1, 0x18, 0x0f, 0xa5, 0x72, 0x4a, 0x9d, 0xf8, 0x1e,
-	0x6c, 0xa4, 0xc2, 0x19, 0xb9, 0xdc, 0x14, 0xf9, 0x21, 0xd4, 0x73, 0xb8, 0x39, 0xc4, 0x07, 0xb0,
-	0x42, 0x40, 0x91, 0x32, 0xda, 0x50, 0x8d, 0x92, 0x4f, 0x85, 0x4c, 0x8f, 0xfc, 0x15, 0xac, 0xa6,
-	0x50, 0x45, 0xda, 0x04, 0x8b, 0xba, 0x49, 0xed, 0x9f, 0xee, 0x56, 0xc5, 0x79, 0x15, 0xcc, 0xb7,
-	0x7e, 0x28, 0x6f, 0xf9, 0x29, 0xd4, 0x3b, 0x11, 0x76, 0x25, 0xc6, 0x6f, 0x88, 0x4c, 0x54, 0xba,
-	0xbb, 0x50, 0x89, 0xdd, 0x54, 0x73, 0x9b, 0xb2, 0x9a, 0x82, 0xfc, 0x08, 0x36, 0xf3, 0xd9, 0x73,
-	0xfa, 0x3b, 0x85, 0xfa, 0x75, 0x38, 0x78, 0x80, 0x5e, 0x3e, 0x7b, 0x8e, 0xde, 0x3e, 0xd4, 0xcf,
-	0x30, 0x1e, 0x7f, 0x5e, 0x2f, 0xef, 0xd4, 0x11, 0x6c, 0xe6, 0x81, 0x73, 0xa8, 0xdf, 0xc3, 0xa3,
-	0x6c, 0xf3, 0x6a, 0xa1, 0x28, 0x81, 0x03, 0xb0, 0x92, 0xcd, 0xa2, 0x5a, 0x2a, 0x58, 0x3d, 0x0a,
-	0xc0, 0x5f, 0xc2, 0xe3, 0x62, 0xa6, 0xbb, 0x2b, 0x68, 0xff, 0x2a, 0x43, 0x2d, 0x4e, 0xb9, 0xc4,
-	0xe8, 0x26, 0xde, 0x3e, 0x2d, 0xa8, 0xbe, 0x43, 0x49, 0xdb, 0x40, 0xb7, 0x9e, 0x9c, 0x6e, 0xe8,
-	0x23, 0x8d, 0x21, 0x7c, 0x81, 0x7d, 0x82, 0xd5, 0xac, 0x2e, 0x73, 0xf4, 0x85, 0x51, 0xf4, 0x2e,
-	0x1a, 0x3b, 0x77, 0x20, 0x92, 0x72, 0x13, 0xe2, 0xac, 0x4f, 0x19, 0xe2, 0xc2, 0x07, 0x90, 0x21,
-	0x2e, 0x36, 0x39, 0x21, 0xce, 0xba, 0x94, 0x21, 0x2e, 0x74, 0x3a, 0x43, 0x5c, 0x6c, 0x31, 0x5f,
-	0x60, 0x1e, 0x6c, 0x14, 0x59, 0xc0, 0xf6, 0x66, 0xb6, 0x9b, 0x71, 0xbb, 0xb1, 0x3f, 0x17, 0x97,
-	0x4a, 0xb5, 0xff, 0x94, 0x60, 0x99, 0x7e, 0x8d, 0xa9, 0x6d, 0x1f, 0xa1, 0xa6, 0xed, 0x1e, 0xf6,
-	0x44, 0xa3, 0x9a, 0xde, 0x68, 0x8d, 0xed, 0x59, 0xe1, 0x49, 0x2f, 0x57, 0xb0, 0x92, 0x59, 0x3a,
-	0xec, 0xa9, 0x5e, 0x5c, 0xc1, 0xda, 0x6a, 0x38, 0xb3, 0x01, 0x13, 0xd6, 0x13, 0x58, 0xbb, 0x1c,
-	0xf7, 0x44, 0x3f, 0xf2, 0x7a, 0x78, 0x15, 0x24, 0x9b, 0xa7, 0xe0, 0x99, 0x4d, 0xed, 0x1c, 0xbe,
-	0x70, 0x64, 0xb0, 0x0e, 0x6c, 0x69, 0xc9, 0x19, 0x89, 0xfb, 0x93, 0xbc, 0x86, 0xe5, 0x37, 0x7d,
-	0xe9, 0xdd, 0xcc, 0xce, 0xdb, 0xca, 0xe7, 0x89, 0x7f, 0x0d, 0xf4, 0x2c, 0xfa, 0x8f, 0x72, 0xfc,
-	0x37, 0x00, 0x00, 0xff, 0xff, 0x9c, 0x65, 0xfe, 0x9b, 0xbf, 0x08, 0x00, 0x00,
+	// 599 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x54, 0xcd, 0x6e, 0xd3, 0x40,
+	0x10, 0xae, 0xdd, 0xd8, 0x49, 0x27, 0x6d, 0xa0, 0x4b, 0x41, 0xdb, 0x1e, 0xc0, 0x2c, 0xa2, 0x04,
+	0x21, 0x05, 0xd4, 0x4a, 0x08, 0x51, 0x21, 0x81, 0x12, 0x54, 0xe5, 0x80, 0x22, 0x39, 0xf4, 0x0a,
+	0x4a, 0xec, 0x01, 0xad, 0x88, 0xb3, 0xc6, 0xbb, 0xa9, 0xd4, 0xa7, 0xe2, 0x0d, 0x38, 0x73, 0xe4,
+	0x91, 0x90, 0xc7, 0x76, 0xd8, 0xfc, 0x49, 0x11, 0xdc, 0x3c, 0x33, 0xdf, 0xcc, 0x7c, 0x33, 0xdf,
+	0xac, 0x81, 0xa7, 0x99, 0x32, 0xea, 0x8b, 0x9c, 0xa0, 0x7e, 0x9e, 0x28, 0xf5, 0x4d, 0xa2, 0xee,
+	0x90, 0x8b, 0xed, 0x95, 0x66, 0x3a, 0x16, 0x3f, 0x1c, 0xa8, 0xf5, 0x0d, 0x26, 0x8c, 0x41, 0x6d,
+	0x3a, 0x4a, 0x90, 0x3b, 0x81, 0xd3, 0xde, 0x0b, 0xe9, 0x9b, 0xb5, 0xc0, 0x95, 0x31, 0x77, 0x03,
+	0xa7, 0xed, 0x85, 0xae, 0x8c, 0xd9, 0x11, 0x78, 0x69, 0x26, 0x23, 0xe4, 0xbb, 0x81, 0xd3, 0x76,
+	0xc3, 0xc2, 0x60, 0xf7, 0x01, 0xa2, 0x91, 0xc1, 0xaf, 0x2a, 0xbb, 0xe9, 0xf7, 0x78, 0x8d, 0xd0,
+	0x96, 0x87, 0x05, 0xd0, 0x54, 0x59, 0x8c, 0x59, 0xde, 0xa6, 0xdf, 0xe3, 0x1e, 0x01, 0x6c, 0x17,
+	0x7b, 0x06, 0x75, 0x95, 0x1a, 0xa9, 0xa6, 0x9a, 0xfb, 0xc1, 0x6e, 0xbb, 0x79, 0x76, 0xd8, 0x99,
+	0x33, 0xec, 0x0c, 0x28, 0x12, 0x56, 0x08, 0xf1, 0x09, 0xfc, 0xc2, 0xf5, 0x1f, 0x94, 0x4f, 0xa0,
+	0xa1, 0x71, 0x82, 0x91, 0xc1, 0x98, 0x08, 0x37, 0xc2, 0xb9, 0x2d, 0xae, 0xa0, 0xd1, 0x2d, 0xc9,
+	0x6f, 0xd5, 0xe1, 0x31, 0x78, 0xd2, 0x60, 0xa2, 0xf9, 0x2e, 0x51, 0xbf, 0x65, 0x51, 0xcf, 0xc7,
+	0x0b, 0x8b, 0xa8, 0xb8, 0x80, 0xda, 0x07, 0x9c, 0xce, 0xd8, 0xf9, 0x7c, 0x5b, 0x12, 0x35, 0x77,
+	0x28, 0xe7, 0x8e, 0x95, 0x53, 0xf5, 0x0e, 0x2d, 0x98, 0xf8, 0xe5, 0x80, 0x37, 0xc8, 0x17, 0x56,
+	0x76, 0x77, 0xe6, 0xdd, 0x2b, 0x86, 0xae, 0xc5, 0x70, 0x3b, 0x46, 0xf9, 0x6a, 0x8c, 0x32, 0xa3,
+	0x09, 0x6d, 0xc0, 0x0d, 0x0b, 0x83, 0xdd, 0x03, 0x5f, 0x9b, 0x91, 0x99, 0x69, 0x12, 0x6a, 0x2f,
+	0x2c, 0x2d, 0xf6, 0x10, 0xf6, 0x8d, 0x4c, 0xf0, 0x33, 0xe9, 0x86, 0x31, 0xf7, 0x29, 0xda, 0xcc,
+	0x7d, 0x83, 0xc2, 0xc5, 0x1e, 0xc1, 0x01, 0x41, 0x22, 0x95, 0xa4, 0x13, 0x34, 0xc8, 0xeb, 0x84,
+	0xa1, 0xbc, 0x6e, 0xe9, 0x13, 0xa7, 0xd0, 0x08, 0x51, 0xa7, 0x6a, 0xaa, 0x49, 0x86, 0xac, 0xfc,
+	0x2e, 0x57, 0x3c, 0xb7, 0xc5, 0x29, 0x1c, 0x55, 0x39, 0x54, 0x3f, 0xc4, 0xef, 0x33, 0xd4, 0x66,
+	0x79, 0x01, 0xe2, 0x29, 0x1c, 0x50, 0x5c, 0x57, 0x00, 0x0e, 0xf5, 0xac, 0xf8, 0x2c, 0x6b, 0x56,
+	0xa6, 0x78, 0x0d, 0xad, 0x0a, 0x5a, 0x12, 0x68, 0x83, 0x4f, 0xf3, 0x54, 0x42, 0xdc, 0xb6, 0xef,
+	0x8e, 0xba, 0x96, 0x71, 0x51, 0x07, 0xef, 0x7d, 0x92, 0x9a, 0x1b, 0xf1, 0x04, 0xee, 0xf6, 0x30,
+	0x67, 0x95, 0xab, 0x49, 0xeb, 0x5c, 0x4f, 0xec, 0xec, 0xa7, 0x0b, 0xcd, 0x1c, 0x33, 0xc4, 0xec,
+	0x3a, 0xbf, 0xb9, 0x0e, 0xd4, 0x2f, 0xd1, 0xd0, 0x0d, 0xd8, 0x6d, 0xa8, 0xea, 0x89, 0xad, 0x51,
+	0x0e, 0x11, 0x3b, 0xec, 0x15, 0xb4, 0xba, 0x19, 0x8e, 0xfe, 0x36, 0x62, 0xcb, 0x42, 0x9e, 0xd8,
+	0x77, 0x53, 0xcd, 0x54, 0x64, 0x5e, 0xa5, 0xf1, 0xbf, 0x64, 0xf6, 0xa1, 0xb5, 0x38, 0x1c, 0x0b,
+	0x2c, 0xe0, 0xda, 0xb9, 0x37, 0x95, 0x7a, 0x0b, 0x47, 0x8b, 0xf4, 0xcb, 0x47, 0xbb, 0xfa, 0xb4,
+	0x37, 0x54, 0x38, 0xfb, 0xed, 0xc2, 0x3e, 0x89, 0x50, 0x6d, 0xf0, 0x25, 0x34, 0x87, 0xb3, 0x71,
+	0x22, 0x4d, 0xf1, 0x14, 0x56, 0xc4, 0xda, 0x44, 0xe5, 0x0d, 0xec, 0xbf, 0x8b, 0x8c, 0xbc, 0x2e,
+	0x0e, 0x49, 0xaf, 0x59, 0xff, 0xf1, 0x72, 0x29, 0x6d, 0xa5, 0x5f, 0xc2, 0xc1, 0xc2, 0x25, 0xb2,
+	0x07, 0xf6, 0x73, 0x5d, 0x73, 0xa3, 0x9b, 0x78, 0x5c, 0xc0, 0xe1, 0x70, 0x36, 0xd6, 0x51, 0x26,
+	0xc7, 0xf8, 0x51, 0x6d, 0x24, 0xb3, 0x32, 0x97, 0xd8, 0x79, 0xe1, 0xb0, 0x2e, 0x1c, 0x5b, 0xc9,
+	0x0b, 0x6d, 0xb7, 0x2e, 0x32, 0xf6, 0xe9, 0xff, 0x7f, 0xfe, 0x27, 0x00, 0x00, 0xff, 0xff, 0x36,
+	0x92, 0xb8, 0x1f, 0x1b, 0x06, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1016,10 +648,10 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MenuServiceClient interface {
 	GetMenu(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Menu, error)
-	CreateMenuItem(ctx context.Context, in *CreateMenuItemRequest, opts ...grpc.CallOption) (*CreateMenuItemResponse, error)
-	UpdateMenuItem(ctx context.Context, in *UpdateMenuItemRequest, opts ...grpc.CallOption) (*UpdateMenuItemResponse, error)
-	DeleteMenuItem(ctx context.Context, in *DeleteMenuItemRequest, opts ...grpc.CallOption) (*DeleteMenuItemResponse, error)
-	CreateMenuItemOption(ctx context.Context, in *CreateMenuItemOptionRequest, opts ...grpc.CallOption) (*CreateMenuItemOptionResponse, error)
+	CreateMenuItem(ctx context.Context, in *Item, opts ...grpc.CallOption) (*Response, error)
+	UpdateMenuItem(ctx context.Context, in *Item, opts ...grpc.CallOption) (*Response, error)
+	DeleteMenuItem(ctx context.Context, in *DeleteMenuItemRequest, opts ...grpc.CallOption) (*Response, error)
+	CreateMenuItemOption(ctx context.Context, in *Option, opts ...grpc.CallOption) (*Response, error)
 }
 
 type menuServiceClient struct {
@@ -1039,8 +671,8 @@ func (c *menuServiceClient) GetMenu(ctx context.Context, in *Empty, opts ...grpc
 	return out, nil
 }
 
-func (c *menuServiceClient) CreateMenuItem(ctx context.Context, in *CreateMenuItemRequest, opts ...grpc.CallOption) (*CreateMenuItemResponse, error) {
-	out := new(CreateMenuItemResponse)
+func (c *menuServiceClient) CreateMenuItem(ctx context.Context, in *Item, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, "/mookiespb.MenuService/CreateMenuItem", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1048,8 +680,8 @@ func (c *menuServiceClient) CreateMenuItem(ctx context.Context, in *CreateMenuIt
 	return out, nil
 }
 
-func (c *menuServiceClient) UpdateMenuItem(ctx context.Context, in *UpdateMenuItemRequest, opts ...grpc.CallOption) (*UpdateMenuItemResponse, error) {
-	out := new(UpdateMenuItemResponse)
+func (c *menuServiceClient) UpdateMenuItem(ctx context.Context, in *Item, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, "/mookiespb.MenuService/UpdateMenuItem", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1057,8 +689,8 @@ func (c *menuServiceClient) UpdateMenuItem(ctx context.Context, in *UpdateMenuIt
 	return out, nil
 }
 
-func (c *menuServiceClient) DeleteMenuItem(ctx context.Context, in *DeleteMenuItemRequest, opts ...grpc.CallOption) (*DeleteMenuItemResponse, error) {
-	out := new(DeleteMenuItemResponse)
+func (c *menuServiceClient) DeleteMenuItem(ctx context.Context, in *DeleteMenuItemRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, "/mookiespb.MenuService/DeleteMenuItem", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1066,8 +698,8 @@ func (c *menuServiceClient) DeleteMenuItem(ctx context.Context, in *DeleteMenuIt
 	return out, nil
 }
 
-func (c *menuServiceClient) CreateMenuItemOption(ctx context.Context, in *CreateMenuItemOptionRequest, opts ...grpc.CallOption) (*CreateMenuItemOptionResponse, error) {
-	out := new(CreateMenuItemOptionResponse)
+func (c *menuServiceClient) CreateMenuItemOption(ctx context.Context, in *Option, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, "/mookiespb.MenuService/CreateMenuItemOption", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1078,10 +710,10 @@ func (c *menuServiceClient) CreateMenuItemOption(ctx context.Context, in *Create
 // MenuServiceServer is the server API for MenuService service.
 type MenuServiceServer interface {
 	GetMenu(context.Context, *Empty) (*Menu, error)
-	CreateMenuItem(context.Context, *CreateMenuItemRequest) (*CreateMenuItemResponse, error)
-	UpdateMenuItem(context.Context, *UpdateMenuItemRequest) (*UpdateMenuItemResponse, error)
-	DeleteMenuItem(context.Context, *DeleteMenuItemRequest) (*DeleteMenuItemResponse, error)
-	CreateMenuItemOption(context.Context, *CreateMenuItemOptionRequest) (*CreateMenuItemOptionResponse, error)
+	CreateMenuItem(context.Context, *Item) (*Response, error)
+	UpdateMenuItem(context.Context, *Item) (*Response, error)
+	DeleteMenuItem(context.Context, *DeleteMenuItemRequest) (*Response, error)
+	CreateMenuItemOption(context.Context, *Option) (*Response, error)
 }
 
 // UnimplementedMenuServiceServer can be embedded to have forward compatible implementations.
@@ -1091,16 +723,16 @@ type UnimplementedMenuServiceServer struct {
 func (*UnimplementedMenuServiceServer) GetMenu(ctx context.Context, req *Empty) (*Menu, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMenu not implemented")
 }
-func (*UnimplementedMenuServiceServer) CreateMenuItem(ctx context.Context, req *CreateMenuItemRequest) (*CreateMenuItemResponse, error) {
+func (*UnimplementedMenuServiceServer) CreateMenuItem(ctx context.Context, req *Item) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateMenuItem not implemented")
 }
-func (*UnimplementedMenuServiceServer) UpdateMenuItem(ctx context.Context, req *UpdateMenuItemRequest) (*UpdateMenuItemResponse, error) {
+func (*UnimplementedMenuServiceServer) UpdateMenuItem(ctx context.Context, req *Item) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateMenuItem not implemented")
 }
-func (*UnimplementedMenuServiceServer) DeleteMenuItem(ctx context.Context, req *DeleteMenuItemRequest) (*DeleteMenuItemResponse, error) {
+func (*UnimplementedMenuServiceServer) DeleteMenuItem(ctx context.Context, req *DeleteMenuItemRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMenuItem not implemented")
 }
-func (*UnimplementedMenuServiceServer) CreateMenuItemOption(ctx context.Context, req *CreateMenuItemOptionRequest) (*CreateMenuItemOptionResponse, error) {
+func (*UnimplementedMenuServiceServer) CreateMenuItemOption(ctx context.Context, req *Option) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateMenuItemOption not implemented")
 }
 
@@ -1127,7 +759,7 @@ func _MenuService_GetMenu_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _MenuService_CreateMenuItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateMenuItemRequest)
+	in := new(Item)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1139,13 +771,13 @@ func _MenuService_CreateMenuItem_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/mookiespb.MenuService/CreateMenuItem",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MenuServiceServer).CreateMenuItem(ctx, req.(*CreateMenuItemRequest))
+		return srv.(MenuServiceServer).CreateMenuItem(ctx, req.(*Item))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _MenuService_UpdateMenuItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateMenuItemRequest)
+	in := new(Item)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1157,7 +789,7 @@ func _MenuService_UpdateMenuItem_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/mookiespb.MenuService/UpdateMenuItem",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MenuServiceServer).UpdateMenuItem(ctx, req.(*UpdateMenuItemRequest))
+		return srv.(MenuServiceServer).UpdateMenuItem(ctx, req.(*Item))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1181,7 +813,7 @@ func _MenuService_DeleteMenuItem_Handler(srv interface{}, ctx context.Context, d
 }
 
 func _MenuService_CreateMenuItemOption_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateMenuItemOptionRequest)
+	in := new(Option)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1193,7 +825,7 @@ func _MenuService_CreateMenuItemOption_Handler(srv interface{}, ctx context.Cont
 		FullMethod: "/mookiespb.MenuService/CreateMenuItemOption",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MenuServiceServer).CreateMenuItemOption(ctx, req.(*CreateMenuItemOptionRequest))
+		return srv.(MenuServiceServer).CreateMenuItemOption(ctx, req.(*Option))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1232,14 +864,12 @@ var _MenuService_serviceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type OrderServiceClient interface {
 	// Unary
-	SubmitOrder(ctx context.Context, in *SubmitOrderRequest, opts ...grpc.CallOption) (*SubmitOrderResponse, error)
-	// completeorder unary
-	CompleteOrder(ctx context.Context, in *CompleteOrderRequest, opts ...grpc.CallOption) (*CompleteOrderResponse, error)
+	SubmitOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Response, error)
+	ActiveOrders(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*OrdersResponse, error)
+	CompleteOrder(ctx context.Context, in *CompleteOrderRequest, opts ...grpc.CallOption) (*Response, error)
 	// server streaming
 	SubscribeToOrders(ctx context.Context, in *Empty, opts ...grpc.CallOption) (OrderService_SubscribeToOrdersClient, error)
 	SubscribeToCompleteOrders(ctx context.Context, in *Empty, opts ...grpc.CallOption) (OrderService_SubscribeToCompleteOrdersClient, error)
-	// all active orders
-	ActiveOrders(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*OrdersResponse, error)
 }
 
 type orderServiceClient struct {
@@ -1250,8 +880,8 @@ func NewOrderServiceClient(cc *grpc.ClientConn) OrderServiceClient {
 	return &orderServiceClient{cc}
 }
 
-func (c *orderServiceClient) SubmitOrder(ctx context.Context, in *SubmitOrderRequest, opts ...grpc.CallOption) (*SubmitOrderResponse, error) {
-	out := new(SubmitOrderResponse)
+func (c *orderServiceClient) SubmitOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, "/mookiespb.OrderService/SubmitOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1259,8 +889,17 @@ func (c *orderServiceClient) SubmitOrder(ctx context.Context, in *SubmitOrderReq
 	return out, nil
 }
 
-func (c *orderServiceClient) CompleteOrder(ctx context.Context, in *CompleteOrderRequest, opts ...grpc.CallOption) (*CompleteOrderResponse, error) {
-	out := new(CompleteOrderResponse)
+func (c *orderServiceClient) ActiveOrders(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*OrdersResponse, error) {
+	out := new(OrdersResponse)
+	err := c.cc.Invoke(ctx, "/mookiespb.OrderService/ActiveOrders", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) CompleteOrder(ctx context.Context, in *CompleteOrderRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, "/mookiespb.OrderService/CompleteOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1332,36 +971,28 @@ func (x *orderServiceSubscribeToCompleteOrdersClient) Recv() (*Order, error) {
 	return m, nil
 }
 
-func (c *orderServiceClient) ActiveOrders(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*OrdersResponse, error) {
-	out := new(OrdersResponse)
-	err := c.cc.Invoke(ctx, "/mookiespb.OrderService/ActiveOrders", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // OrderServiceServer is the server API for OrderService service.
 type OrderServiceServer interface {
 	// Unary
-	SubmitOrder(context.Context, *SubmitOrderRequest) (*SubmitOrderResponse, error)
-	// completeorder unary
-	CompleteOrder(context.Context, *CompleteOrderRequest) (*CompleteOrderResponse, error)
+	SubmitOrder(context.Context, *Order) (*Response, error)
+	ActiveOrders(context.Context, *Empty) (*OrdersResponse, error)
+	CompleteOrder(context.Context, *CompleteOrderRequest) (*Response, error)
 	// server streaming
 	SubscribeToOrders(*Empty, OrderService_SubscribeToOrdersServer) error
 	SubscribeToCompleteOrders(*Empty, OrderService_SubscribeToCompleteOrdersServer) error
-	// all active orders
-	ActiveOrders(context.Context, *Empty) (*OrdersResponse, error)
 }
 
 // UnimplementedOrderServiceServer can be embedded to have forward compatible implementations.
 type UnimplementedOrderServiceServer struct {
 }
 
-func (*UnimplementedOrderServiceServer) SubmitOrder(ctx context.Context, req *SubmitOrderRequest) (*SubmitOrderResponse, error) {
+func (*UnimplementedOrderServiceServer) SubmitOrder(ctx context.Context, req *Order) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubmitOrder not implemented")
 }
-func (*UnimplementedOrderServiceServer) CompleteOrder(ctx context.Context, req *CompleteOrderRequest) (*CompleteOrderResponse, error) {
+func (*UnimplementedOrderServiceServer) ActiveOrders(ctx context.Context, req *Empty) (*OrdersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ActiveOrders not implemented")
+}
+func (*UnimplementedOrderServiceServer) CompleteOrder(ctx context.Context, req *CompleteOrderRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CompleteOrder not implemented")
 }
 func (*UnimplementedOrderServiceServer) SubscribeToOrders(req *Empty, srv OrderService_SubscribeToOrdersServer) error {
@@ -1370,16 +1001,13 @@ func (*UnimplementedOrderServiceServer) SubscribeToOrders(req *Empty, srv OrderS
 func (*UnimplementedOrderServiceServer) SubscribeToCompleteOrders(req *Empty, srv OrderService_SubscribeToCompleteOrdersServer) error {
 	return status.Errorf(codes.Unimplemented, "method SubscribeToCompleteOrders not implemented")
 }
-func (*UnimplementedOrderServiceServer) ActiveOrders(ctx context.Context, req *Empty) (*OrdersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ActiveOrders not implemented")
-}
 
 func RegisterOrderServiceServer(s *grpc.Server, srv OrderServiceServer) {
 	s.RegisterService(&_OrderService_serviceDesc, srv)
 }
 
 func _OrderService_SubmitOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubmitOrderRequest)
+	in := new(Order)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1391,7 +1019,25 @@ func _OrderService_SubmitOrder_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/mookiespb.OrderService/SubmitOrder",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServiceServer).SubmitOrder(ctx, req.(*SubmitOrderRequest))
+		return srv.(OrderServiceServer).SubmitOrder(ctx, req.(*Order))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_ActiveOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).ActiveOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mookiespb.OrderService/ActiveOrders",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).ActiveOrders(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1456,24 +1102,6 @@ func (x *orderServiceSubscribeToCompleteOrdersServer) Send(m *Order) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _OrderService_ActiveOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrderServiceServer).ActiveOrders(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/mookiespb.OrderService/ActiveOrders",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServiceServer).ActiveOrders(ctx, req.(*Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 var _OrderService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "mookiespb.OrderService",
 	HandlerType: (*OrderServiceServer)(nil),
@@ -1483,12 +1111,12 @@ var _OrderService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _OrderService_SubmitOrder_Handler,
 		},
 		{
-			MethodName: "CompleteOrder",
-			Handler:    _OrderService_CompleteOrder_Handler,
-		},
-		{
 			MethodName: "ActiveOrders",
 			Handler:    _OrderService_ActiveOrders_Handler,
+		},
+		{
+			MethodName: "CompleteOrder",
+			Handler:    _OrderService_CompleteOrder_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

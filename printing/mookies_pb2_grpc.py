@@ -21,23 +21,23 @@ class MenuServiceStub(object):
         )
     self.CreateMenuItem = channel.unary_unary(
         '/mookiespb.MenuService/CreateMenuItem',
-        request_serializer=mookies__pb2.CreateMenuItemRequest.SerializeToString,
-        response_deserializer=mookies__pb2.CreateMenuItemResponse.FromString,
+        request_serializer=mookies__pb2.Item.SerializeToString,
+        response_deserializer=mookies__pb2.Response.FromString,
         )
     self.UpdateMenuItem = channel.unary_unary(
         '/mookiespb.MenuService/UpdateMenuItem',
-        request_serializer=mookies__pb2.UpdateMenuItemRequest.SerializeToString,
-        response_deserializer=mookies__pb2.UpdateMenuItemResponse.FromString,
+        request_serializer=mookies__pb2.Item.SerializeToString,
+        response_deserializer=mookies__pb2.Response.FromString,
         )
     self.DeleteMenuItem = channel.unary_unary(
         '/mookiespb.MenuService/DeleteMenuItem',
         request_serializer=mookies__pb2.DeleteMenuItemRequest.SerializeToString,
-        response_deserializer=mookies__pb2.DeleteMenuItemResponse.FromString,
+        response_deserializer=mookies__pb2.Response.FromString,
         )
     self.CreateMenuItemOption = channel.unary_unary(
         '/mookiespb.MenuService/CreateMenuItemOption',
-        request_serializer=mookies__pb2.CreateMenuItemOptionRequest.SerializeToString,
-        response_deserializer=mookies__pb2.CreateMenuItemOptionResponse.FromString,
+        request_serializer=mookies__pb2.Option.SerializeToString,
+        response_deserializer=mookies__pb2.Response.FromString,
         )
 
 
@@ -90,23 +90,23 @@ def add_MenuServiceServicer_to_server(servicer, server):
       ),
       'CreateMenuItem': grpc.unary_unary_rpc_method_handler(
           servicer.CreateMenuItem,
-          request_deserializer=mookies__pb2.CreateMenuItemRequest.FromString,
-          response_serializer=mookies__pb2.CreateMenuItemResponse.SerializeToString,
+          request_deserializer=mookies__pb2.Item.FromString,
+          response_serializer=mookies__pb2.Response.SerializeToString,
       ),
       'UpdateMenuItem': grpc.unary_unary_rpc_method_handler(
           servicer.UpdateMenuItem,
-          request_deserializer=mookies__pb2.UpdateMenuItemRequest.FromString,
-          response_serializer=mookies__pb2.UpdateMenuItemResponse.SerializeToString,
+          request_deserializer=mookies__pb2.Item.FromString,
+          response_serializer=mookies__pb2.Response.SerializeToString,
       ),
       'DeleteMenuItem': grpc.unary_unary_rpc_method_handler(
           servicer.DeleteMenuItem,
           request_deserializer=mookies__pb2.DeleteMenuItemRequest.FromString,
-          response_serializer=mookies__pb2.DeleteMenuItemResponse.SerializeToString,
+          response_serializer=mookies__pb2.Response.SerializeToString,
       ),
       'CreateMenuItemOption': grpc.unary_unary_rpc_method_handler(
           servicer.CreateMenuItemOption,
-          request_deserializer=mookies__pb2.CreateMenuItemOptionRequest.FromString,
-          response_serializer=mookies__pb2.CreateMenuItemOptionResponse.SerializeToString,
+          request_deserializer=mookies__pb2.Option.FromString,
+          response_serializer=mookies__pb2.Response.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
@@ -126,13 +126,18 @@ class OrderServiceStub(object):
     """
     self.SubmitOrder = channel.unary_unary(
         '/mookiespb.OrderService/SubmitOrder',
-        request_serializer=mookies__pb2.SubmitOrderRequest.SerializeToString,
-        response_deserializer=mookies__pb2.SubmitOrderResponse.FromString,
+        request_serializer=mookies__pb2.Order.SerializeToString,
+        response_deserializer=mookies__pb2.Response.FromString,
+        )
+    self.ActiveOrders = channel.unary_unary(
+        '/mookiespb.OrderService/ActiveOrders',
+        request_serializer=mookies__pb2.Empty.SerializeToString,
+        response_deserializer=mookies__pb2.OrdersResponse.FromString,
         )
     self.CompleteOrder = channel.unary_unary(
         '/mookiespb.OrderService/CompleteOrder',
         request_serializer=mookies__pb2.CompleteOrderRequest.SerializeToString,
-        response_deserializer=mookies__pb2.CompleteOrderResponse.FromString,
+        response_deserializer=mookies__pb2.Response.FromString,
         )
     self.SubscribeToOrders = channel.unary_stream(
         '/mookiespb.OrderService/SubscribeToOrders',
@@ -143,11 +148,6 @@ class OrderServiceStub(object):
         '/mookiespb.OrderService/SubscribeToCompleteOrders',
         request_serializer=mookies__pb2.Empty.SerializeToString,
         response_deserializer=mookies__pb2.Order.FromString,
-        )
-    self.ActiveOrders = channel.unary_unary(
-        '/mookiespb.OrderService/ActiveOrders',
-        request_serializer=mookies__pb2.Empty.SerializeToString,
-        response_deserializer=mookies__pb2.OrdersResponse.FromString,
         )
 
 
@@ -162,11 +162,16 @@ class OrderServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def CompleteOrder(self, request, context):
-    """validate order can be unary
+  def ActiveOrders(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
 
-    completeorder unary
-    """
+  def CompleteOrder(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
@@ -185,25 +190,23 @@ class OrderServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def ActiveOrders(self, request, context):
-    """all active orders
-    """
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
 
 def add_OrderServiceServicer_to_server(servicer, server):
   rpc_method_handlers = {
       'SubmitOrder': grpc.unary_unary_rpc_method_handler(
           servicer.SubmitOrder,
-          request_deserializer=mookies__pb2.SubmitOrderRequest.FromString,
-          response_serializer=mookies__pb2.SubmitOrderResponse.SerializeToString,
+          request_deserializer=mookies__pb2.Order.FromString,
+          response_serializer=mookies__pb2.Response.SerializeToString,
+      ),
+      'ActiveOrders': grpc.unary_unary_rpc_method_handler(
+          servicer.ActiveOrders,
+          request_deserializer=mookies__pb2.Empty.FromString,
+          response_serializer=mookies__pb2.OrdersResponse.SerializeToString,
       ),
       'CompleteOrder': grpc.unary_unary_rpc_method_handler(
           servicer.CompleteOrder,
           request_deserializer=mookies__pb2.CompleteOrderRequest.FromString,
-          response_serializer=mookies__pb2.CompleteOrderResponse.SerializeToString,
+          response_serializer=mookies__pb2.Response.SerializeToString,
       ),
       'SubscribeToOrders': grpc.unary_stream_rpc_method_handler(
           servicer.SubscribeToOrders,
@@ -214,11 +217,6 @@ def add_OrderServiceServicer_to_server(servicer, server):
           servicer.SubscribeToCompleteOrders,
           request_deserializer=mookies__pb2.Empty.FromString,
           response_serializer=mookies__pb2.Order.SerializeToString,
-      ),
-      'ActiveOrders': grpc.unary_unary_rpc_method_handler(
-          servicer.ActiveOrders,
-          request_deserializer=mookies__pb2.Empty.FromString,
-          response_serializer=mookies__pb2.OrdersResponse.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

@@ -57,14 +57,14 @@ func (mr *MockMenuServiceClientMockRecorder) GetMenu(ctx, in interface{}, opts .
 }
 
 // CreateMenuItem mocks base method
-func (m *MockMenuServiceClient) CreateMenuItem(ctx context.Context, in *protofiles.CreateMenuItemRequest, opts ...grpc.CallOption) (*protofiles.CreateMenuItemResponse, error) {
+func (m *MockMenuServiceClient) CreateMenuItem(ctx context.Context, in *protofiles.Item, opts ...grpc.CallOption) (*protofiles.Response, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "CreateMenuItem", varargs...)
-	ret0, _ := ret[0].(*protofiles.CreateMenuItemResponse)
+	ret0, _ := ret[0].(*protofiles.Response)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -77,14 +77,14 @@ func (mr *MockMenuServiceClientMockRecorder) CreateMenuItem(ctx, in interface{},
 }
 
 // UpdateMenuItem mocks base method
-func (m *MockMenuServiceClient) UpdateMenuItem(ctx context.Context, in *protofiles.UpdateMenuItemRequest, opts ...grpc.CallOption) (*protofiles.UpdateMenuItemResponse, error) {
+func (m *MockMenuServiceClient) UpdateMenuItem(ctx context.Context, in *protofiles.Item, opts ...grpc.CallOption) (*protofiles.Response, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "UpdateMenuItem", varargs...)
-	ret0, _ := ret[0].(*protofiles.UpdateMenuItemResponse)
+	ret0, _ := ret[0].(*protofiles.Response)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -97,14 +97,14 @@ func (mr *MockMenuServiceClientMockRecorder) UpdateMenuItem(ctx, in interface{},
 }
 
 // DeleteMenuItem mocks base method
-func (m *MockMenuServiceClient) DeleteMenuItem(ctx context.Context, in *protofiles.DeleteMenuItemRequest, opts ...grpc.CallOption) (*protofiles.DeleteMenuItemResponse, error) {
+func (m *MockMenuServiceClient) DeleteMenuItem(ctx context.Context, in *protofiles.DeleteMenuItemRequest, opts ...grpc.CallOption) (*protofiles.Response, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "DeleteMenuItem", varargs...)
-	ret0, _ := ret[0].(*protofiles.DeleteMenuItemResponse)
+	ret0, _ := ret[0].(*protofiles.Response)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -117,14 +117,14 @@ func (mr *MockMenuServiceClientMockRecorder) DeleteMenuItem(ctx, in interface{},
 }
 
 // CreateMenuItemOption mocks base method
-func (m *MockMenuServiceClient) CreateMenuItemOption(ctx context.Context, in *protofiles.CreateMenuItemOptionRequest, opts ...grpc.CallOption) (*protofiles.CreateMenuItemOptionResponse, error) {
+func (m *MockMenuServiceClient) CreateMenuItemOption(ctx context.Context, in *protofiles.Option, opts ...grpc.CallOption) (*protofiles.Response, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "CreateMenuItemOption", varargs...)
-	ret0, _ := ret[0].(*protofiles.CreateMenuItemOptionResponse)
+	ret0, _ := ret[0].(*protofiles.Response)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -175,10 +175,10 @@ func (mr *MockMenuServiceServerMockRecorder) GetMenu(arg0, arg1 interface{}) *go
 }
 
 // CreateMenuItem mocks base method
-func (m *MockMenuServiceServer) CreateMenuItem(arg0 context.Context, arg1 *protofiles.CreateMenuItemRequest) (*protofiles.CreateMenuItemResponse, error) {
+func (m *MockMenuServiceServer) CreateMenuItem(arg0 context.Context, arg1 *protofiles.Item) (*protofiles.Response, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateMenuItem", arg0, arg1)
-	ret0, _ := ret[0].(*protofiles.CreateMenuItemResponse)
+	ret0, _ := ret[0].(*protofiles.Response)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -190,10 +190,10 @@ func (mr *MockMenuServiceServerMockRecorder) CreateMenuItem(arg0, arg1 interface
 }
 
 // UpdateMenuItem mocks base method
-func (m *MockMenuServiceServer) UpdateMenuItem(arg0 context.Context, arg1 *protofiles.UpdateMenuItemRequest) (*protofiles.UpdateMenuItemResponse, error) {
+func (m *MockMenuServiceServer) UpdateMenuItem(arg0 context.Context, arg1 *protofiles.Item) (*protofiles.Response, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateMenuItem", arg0, arg1)
-	ret0, _ := ret[0].(*protofiles.UpdateMenuItemResponse)
+	ret0, _ := ret[0].(*protofiles.Response)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -205,10 +205,10 @@ func (mr *MockMenuServiceServerMockRecorder) UpdateMenuItem(arg0, arg1 interface
 }
 
 // DeleteMenuItem mocks base method
-func (m *MockMenuServiceServer) DeleteMenuItem(arg0 context.Context, arg1 *protofiles.DeleteMenuItemRequest) (*protofiles.DeleteMenuItemResponse, error) {
+func (m *MockMenuServiceServer) DeleteMenuItem(arg0 context.Context, arg1 *protofiles.DeleteMenuItemRequest) (*protofiles.Response, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteMenuItem", arg0, arg1)
-	ret0, _ := ret[0].(*protofiles.DeleteMenuItemResponse)
+	ret0, _ := ret[0].(*protofiles.Response)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -220,10 +220,10 @@ func (mr *MockMenuServiceServerMockRecorder) DeleteMenuItem(arg0, arg1 interface
 }
 
 // CreateMenuItemOption mocks base method
-func (m *MockMenuServiceServer) CreateMenuItemOption(arg0 context.Context, arg1 *protofiles.CreateMenuItemOptionRequest) (*protofiles.CreateMenuItemOptionResponse, error) {
+func (m *MockMenuServiceServer) CreateMenuItemOption(arg0 context.Context, arg1 *protofiles.Option) (*protofiles.Response, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateMenuItemOption", arg0, arg1)
-	ret0, _ := ret[0].(*protofiles.CreateMenuItemOptionResponse)
+	ret0, _ := ret[0].(*protofiles.Response)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -258,14 +258,14 @@ func (m *MockOrderServiceClient) EXPECT() *MockOrderServiceClientMockRecorder {
 }
 
 // SubmitOrder mocks base method
-func (m *MockOrderServiceClient) SubmitOrder(ctx context.Context, in *protofiles.SubmitOrderRequest, opts ...grpc.CallOption) (*protofiles.SubmitOrderResponse, error) {
+func (m *MockOrderServiceClient) SubmitOrder(ctx context.Context, in *protofiles.Order, opts ...grpc.CallOption) (*protofiles.Response, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "SubmitOrder", varargs...)
-	ret0, _ := ret[0].(*protofiles.SubmitOrderResponse)
+	ret0, _ := ret[0].(*protofiles.Response)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -277,15 +277,35 @@ func (mr *MockOrderServiceClientMockRecorder) SubmitOrder(ctx, in interface{}, o
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SubmitOrder", reflect.TypeOf((*MockOrderServiceClient)(nil).SubmitOrder), varargs...)
 }
 
+// ActiveOrders mocks base method
+func (m *MockOrderServiceClient) ActiveOrders(ctx context.Context, in *protofiles.Empty, opts ...grpc.CallOption) (*protofiles.OrdersResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ActiveOrders", varargs...)
+	ret0, _ := ret[0].(*protofiles.OrdersResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ActiveOrders indicates an expected call of ActiveOrders
+func (mr *MockOrderServiceClientMockRecorder) ActiveOrders(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ActiveOrders", reflect.TypeOf((*MockOrderServiceClient)(nil).ActiveOrders), varargs...)
+}
+
 // CompleteOrder mocks base method
-func (m *MockOrderServiceClient) CompleteOrder(ctx context.Context, in *protofiles.CompleteOrderRequest, opts ...grpc.CallOption) (*protofiles.CompleteOrderResponse, error) {
+func (m *MockOrderServiceClient) CompleteOrder(ctx context.Context, in *protofiles.CompleteOrderRequest, opts ...grpc.CallOption) (*protofiles.Response, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "CompleteOrder", varargs...)
-	ret0, _ := ret[0].(*protofiles.CompleteOrderResponse)
+	ret0, _ := ret[0].(*protofiles.Response)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -335,26 +355,6 @@ func (mr *MockOrderServiceClientMockRecorder) SubscribeToCompleteOrders(ctx, in 
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SubscribeToCompleteOrders", reflect.TypeOf((*MockOrderServiceClient)(nil).SubscribeToCompleteOrders), varargs...)
-}
-
-// ActiveOrders mocks base method
-func (m *MockOrderServiceClient) ActiveOrders(ctx context.Context, in *protofiles.Empty, opts ...grpc.CallOption) (*protofiles.OrdersResponse, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, in}
-	for _, a := range opts {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "ActiveOrders", varargs...)
-	ret0, _ := ret[0].(*protofiles.OrdersResponse)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ActiveOrders indicates an expected call of ActiveOrders
-func (mr *MockOrderServiceClientMockRecorder) ActiveOrders(ctx, in interface{}, opts ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ActiveOrders", reflect.TypeOf((*MockOrderServiceClient)(nil).ActiveOrders), varargs...)
 }
 
 // MockOrderService_SubscribeToOrdersClient is a mock of OrderService_SubscribeToOrdersClient interface
@@ -627,10 +627,10 @@ func (m *MockOrderServiceServer) EXPECT() *MockOrderServiceServerMockRecorder {
 }
 
 // SubmitOrder mocks base method
-func (m *MockOrderServiceServer) SubmitOrder(arg0 context.Context, arg1 *protofiles.SubmitOrderRequest) (*protofiles.SubmitOrderResponse, error) {
+func (m *MockOrderServiceServer) SubmitOrder(arg0 context.Context, arg1 *protofiles.Order) (*protofiles.Response, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SubmitOrder", arg0, arg1)
-	ret0, _ := ret[0].(*protofiles.SubmitOrderResponse)
+	ret0, _ := ret[0].(*protofiles.Response)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -641,11 +641,26 @@ func (mr *MockOrderServiceServerMockRecorder) SubmitOrder(arg0, arg1 interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SubmitOrder", reflect.TypeOf((*MockOrderServiceServer)(nil).SubmitOrder), arg0, arg1)
 }
 
+// ActiveOrders mocks base method
+func (m *MockOrderServiceServer) ActiveOrders(arg0 context.Context, arg1 *protofiles.Empty) (*protofiles.OrdersResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ActiveOrders", arg0, arg1)
+	ret0, _ := ret[0].(*protofiles.OrdersResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ActiveOrders indicates an expected call of ActiveOrders
+func (mr *MockOrderServiceServerMockRecorder) ActiveOrders(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ActiveOrders", reflect.TypeOf((*MockOrderServiceServer)(nil).ActiveOrders), arg0, arg1)
+}
+
 // CompleteOrder mocks base method
-func (m *MockOrderServiceServer) CompleteOrder(arg0 context.Context, arg1 *protofiles.CompleteOrderRequest) (*protofiles.CompleteOrderResponse, error) {
+func (m *MockOrderServiceServer) CompleteOrder(arg0 context.Context, arg1 *protofiles.CompleteOrderRequest) (*protofiles.Response, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CompleteOrder", arg0, arg1)
-	ret0, _ := ret[0].(*protofiles.CompleteOrderResponse)
+	ret0, _ := ret[0].(*protofiles.Response)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -682,21 +697,6 @@ func (m *MockOrderServiceServer) SubscribeToCompleteOrders(arg0 *protofiles.Empt
 func (mr *MockOrderServiceServerMockRecorder) SubscribeToCompleteOrders(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SubscribeToCompleteOrders", reflect.TypeOf((*MockOrderServiceServer)(nil).SubscribeToCompleteOrders), arg0, arg1)
-}
-
-// ActiveOrders mocks base method
-func (m *MockOrderServiceServer) ActiveOrders(arg0 context.Context, arg1 *protofiles.Empty) (*protofiles.OrdersResponse, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ActiveOrders", arg0, arg1)
-	ret0, _ := ret[0].(*protofiles.OrdersResponse)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ActiveOrders indicates an expected call of ActiveOrders
-func (mr *MockOrderServiceServerMockRecorder) ActiveOrders(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ActiveOrders", reflect.TypeOf((*MockOrderServiceServer)(nil).ActiveOrders), arg0, arg1)
 }
 
 // MockOrderService_SubscribeToOrdersServer is a mock of OrderService_SubscribeToOrdersServer interface

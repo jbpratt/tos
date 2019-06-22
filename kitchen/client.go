@@ -153,7 +153,7 @@ func (l *layout) completeOrder(order *mookiespb.Order, i int) error {
 	if err != nil {
 		return err
 	}
-	log.Printf("Response from CompleteOrder: %v\n", res.GetResult())
+	log.Printf("Response from CompleteOrder: %v\n", res.GetResponse())
 
 	l.Orders = append(l.Orders[:i], l.Orders[i+1:]...)
 	// so we have the option for an undo button if the order was dismissed too early
