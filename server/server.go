@@ -50,8 +50,9 @@ type server struct {
 	ps       *pubsub.PubSub
 }
 
-func (s *server) GetMenu(ctx context.Context, empty *mookiespb.Empty) (*mookiespb.Menu, error) {
-	logger.Println("Client has requested the menu")
+func (s *server) GetMenu(ctx context.Context,
+	empty *mookiespb.Empty) (*mookiespb.Menu, error) {
+
 	if len(s.menu.GetCategories()) == 0 {
 		return nil, status.Error(codes.NotFound, "menu is empty")
 	}
@@ -65,16 +66,35 @@ func (s *server) CreateMenuItem(ctx context.Context,
 		return nil, status.Error(codes.InvalidArgument, "no item provided")
 	}
 
+	if req.GetName() == "" {
+		return nil, status.Error(codes.InvalidArgument, "item must have a name")
+	}
+
+	if req.GetCategoryID() == 0 {
+		return nil, status.Error(codes.InvalidArgument, "item must have a categoryID (non 0)")
+	}
+
+	// ignoring price in case of $0 item?
+
+	// check if item aleady exists
+	for _, c := range s.menu.GetCategories() {
+		if c.GetId() == req.GetCategoryID() {
+			for _, i := range c.GetItems() {
+				if i.GetName() == req.GetName() {
+					return nil, status.Error(codes.FailedPrecondition, "item already exists")
+				}
+			}
+		}
+	}
+
 	err := s.services.Menu.CreateMenuItem(req)
 	if err != nil {
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "internal err: %v", err)
 	}
 
-	res := &mookiespb.Response{
-		Response: "success",
-	}
+	res := &mookiespb.Response{Response: "success"}
 
-	return res, s.LoadData()
+	return res, s.loadData()
 }
 
 func (s *server) UpdateMenuItem(ctx context.Context,
@@ -98,35 +118,45 @@ func (s *server) CreateMenuItemOption(ctx context.Context,
 func (s *server) SubmitOrder(ctx context.Context,
 	req *mookiespb.Order) (*mookiespb.Response, error) {
 
-	logger.Println("An order was received")
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "order not provided")
+	}
+
+	if req.GetItems() == nil {
+		return nil, status.Error(codes.InvalidArgument, "order items not provided")
+	}
+
+	if req.GetTotal() == 0 {
+		return nil, status.Error(codes.InvalidArgument, "order price not provided")
+	}
+
 	o := req
 	o.Status = "active"
 
 	err := s.services.Order.SubmitOrder(o)
 	if err != nil {
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "internal err: %v", err)
 	}
 
-	res := &mookiespb.Response{
-		Response: "Order has been placed..",
-	}
+	res := &mookiespb.Response{Response: "Order has been placed.."}
 
 	go publish(s.ps, o, topicOrder)
 
-	return res, s.LoadData()
+	return res, s.loadData()
 }
 
 func (s *server) SubscribeToOrders(req *mookiespb.Empty,
 	stream mookiespb.OrderService_SubscribeToOrdersServer) error {
 
-	logger.Printf("Client has subscribed to orders: %v\n", req)
+	logger.Infoln("Client has subscribed to orders")
+
 	ch := s.ps.Sub(topicOrder)
 	for {
 		if o, ok := <-ch; ok {
 			logger.Printf("Sending order to client: %v\n", o)
 			err := stream.Send(o.(*mookiespb.Order))
 			if err != nil {
-				return err
+				return status.Errorf(codes.Internal, "internal err: %v", err)
 			}
 		}
 	}
@@ -135,14 +165,15 @@ func (s *server) SubscribeToOrders(req *mookiespb.Empty,
 func (s *server) SubscribeToCompleteOrders(req *mookiespb.Empty,
 	stream mookiespb.OrderService_SubscribeToCompleteOrdersServer) error {
 
-	logger.Printf("Client has subscribed to orders: %v\n", req)
+	logger.Infoln("Client has subscribed to complete orders")
+
 	ch := s.ps.Sub(topicComplete)
 	for {
 		if o, ok := <-ch; ok {
 			logger.Printf("Sending order to client: %v\n", o)
 			err := stream.Send(o.(*mookiespb.Order))
 			if err != nil {
-				return err
+				return status.Errorf(codes.Internal, "internal err: %v", err)
 			}
 		}
 	}
@@ -155,8 +186,12 @@ func publish(ps *pubsub.PubSub, order *mookiespb.Order, topic string) {
 func (s *server) CompleteOrder(ctx context.Context,
 	req *mookiespb.CompleteOrderRequest) (*mookiespb.Response, error) {
 
-	logger.Printf("Client is completing order: %v\n", req)
+	if req.GetId() == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "order id must be non zero")
+	}
+
 	// update order to be complete
+	// TODO: handle if not found
 	for _, o := range s.orders {
 		if req.GetId() == o.GetId() {
 			o.Status = "complete"
@@ -168,24 +203,25 @@ func (s *server) CompleteOrder(ctx context.Context,
 	if err != nil {
 		return nil, err
 	}
-	res := &mookiespb.Response{
-		Response: "Order marked as complete",
-	}
 
-	return res, s.LoadData()
+	res := &mookiespb.Response{Response: "Order marked as complete"}
+
+	return res, s.loadData()
 }
 
 func (s *server) ActiveOrders(
 	ctx context.Context, empty *mookiespb.Empty) (*mookiespb.OrdersResponse, error) {
 
-	logger.Println("Client has requested active orders")
-	res := &mookiespb.OrdersResponse{
-		Orders: s.orders,
+	if s.orders == nil {
+		return nil, status.Errorf(codes.Internal, "server.orders has not been initialized")
 	}
+
+	res := &mookiespb.OrdersResponse{Orders: s.orders}
+
 	return res, nil
 }
 
-func (s *server) LoadData() error {
+func (s *server) loadData() error {
 	menu, err := s.services.Menu.GetMenu()
 	if err != nil {
 		return err
@@ -208,7 +244,7 @@ func NewServer() (*server, error) {
 	}
 	server := &server{services: services, ps: pubsub.New(0)}
 	//err = server.services.Menu.SeedMenu()
-	err = server.LoadData()
+	err = server.loadData()
 	if err != nil {
 		return nil, err
 	}
