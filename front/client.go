@@ -175,7 +175,10 @@ func (l *layout) doMenuRequest() (*mookiespb.Menu, error) {
 	l.debug("Starting to request menu...")
 	req := &mookiespb.Empty{}
 
-	res, err := l.client.MenuClient.GetMenu(context.Background(), req)
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+
+	res, err := l.client.MenuClient.GetMenu(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +187,7 @@ func (l *layout) doMenuRequest() (*mookiespb.Menu, error) {
 }
 
 // pass in order as arg
-func (l *layout) doSubmitOrderRequest(order *mookiespb.Order) {
+func (l *layout) doSubmitOrderRequest(order *mookiespb.Order) error {
 	l.debug("Starting order request")
 	req := order
 
@@ -193,12 +196,40 @@ func (l *layout) doSubmitOrderRequest(order *mookiespb.Order) {
 
 	res, err := l.client.OrderClient.SubmitOrder(ctx, req)
 	if err != nil {
-		log.Fatalf("Error while submitting order RPC: %v\n", err)
+		return err
 	}
 	l.debug("Response from SubmitOrder: %v\n", res.GetResponse())
+	return nil
 }
 
 // TODO write function to create menuItem
+func (l *layout) CreateMenuItem(item *mookiespb.Item) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+
+	req := item
+
+	// check res here
+	_, err := l.client.MenuClient.CreateMenuItem(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (l *layout) DeleteMenuItem(id int32) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+
+	req := &mookiespb.DeleteMenuItemRequest{Id: id}
+
+	_, err := l.client.MenuClient.DeleteMenuItem(ctx, req)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 func (l *layout) basicDemo(w *nucular.Window) {
 	l.overviewLayout(w)
