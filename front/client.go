@@ -186,7 +186,6 @@ func (l *layout) doMenuRequest() (*mookiespb.Menu, error) {
 	return res, nil
 }
 
-// pass in order as arg
 func (l *layout) doSubmitOrderRequest(order *mookiespb.Order) error {
 	l.debug("Starting order request")
 	req := order
@@ -202,7 +201,6 @@ func (l *layout) doSubmitOrderRequest(order *mookiespb.Order) error {
 	return nil
 }
 
-// TODO write function to create menuItem
 func (l *layout) CreateMenuItem(item *mookiespb.Item) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 	defer cancel()
@@ -330,7 +328,9 @@ func (l *layout) newMenuItemPopup(w *nucular.Window) {
 			item.Price = float32(s * 100)
 			item.CategoryID = l.catID
 			log.Infof("added item %v with price $ %v in category %v.", item.Name, item.Price/100, item.CategoryID)
-			// TODO: call item creation function here
+			l.CreateMenuItem(item)
+			l.doMenuRequest()
+			// TODO: does not work atm
 			w.Close()
 		}
 	}

@@ -3,3 +3,4 @@ bin/
 printing/__pycache__/
 vendor/
 cert/
+client.exe
