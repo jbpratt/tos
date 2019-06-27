@@ -151,6 +151,7 @@ func (o *orderDB) GetOrders() ([]*mookiespb.Order, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("orders len:", len(orders))
 	for _, order := range orders {
 		err = o.getOrderItems(order)
 		if err != nil {

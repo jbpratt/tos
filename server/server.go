@@ -233,6 +233,9 @@ func (s *server) loadData() error {
 		return err
 	}
 	s.orders = orders
+	if s.orders == nil {
+		s.orders = []*mookiespb.Order{}
+	}
 
 	return nil
 }
