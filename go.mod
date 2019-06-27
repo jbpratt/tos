@@ -10,6 +10,7 @@ require (
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/coreos/go-systemd v0.0.0-20190620071333-e64a0ec8b42a // indirect
 	github.com/cskr/pubsub v1.0.2
+	github.com/davecgh/go-spew v1.1.1
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/mock v1.3.1
