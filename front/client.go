@@ -49,9 +49,6 @@ type layout struct {
 	DebugEnabled bool
 	DebugStrings []string
 
-	// Popup
-	PSelect []bool
-
 	//item creation
 	catID int32
 
@@ -163,7 +160,7 @@ func main() {
 	l.client.MenuClient = mookiespb.NewMenuServiceClient(cc)
 	l.client.OrderClient = mookiespb.NewOrderServiceClient(cc)
 
-	l.menu, _ = l.doMenuRequest()
+	l.menu, _ = l.GetMenu()
 	groupFlags := nucular.WindowFlags(0)
 	groupFlags |= nucular.WindowNoScrollbar
 	wnd := nucular.NewMasterWindow(groupFlags, "Mookies", l.basicDemo)
@@ -171,7 +168,7 @@ func main() {
 	wnd.Main()
 }
 
-func (l *layout) doMenuRequest() (*mookiespb.Menu, error) {
+func (l *layout) GetMenu() (*mookiespb.Menu, error) {
 	l.debug("Starting to request menu...")
 	req := &mookiespb.Empty{}
 
@@ -186,7 +183,7 @@ func (l *layout) doMenuRequest() (*mookiespb.Menu, error) {
 	return res, nil
 }
 
-func (l *layout) doSubmitOrderRequest(order *mookiespb.Order) error {
+func (l *layout) SubmitOrder(order *mookiespb.Order) error {
 	l.debug("Starting order request")
 	req := order
 
@@ -327,9 +324,9 @@ func (l *layout) newMenuItemPopup(w *nucular.Window) {
 			item.Name = string(l.CustomOptionNameEditor.Buffer)
 			item.Price = float32(s * 100)
 			item.CategoryID = l.catID
-			log.Infof("added item %v with price $ %v in category %v.", item.Name, item.Price/100, item.CategoryID)
 			l.CreateMenuItem(item)
-			l.doMenuRequest()
+			log.Infof("added item %v with price $ %v in category %v.", item.Name, item.Price/100, item.CategoryID)
+			l.GetMenu()
 			// TODO: does not work atm
 			w.Close()
 		}
@@ -368,7 +365,8 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 	w.Spacing(1)
 	w.Label(time.Now().Format("3:04PM"), "CC")
 	if w.Button(label.T("settings"), false) {
-		w.Master().PopupOpen("Select options:", nucular.WindowMovable, rect.Rect{200, 100, 230, 200}, true, l.settings)
+		w.Master().PopupOpen("Select options:",
+			nucular.WindowMovable, rect.Rect{200, 100, 230, 200}, true, l.settings)
 	}
 	// creates a row of height 20 with 1 column
 	w.Row(20).Dynamic(1)
@@ -416,7 +414,8 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 						if len(item.GetOptions()) < 1 {
 							l.order.Items = append(l.order.Items, l.CurrentItem)
 						} else {
-							w.Master().PopupOpen("Select options:", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{(w.Bounds.W / 2) - 115, 100, 230, (len(item.GetOptions()) * 40) + 140}, true, l.itemOptionPopup)
+							w.Master().PopupOpen("Select options:",
+								nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{(w.Bounds.W / 2) - 115, 100, 230, (len(item.GetOptions()) * 40) + 140}, true, l.itemOptionPopup)
 						}
 					}
 					newRow++
@@ -440,13 +439,13 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 	groupFlags |= nucular.WindowNoScrollbar
 
 	// creates a second group and puts it in the second column
-	if sw := w.GroupBegin("asdasd", groupFlags); sw != nil {
+	if sw := w.GroupBegin("orders", groupFlags); sw != nil {
 		newHeight := sw.Bounds.H - 117
 		sw.Row(newHeight).Dynamic(1)
 		groupFlags = nucular.WindowFlags(0)
 		groupFlags |= nucular.WindowNoHScrollbar
 		groupFlags |= nucular.WindowBorder
-		if orderWindow := sw.GroupBegin("asdasd", groupFlags); orderWindow != nil {
+		if orderWindow := sw.GroupBegin("orders", groupFlags); orderWindow != nil {
 			if len(l.order.Items) > 0 {
 				for itemNumber, item := range l.order.Items {
 
@@ -466,7 +465,8 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 							if i == 0 {
 								itemWindow.Row(12).Static(itemWindow.Bounds.W-65, 10)
 								itemWindow.Label("• "+line, "LT")
-								itemWindow.Label(fmt.Sprintf("$ %5v", fmt.Sprintf("%.2f", item.GetPrice()/100)), "RT")
+								itemWindow.Label(
+									fmt.Sprintf("$ %5v", fmt.Sprintf("%.2f", item.GetPrice()/100)), "RT")
 							} else {
 								itemWindow.Row(12).Dynamic(1)
 								itemWindow.Label("  "+line, "LT")
@@ -579,12 +579,14 @@ func (l *layout) sendOrder(w *nucular.Window) {
 	if len(l.NameEditor.Buffer) > 0 && len(l.order.Items) > 0 {
 		l.order.Name = string(l.NameEditor.Buffer)
 		l.order.Total = float32(math.Round(float64(sum*100)) / 100)
-		l.doSubmitOrderRequest(l.order)
+		l.SubmitOrder(l.order)
 		l.order.Reset()
 		l.NameEditor.Buffer = nil
 	} else {
 		l.Error = errors.New("Please give the order a name")
-		w.Master().PopupOpen("Error", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{20, 100, 230, 150}, true, l.errorPopup)
+		w.Master().PopupOpen("Error",
+			nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar,
+			rect.Rect{20, 100, 230, 150}, true, l.errorPopup)
 	}
 }
 

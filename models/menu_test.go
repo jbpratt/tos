@@ -24,7 +24,6 @@ func TestSeedMenu(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer db.Close()
 }
 
 func TestGetMenu(t *testing.T) {

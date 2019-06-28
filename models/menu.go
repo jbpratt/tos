@@ -123,6 +123,7 @@ func (m *menuDB) SeedMenu() error {
 	return nil
 }
 
+// TODO: stop using fmt.Sprintf to format queries
 func (m *menuDB) GetMenu() (*mookiespb.Menu, error) {
 	m.RLock()
 	defer m.RUnlock()
@@ -155,6 +156,7 @@ func (m *menuDB) GetMenu() (*mookiespb.Menu, error) {
 func (m *menuDB) CreateMenuItem(item *mookiespb.Item) error {
 	m.Lock()
 	defer m.Unlock()
+	fmt.Println("inserting item", item)
 
 	res, err := m.db.Exec(
 		"INSERT INTO items (name, price, category_id) VALUES (?,?,?)",
