@@ -3,8 +3,9 @@
 USER='pi'
 
 echo Stopping system
-ssh pi@mfront 'killall front'
-ssh pi@mkitchen 'killall kitchen'
+ssh front 'killall front'
+ssh kitchen 'killall kitchen'
+echo Stopped
 #ssh pi@mfront << EOF
 #  pid=$(cat /var/tmp/mookies-pids/front.pid)
 #  echo "Killing PID ${pid}"
