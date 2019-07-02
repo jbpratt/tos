@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"flag"
+	"fmt"
 	"net"
 	"net/http"
 	"os"
@@ -206,8 +207,10 @@ func (s *server) CompleteOrder(ctx context.Context,
 	p := escpos.New(w)
 	p.Init()
 	p.SetSmooth(1)
-	p.SetFontSize(2, 3)
+	p.SetFontSize(1, 2)
 	p.SetFont("A")
+	p.Write("Mookies Smokehouse")
+	p.Formfeed()
 	// update order to be complete
 	// TODO: handle if not found
 	for _, o := range s.orders {
@@ -215,10 +218,12 @@ func (s *server) CompleteOrder(ctx context.Context,
 			o.Status = "complete"
 			//go publish(s.ps, o, topicComplete)
 			p.Write(o.GetName())
+			p.Formfeed()
+			p.Write(fmt.Sprintf("%d", o.GetTotal()))
+			p.Formfeed()
 		}
 	}
 
-	p.Formfeed()
 	p.Cut()
 	p.End()
 
