@@ -1,16 +1,14 @@
-FROM golang:1.12
+FROM golang as builder
+ENV GO111MODULE=on
+WORKDIR /code
+ADD go.mod go.sum /code/
+RUN go mod download
+ADD . .
+RUN go build -o /app . 
 
-RUN mkdir /src
-
-ADD . /src/
-
-WORKDIR /src
-
-RUN go get -d -v ./...
-
-RUN go build -o main .
-
+FROM gcr.io/distroless/base
+EXPOSE 50051 
 EXPOSE 9001
-EXPOSE 50051
-
-ENTRYPOINT ["./main"]
+WORKDIR /
+COPY --from=builder /app /usr/bin/app
+ENTRYPOINT ["/usr/bin/app"]

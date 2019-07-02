@@ -19,6 +19,7 @@
 - [ ] Numpad works, not showing selected number
 - [x] Docker: mount printer device
 - [ ] Optional TLS for python client
+- [x] Rewrite server dockerfile
 
 #### Thoughts
 - Python client going out as found cups fix
