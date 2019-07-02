@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"flag"
 	"net"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/cskr/pubsub"
@@ -13,6 +15,7 @@ import (
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/jbpratt78/tos/models"
 	mookiespb "github.com/jbpratt78/tos/protofiles"
+	"github.com/knq/escpos"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -40,6 +43,7 @@ var (
 	tls      = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
 	crt      = flag.String("crt", "cert/server.crt", "TLS cert to use")
 	key      = flag.String("key", "cert/server.key", "TLS key to use")
+	lpDev    = flag.String("p", "/dev/usb/lp0", "Printer dev file")
 	logger   *logrus.Logger
 )
 
@@ -190,16 +194,38 @@ func (s *server) CompleteOrder(ctx context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "order id must be non zero")
 	}
 
+	f, err := os.OpenFile(*lpDev, os.O_RDWR, 0)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	bw := bufio.NewWriter(f)
+
+	w := bufio.NewReadWriter(nil, bw)
+	p := escpos.New(w)
+	p.Init()
+	p.SetSmooth(1)
+	p.SetFontSize(2, 3)
+	p.SetFont("A")
 	// update order to be complete
 	// TODO: handle if not found
 	for _, o := range s.orders {
 		if req.GetId() == o.GetId() {
 			o.Status = "complete"
-			go publish(s.ps, o, topicComplete)
+			//go publish(s.ps, o, topicComplete)
+			p.Write(o.GetName())
 		}
 	}
 
-	err := s.services.Order.CompleteOrder(req.GetId())
+	p.Formfeed()
+	p.Cut()
+	p.End()
+
+	w.Flush()
+	bw.Flush()
+
+	err = s.services.Order.CompleteOrder(req.GetId())
 	if err != nil {
 		return nil, err
 	}

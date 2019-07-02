@@ -20,6 +20,9 @@
 - [x] Docker: mount printer device
 - [ ] Optional TLS for python client
 
+#### Thoughts
+- Python client going out as found cups fix
+
 ### Debugging
 `GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info GODEBUG=http2debug=2`
 

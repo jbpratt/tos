@@ -19,6 +19,8 @@ services:
     restart: always
     volumes:
       - ./cert/:/src/cert/
+    devices:
+      - "/dev/usb/lp0:/dev/usb/lp0"
     ports:
       - "50051:50051"
       - "9001:9001"
