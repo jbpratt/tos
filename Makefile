@@ -2,7 +2,7 @@ PKG := "github.com/jbpratt78/tos"
 SERVER_OUT := "bin/server"
 FRONT_CLIENT_OUT := "bin/front"
 BACK_CLIENT_OUT := "bin/kitchen"
-SERVER_PKG_BUILD := "${PKG}/server"
+SERVER_PKG_BUILD := "${PKG}"
 FRONT_CLIENT_PKG_BUILD := "${PKG}/front"
 BACK_CLIENT_PKG_BUILD := "${PKG}/kitchen"
 
@@ -33,6 +33,4 @@ start: back
 gen:
 	protoc protofiles/mookies.proto --go_out=plugins=grpc:.
 	protoc-go-inject-tag -input=protofiles/mookies.pb.go
-	python3 -m grpc_tools.protoc -I protofiles/ --python_out=printing/ \
-		--grpc_python_out=printing/ protofiles/mookies.proto
 	mockgen -source=protofiles/mookies.pb.go > mock/proto_mock.go

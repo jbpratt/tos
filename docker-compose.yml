@@ -15,12 +15,12 @@ services:
     network_mode: "host"
   grpcserver:
     container_name: grpcserver
-    build: ./server
+    build: .
     restart: always
     volumes:
       - ./cert/:/src/cert/
-    devices:
-      - "/dev/usb/lp0:/dev/usb/lp0"
+        #devices:
+        #- "/dev/usb/lp0:/dev/usb/lp0"
     ports:
       - "50051:50051"
       - "9001:9001"

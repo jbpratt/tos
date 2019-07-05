@@ -3,6 +3,7 @@
 
 ### Setup
 
+
 ### TODO:
 - [ ] Client GUI code needs cleaning up
 - [ ] Document and try to solve server not accepting order on restart
@@ -21,8 +22,6 @@
 - [ ] Optional TLS for python client
 - [x] Rewrite server dockerfile
 
-#### Thoughts
-- Python client going out as found cups fix
 
 ### Debugging
 `GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info GODEBUG=http2debug=2`
