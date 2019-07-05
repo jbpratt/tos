@@ -322,11 +322,12 @@ func (l *layout) newMenuItemPopup(w *nucular.Window) {
 		price := string(l.CustomOptionPriceEditor.Buffer)
 		if s, err := strconv.ParseFloat(price, 32); err == nil && len(l.CustomOptionNameEditor.Buffer) >= 1 {
 			item.Name = string(l.CustomOptionNameEditor.Buffer)
+			l.CustomOptionNameEditor.Buffer = nil
 			item.Price = float32(s * 100)
-			item.CategoryID = l.catID
+			item.CategoryID = l.catID + 1
 			l.CreateMenuItem(item)
 			log.Infof("added item %v with price $ %v in category %v.", item.Name, item.Price/100, item.CategoryID)
-			l.GetMenu()
+			l.menu, _ = l.GetMenu()
 			// TODO: does not work atm
 			w.Close()
 		}
