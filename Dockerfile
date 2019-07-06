@@ -6,7 +6,7 @@ RUN go mod download
 ADD . .
 RUN go build -o /app server.go 
 
-FROM gcr.io/distroless/base
+FROM golang:1.12 
 EXPOSE 9001
 EXPOSE 50051
 WORKDIR /
