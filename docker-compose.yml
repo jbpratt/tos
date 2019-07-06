@@ -25,14 +25,6 @@ services:
       - "50051:50051"
       - "9001:9001"
     network_mode: "host"
-    #  grpcprinter:
-    #container_name: grpcprinter
-    #build: ./printing
-    #devices:
-    #  - "/dev/usb/lp0:/dev/usb/lp0"
-    #ports:
-    # - "9002:9002"
-    #network_mode: "host"
   influxdb:
     build: ./influxdb
     env_file: configuration.env

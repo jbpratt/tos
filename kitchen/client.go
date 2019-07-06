@@ -194,7 +194,7 @@ func (l *layout) subscribeToOrders() error {
 			break
 		}
 		if err != nil {
-			return nil
+			return err
 		}
 		l.Orders = append(l.Orders, order)
 		log.Infof("Received order: %v\n", order)
