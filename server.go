@@ -195,9 +195,32 @@ func (s *server) CompleteOrder(ctx context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "order id must be non zero")
 	}
 
-	f, err := os.OpenFile(*lpDev, os.O_RDWR, 0)
+	// update order to be complete
+	// TODO: handle if not found
+	for _, o := range s.orders {
+		if req.GetId() == o.GetId() {
+			o.Status = "complete"
+			err := printOrder(o)
+			if err != nil {
+				return nil, status.Errorf(codes.Internal, "printer not established")
+			}
+		}
+	}
+
+	err := s.services.Order.CompleteOrder(req.GetId())
 	if err != nil {
 		return nil, err
+	}
+
+	res := &mookiespb.Response{Response: "Order marked as complete"}
+
+	return res, s.loadData()
+}
+
+func printOrder(o *mookiespb.Order) error {
+	f, err := os.OpenFile(*lpDev, os.O_RDWR, 0)
+	if err != nil {
+		return err
 	}
 	defer f.Close()
 
@@ -211,33 +234,18 @@ func (s *server) CompleteOrder(ctx context.Context,
 	p.SetFont("A")
 	p.Write("Mookies Smokehouse")
 	p.Formfeed()
-	// update order to be complete
-	// TODO: handle if not found
-	for _, o := range s.orders {
-		if req.GetId() == o.GetId() {
-			o.Status = "complete"
-			//go publish(s.ps, o, topicComplete)
-			p.Write(o.GetName())
-			p.Formfeed()
-			p.Write(fmt.Sprintf("%f", o.GetTotal()))
-			p.Formfeed()
-		}
-	}
+
+	p.Write(o.GetName())
+	p.Formfeed()
+	p.Write(fmt.Sprintf("%f", o.GetTotal()))
+	p.Formfeed()
 
 	p.Cut()
 	p.End()
 
 	w.Flush()
 	bw.Flush()
-
-	err = s.services.Order.CompleteOrder(req.GetId())
-	if err != nil {
-		return nil, err
-	}
-
-	res := &mookiespb.Response{Response: "Order marked as complete"}
-
-	return res, s.loadData()
+	return nil
 }
 
 func (s *server) ActiveOrders(

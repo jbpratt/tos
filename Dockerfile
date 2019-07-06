@@ -4,7 +4,7 @@ WORKDIR /code
 ADD go.mod go.sum /code/
 RUN go mod download
 ADD . .
-RUN go build -o /app . 
+RUN go build -o /app server.go 
 
 FROM gcr.io/distroless/base
 EXPOSE 9001

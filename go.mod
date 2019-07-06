@@ -5,6 +5,7 @@ go 1.12
 require (
 	github.com/aarzilli/nucular v0.0.0-20190604155258-847327059ed7
 	github.com/cskr/pubsub v1.0.2
+	github.com/davecgh/go-spew v1.1.1
 	github.com/golang/mock v1.1.1
 	github.com/golang/protobuf v1.3.1
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
