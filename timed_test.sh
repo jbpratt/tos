@@ -1,7 +1,7 @@
 #!/bin/sh
 while true
 do
-  go run cli/main.go -a server:50051 order
+  go run cli/main.go -a :50051 order
   echo "order placed"
-sleep 300
+sleep $((RANDOM % 350))
 done
