@@ -89,6 +89,4 @@ service OrderService {
 
   // server streaming
   rpc SubscribeToOrders(Empty) returns (stream Order) {};
-
-  rpc SubscribeToCompleteOrders(Empty) returns (stream Order) {};
 }

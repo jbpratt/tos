@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -82,15 +81,15 @@ var (
 	wnd  nucular.MasterWindow
 
 	log grpclog.LoggerV2
+	reg = prometheus.NewRegistry()
 )
 
 func init() {
-	log = grpclog.NewLoggerV2(os.Stdout, ioutil.Discard, ioutil.Discard)
+	log = grpclog.NewLoggerV2(os.Stdout, os.Stdout, os.Stdout)
 	grpclog.SetLoggerV2(log)
 }
 
-func main() {
-	flag.Parse()
+func connectToServer() (*grpc.ClientConn, error) {
 	var opts []grpc.DialOption
 	if *tls {
 		creds, err := credentials.NewClientTLSFromFile(*cert, "")
@@ -103,7 +102,6 @@ func main() {
 		opts = append(opts, grpc.WithInsecure())
 	}
 
-	reg := prometheus.NewRegistry()
 	grpcMetrics := grpc_prometheus.NewClientMetrics()
 	reg.MustRegister(grpcMetrics)
 
@@ -113,7 +111,13 @@ func main() {
 		grpc.WithKeepaliveParams(kacp),
 	)
 
-	cc, err := grpc.Dial(*addr, opts...)
+	return grpc.Dial(*addr, opts...)
+}
+
+func main() {
+	flag.Parse()
+
+	cc, err := connectToServer()
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
 	}
@@ -137,7 +141,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	go l.subscribeToOrders()
+	go func() {
+		for {
+			err := l.subscribeToOrders()
+			log.Warningf("subscription failed: %v", err)
+			time.Sleep(time.Second * 5)
+		}
+	}()
 
 	groupFlags := nucular.WindowFlags(0)
 	groupFlags |= nucular.WindowNoScrollbar
@@ -191,16 +201,16 @@ func (l *layout) subscribeToOrders() error {
 		if err == io.EOF {
 			// end of stream, never hope to hit?
 			// or call subscribeToOrders often
-			break
+			return err
 		}
 		if err != nil {
+			fmt.Printf("got error trying to get order %v", err)
 			return err
 		}
 		l.Orders = append(l.Orders, order)
 		log.Infof("Received order: %v\n", order)
 		wnd.Changed()
 	}
-	return nil
 }
 
 func (l *layout) overviewLayout(w *nucular.Window) {
@@ -242,7 +252,7 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 				}
 
 				for _, item := range order.Items {
-					lines := strings.Split(wrapText(item.Name, 24), "\n")
+					lines := strings.Split(wrapText(item.Name, 22), "\n")
 					for i, line := range lines {
 						singleOrderWindow.Row(12).Dynamic(1)
 						if i == 0 {
@@ -255,7 +265,7 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 						if !option.GetSelected() {
 							continue
 						}
-						lines := strings.Split(wrapText(option.GetName(), 22), "\n")
+						lines := strings.Split(wrapText(option.GetName(), 20), "\n")
 						for i, line := range lines {
 							singleOrderWindow.Row(12).Dynamic(1)
 							if i == 0 {

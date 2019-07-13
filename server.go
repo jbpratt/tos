@@ -161,24 +161,7 @@ func (s *server) SubscribeToOrders(req *mookiespb.Empty,
 			logger.Printf("Sending order to client: %v\n", o)
 			err := stream.Send(o.(*mookiespb.Order))
 			if err != nil {
-				return status.Errorf(codes.Internal, "internal err: %v", err)
-			}
-		}
-	}
-}
-
-func (s *server) SubscribeToCompleteOrders(req *mookiespb.Empty,
-	stream mookiespb.OrderService_SubscribeToCompleteOrdersServer) error {
-
-	logger.Infoln("Client has subscribed to complete orders")
-
-	ch := s.ps.Sub(topicComplete)
-	for {
-		if o, ok := <-ch; ok {
-			logger.Printf("Sending order to client: %v\n", o)
-			err := stream.Send(o.(*mookiespb.Order))
-			if err != nil {
-				return status.Errorf(codes.Internal, "internal err: %v", err)
+				return status.Errorf(codes.Internal, "SubscribeToOrders() = internal err: %v", err)
 			}
 		}
 	}
@@ -200,10 +183,10 @@ func (s *server) CompleteOrder(ctx context.Context,
 	for _, o := range s.orders {
 		if req.GetId() == o.GetId() {
 			o.Status = "complete"
-			err := printOrder(o)
-			if err != nil {
-				return nil, status.Errorf(codes.Internal, "printer not established")
-			}
+			// err := printOrder(o)
+			// if err != nil {
+			// 	return nil, status.Errorf(codes.Internal, "printer not established")
+			// }
 		}
 	}
 
