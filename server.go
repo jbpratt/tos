@@ -38,10 +38,10 @@ var (
 	kasp        = keepalive.ServerParameters{
 		Time: 60 * time.Second,
 	}
+	tls      = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
 	promAddr = flag.String("prom", ":9001", "Port to run metrics HTTP server")
 	listen   = flag.String("listen", ":50051", "listen address")
 	dbp      = flag.String("database", "./mookies.db", "database to use")
-	tls      = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
 	crt      = flag.String("crt", "cert/server.crt", "TLS cert to use")
 	key      = flag.String("key", "cert/server.key", "TLS key to use")
 	lpDev    = flag.String("p", "/dev/usb/lp0", "Printer dev file")
@@ -76,7 +76,8 @@ func (s *server) CreateMenuItem(ctx context.Context,
 	}
 
 	if req.GetCategoryID() == 0 {
-		return nil, status.Error(codes.InvalidArgument, "item must have a categoryID (non 0)")
+		return nil, status.Error(codes.InvalidArgument,
+			"item must have a categoryID (non 0)")
 	}
 
 	// ignoring price in case of $0 item?
@@ -86,7 +87,8 @@ func (s *server) CreateMenuItem(ctx context.Context,
 		if c.GetId() == req.GetCategoryID() {
 			for _, i := range c.GetItems() {
 				if i.GetName() == req.GetName() {
-					return nil, status.Error(codes.FailedPrecondition, "item already exists")
+					return nil, status.Error(codes.FailedPrecondition,
+						"item already exists")
 				}
 			}
 		}
@@ -94,16 +96,31 @@ func (s *server) CreateMenuItem(ctx context.Context,
 
 	err := s.services.Menu.CreateMenuItem(req)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "internal err: %v", err)
+		return nil, status.Errorf(codes.Internal,
+			"services..CreateMenuItem(%v) returned %v", req, err)
 	}
 
 	res := &mookiespb.Response{Response: "success"}
-
 	return res, s.loadData()
 }
 
 func (s *server) UpdateMenuItem(ctx context.Context,
 	req *mookiespb.Item) (*mookiespb.Response, error) {
+
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "item id not provided")
+	}
+
+	if req.GetId() == 0 {
+		return nil, status.Error(codes.InvalidArgument,
+			"req must have itemid (non 0)")
+	}
+
+	//err := s.services.Menu.UpdateMenuItem(req)
+	//if err != nil {
+	//	return nil, status.Errorf(codes.Internal,
+	//		"services..UpdateMenuItem(%v) returned %v", req, err)
+	//}
 
 	return nil, status.Error(codes.Unimplemented, "not implemented")
 }
@@ -111,11 +128,33 @@ func (s *server) UpdateMenuItem(ctx context.Context,
 func (s *server) DeleteMenuItem(ctx context.Context,
 	req *mookiespb.DeleteMenuItemRequest) (*mookiespb.Response, error) {
 
-	return nil, status.Error(codes.Unimplemented, "not implemented")
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument,
+			"req must not be nil")
+	}
+
+	if req.GetId() == 0 {
+		return nil, status.Error(codes.InvalidArgument,
+			"req must have itemid (non 0)")
+	}
+
+	err := s.services.Menu.DeleteMenuItem(req.GetId())
+	if err != nil {
+		return nil, status.Errorf(codes.Internal,
+			"services..UpdateMenuItem(%v) returned %v", req, err)
+	}
+
+	res := &mookiespb.Response{Response: "success"}
+	return res, s.loadData()
 }
 
 func (s *server) CreateMenuItemOption(ctx context.Context,
 	req *mookiespb.Option) (*mookiespb.Response, error) {
+
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument,
+			"item option not provided")
+	}
 
 	return nil, status.Error(codes.Unimplemented, "not implemented")
 }
@@ -124,15 +163,18 @@ func (s *server) SubmitOrder(ctx context.Context,
 	req *mookiespb.Order) (*mookiespb.Response, error) {
 
 	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "order not provided")
+		return nil, status.Error(codes.InvalidArgument,
+			"order not provided")
 	}
 
 	if req.GetItems() == nil {
-		return nil, status.Error(codes.InvalidArgument, "order items not provided")
+		return nil, status.Error(codes.InvalidArgument,
+			"order items not provided")
 	}
 
 	if req.GetTotal() == 0 {
-		return nil, status.Error(codes.InvalidArgument, "order price not provided")
+		return nil, status.Error(codes.InvalidArgument,
+			"order price not provided")
 	}
 
 	o := req
@@ -161,7 +203,8 @@ func (s *server) SubscribeToOrders(req *mookiespb.Empty,
 			logger.Printf("Sending order to client: %v\n", o)
 			err := stream.Send(o.(*mookiespb.Order))
 			if err != nil {
-				return status.Errorf(codes.Internal, "SubscribeToOrders() = internal err: %v", err)
+				return status.Errorf(codes.Internal,
+					"stream.Send(%v) failed with %v", o, err)
 			}
 		}
 	}
@@ -175,7 +218,8 @@ func (s *server) CompleteOrder(ctx context.Context,
 	req *mookiespb.CompleteOrderRequest) (*mookiespb.Response, error) {
 
 	if req.GetId() == 0 {
-		return nil, status.Errorf(codes.InvalidArgument, "order id must be non zero")
+		return nil, status.Errorf(codes.InvalidArgument,
+			"order id must be non zero")
 	}
 
 	// update order to be complete
@@ -185,7 +229,8 @@ func (s *server) CompleteOrder(ctx context.Context,
 			o.Status = "complete"
 			// err := printOrder(o)
 			// if err != nil {
-			// 	return nil, status.Errorf(codes.Internal, "printer not established")
+			// 	return nil, status.Errorf(codes.Internal,
+			//	"printer not established")
 			// }
 		}
 	}
@@ -235,7 +280,8 @@ func (s *server) ActiveOrders(
 	ctx context.Context, empty *mookiespb.Empty) (*mookiespb.OrdersResponse, error) {
 
 	if s.orders == nil {
-		return nil, status.Errorf(codes.Internal, "server.orders has not been initialized")
+		return nil, status.Errorf(codes.Internal,
+			"ActiveOrders() failed: server.orders has not been initialized")
 	}
 
 	res := &mookiespb.OrdersResponse{Orders: s.orders}
