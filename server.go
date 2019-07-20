@@ -179,6 +179,11 @@ func (s *server) SubmitOrder(ctx context.Context,
 			"order price not provided")
 	}
 
+	if req.GetName() == "" || req.GetName() == " " {
+		return nil, status.Error(codes.InvalidArgument,
+			"order name not provided")
+	}
+
 	o := req
 	o.Status = "active"
 
@@ -234,8 +239,7 @@ func (s *server) CompleteOrder(ctx context.Context,
 						"printer not established")
 				}
 			}
-		} else {
-			return nil, status.Errorf(codes.NotFound, "order not found")
+			break
 		}
 	}
 

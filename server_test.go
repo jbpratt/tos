@@ -68,26 +68,31 @@ func TestServer(t *testing.T) {
 
 	// subscribe to orders
 
-	testOrder := &mookiespb.Order{
-		Items: []*mookiespb.Item{testItem},
-		Total: 555,
+	testOrders := []*mookiespb.Order{
+		{Items: []*mookiespb.Item{testItem}, Total: 555, Name: "order test"},
+		{Items: []*mookiespb.Item{testItem}, Total: 999, Name: "mfsjo813ma"},
+		{Items: []*mookiespb.Item{testItem}, Total: 1, Name: "majora"},
 	}
 
-	_, err = s.SubmitOrder(context.Background(), testOrder)
-	if err != nil {
-		t.Errorf("server.SubmitOrder() failed with %v", err)
+	for _, o := range testOrders {
+		_, err = s.SubmitOrder(context.Background(), o)
+		if err != nil {
+			t.Errorf("server.SubmitOrder() failed with %v", err)
+		}
 	}
 
 	// compare order from here to order received on subscribe
-	_, err = s.ActiveOrders(context.Background(),
-		&mookiespb.Empty{})
+	x, err := s.ActiveOrders(context.Background(), &mookiespb.Empty{})
 	if err != nil {
 		t.Errorf("ActiveOrders() failed with %v", err)
 	}
 
-	_, err = s.CompleteOrder(context.Background(),
-		&mookiespb.CompleteOrderRequest{Id: 1})
-	if err != nil {
-		t.Errorf("server.CompleteOrder() failed with %v", err)
+	for _, o := range x.GetOrders() {
+		_, err = s.CompleteOrder(context.Background(),
+			&mookiespb.CompleteOrderRequest{Id: o.GetId()})
+		if err != nil {
+			spew.Dump(o)
+			t.Errorf("server.CompleteOrder() failed with %v", err)
+		}
 	}
 }
