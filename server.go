@@ -39,6 +39,7 @@ var (
 		Time: 60 * time.Second,
 	}
 	tls      = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
+	prnt     = flag.Bool("print", true, "Use printer for complete orders")
 	promAddr = flag.String("prom", ":9001", "Port to run metrics HTTP server")
 	listen   = flag.String("listen", ":50051", "listen address")
 	dbp      = flag.String("database", "/tmp/mookies.db", "database to use")
@@ -223,16 +224,18 @@ func (s *server) CompleteOrder(ctx context.Context,
 			"order id must be non zero")
 	}
 
-	// update order to be complete
-	// TODO: handle if not found
 	for _, o := range s.orders {
 		if req.GetId() == o.GetId() {
 			o.Status = "complete"
-			// err := printOrder(o)
-			// if err != nil {
-			// 	return nil, status.Errorf(codes.Internal,
-			//	"printer not established")
-			// }
+			if *prnt {
+				err := printOrder(o)
+				if err != nil {
+					return nil, status.Errorf(codes.Internal,
+						"printer not established")
+				}
+			}
+		} else {
+			return nil, status.Errorf(codes.NotFound, "order not found")
 		}
 	}
 
@@ -307,12 +310,14 @@ func (s *server) loadData() error {
 			return err
 		}
 	}
+
 	s.menu = menu
 
 	orders, err := s.services.Order.GetOrders()
 	if err != nil {
 		return err
 	}
+
 	s.orders = orders
 	if s.orders == nil {
 		s.orders = []*mookiespb.Order{}

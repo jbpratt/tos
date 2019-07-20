@@ -1,5 +1,4 @@
 # TOS
-<img src="assets/Text.png" alt="Mookies Smokehouse">
 
 ### Setup
 
@@ -7,26 +6,17 @@
 ### TODO:
 - [ ] Client GUI code needs cleaning up
 - [ ] Document and try to solve server not accepting order on restart
-- [x] Deploy script
 - [ ] Determine proper restart order and script
-- [ ] Handle errors in a more Go like style
-- [ ] Testing
 - [ ] Additional GRPC features
   - [x] Keep alive
   - [ ] Auth
   - [ ] Encryption
-- [ ] Custom item from front
-- [x] Prometheus for server and clients
-- [ ] Numpad works, not showing selected number
-- [x] Docker: mount printer device
-- [ ] Optional TLS for python client
-- [x] Rewrite server dockerfile
-
 
 ### Debugging
 `GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info GODEBUG=http2debug=2`
 
 ### License
+```
 MIT License
 
 Copyright (c) 2019 jbpratt
@@ -47,6 +37,7 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+```
 
 ### Contributing
 1. Fork it!

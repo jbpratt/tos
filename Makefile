@@ -11,6 +11,9 @@ all: server front back
 dep: ## Get the dependencies
 	@go get -u
 
+deploy: start
+	$(sh ./scripts/start_system.sh)
+
 server: dep protofiles/mookies.pb.go
 	@go build -i -v -o $(SERVER_OUT) $(SERVER_PKG_BUILD)
 
@@ -26,7 +29,7 @@ clean:
 test:
 	@go test ./...
 
-start: back 
+start:
 	@docker-compose up -d
 	rm -rf ./bin/server
 

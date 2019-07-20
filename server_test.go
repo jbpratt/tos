@@ -10,6 +10,7 @@ import (
 
 func TestServer(t *testing.T) {
 	*dbp = ":memory:"
+	*prnt = false
 
 	s, err := NewServer()
 	if err != nil {
@@ -63,5 +64,30 @@ func TestServer(t *testing.T) {
 	if len(menu.Categories[1].Items) != len(s.menu.Categories[1].Items) {
 		spew.Dump(s.menu)
 		t.Errorf("DeleteMenuItem() failed to delete the item")
+	}
+
+	// subscribe to orders
+
+	testOrder := &mookiespb.Order{
+		Items: []*mookiespb.Item{testItem},
+		Total: 555,
+	}
+
+	_, err = s.SubmitOrder(context.Background(), testOrder)
+	if err != nil {
+		t.Errorf("server.SubmitOrder() failed with %v", err)
+	}
+
+	// compare order from here to order received on subscribe
+	_, err = s.ActiveOrders(context.Background(),
+		&mookiespb.Empty{})
+	if err != nil {
+		t.Errorf("ActiveOrders() failed with %v", err)
+	}
+
+	_, err = s.CompleteOrder(context.Background(),
+		&mookiespb.CompleteOrderRequest{Id: 1})
+	if err != nil {
+		t.Errorf("server.CompleteOrder() failed with %v", err)
 	}
 }
