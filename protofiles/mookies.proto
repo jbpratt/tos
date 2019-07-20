@@ -4,25 +4,25 @@ package mookiespb;
 
 message Item {
   string name = 1;
-  int32 id = 2;
+  int64 id = 2;
   float price = 3;
   // @inject_tag: db:"category_id"
-  int32 categoryID = 4;
+  int64 categoryID = 4;
   // @inject_tag: db:"order_item_id"
-  int32 orderItemID = 5;
+  int64 orderItemID = 5;
   repeated Option options = 6;
 }
 
 message Option {
   string name = 1;
-  int32 id = 2;
+  int64 id = 2;
   float price = 3;
   bool selected = 4;
 }
 
 message Category {
   string name = 1;
-  int32 id = 2;
+  int64 id = 2;
   repeated Item items = 3;
 }
 
@@ -31,7 +31,7 @@ message Menu {
 }
 
 message Order {
-  int32 id = 1;
+  int64 id = 1;
   string name = 2;
   repeated Item items = 3;
   float total = 4;
@@ -46,8 +46,12 @@ message Response {
   string response = 1;
 }
 
+message CreateMenuItemResponse {
+  int64 id = 1;
+}
+
 message CompleteOrderRequest {
-  int32 id = 1;
+  int64 id = 1;
 }
 
 message OrdersRequest {
@@ -63,14 +67,14 @@ message Empty {
 }
 
 message DeleteMenuItemRequest {
-  int32 id = 1;
+  int64 id = 1;
 }
 
 // All unary requests
 service MenuService{
   rpc GetMenu(Empty) returns (Menu) {};
 
-  rpc CreateMenuItem(Item) returns (Response) {};
+  rpc CreateMenuItem(Item) returns (CreateMenuItemResponse) {};
 
   rpc UpdateMenuItem(Item) returns (Response) {};
 

@@ -41,7 +41,7 @@ var (
 	tls      = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
 	promAddr = flag.String("prom", ":9001", "Port to run metrics HTTP server")
 	listen   = flag.String("listen", ":50051", "listen address")
-	dbp      = flag.String("database", "./mookies.db", "database to use")
+	dbp      = flag.String("database", "/tmp/mookies.db", "database to use")
 	crt      = flag.String("crt", "cert/server.crt", "TLS cert to use")
 	key      = flag.String("key", "cert/server.key", "TLS key to use")
 	lpDev    = flag.String("p", "/dev/usb/lp0", "Printer dev file")
@@ -65,7 +65,7 @@ func (s *server) GetMenu(ctx context.Context,
 }
 
 func (s *server) CreateMenuItem(ctx context.Context,
-	req *mookiespb.Item) (*mookiespb.Response, error) {
+	req *mookiespb.Item) (*mookiespb.CreateMenuItemResponse, error) {
 
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "no item provided")
@@ -94,13 +94,13 @@ func (s *server) CreateMenuItem(ctx context.Context,
 		}
 	}
 
-	err := s.services.Menu.CreateMenuItem(req)
+	id, err := s.services.Menu.CreateMenuItem(req)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal,
 			"services..CreateMenuItem(%v) returned %v", req, err)
 	}
 
-	res := &mookiespb.Response{Response: "success"}
+	res := &mookiespb.CreateMenuItemResponse{Id: id}
 	return res, s.loadData()
 }
 
@@ -116,13 +116,14 @@ func (s *server) UpdateMenuItem(ctx context.Context,
 			"req must have itemid (non 0)")
 	}
 
-	//err := s.services.Menu.UpdateMenuItem(req)
-	//if err != nil {
-	//	return nil, status.Errorf(codes.Internal,
-	//		"services..UpdateMenuItem(%v) returned %v", req, err)
-	//}
+	err := s.services.Menu.UpdateMenuItem(req)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal,
+			"services..UpdateMenuItem(%v) returned %v", req, err)
+	}
 
-	return nil, status.Error(codes.Unimplemented, "not implemented")
+	res := &mookiespb.Response{Response: "success"}
+	return res, s.loadData()
 }
 
 func (s *server) DeleteMenuItem(ctx context.Context,

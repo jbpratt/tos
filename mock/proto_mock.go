@@ -57,14 +57,14 @@ func (mr *MockMenuServiceClientMockRecorder) GetMenu(ctx, in interface{}, opts .
 }
 
 // CreateMenuItem mocks base method
-func (m *MockMenuServiceClient) CreateMenuItem(ctx context.Context, in *protofiles.Item, opts ...grpc.CallOption) (*protofiles.Response, error) {
+func (m *MockMenuServiceClient) CreateMenuItem(ctx context.Context, in *protofiles.Item, opts ...grpc.CallOption) (*protofiles.CreateMenuItemResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "CreateMenuItem", varargs...)
-	ret0, _ := ret[0].(*protofiles.Response)
+	ret0, _ := ret[0].(*protofiles.CreateMenuItemResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -175,10 +175,10 @@ func (mr *MockMenuServiceServerMockRecorder) GetMenu(arg0, arg1 interface{}) *go
 }
 
 // CreateMenuItem mocks base method
-func (m *MockMenuServiceServer) CreateMenuItem(arg0 context.Context, arg1 *protofiles.Item) (*protofiles.Response, error) {
+func (m *MockMenuServiceServer) CreateMenuItem(arg0 context.Context, arg1 *protofiles.Item) (*protofiles.CreateMenuItemResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateMenuItem", arg0, arg1)
-	ret0, _ := ret[0].(*protofiles.Response)
+	ret0, _ := ret[0].(*protofiles.CreateMenuItemResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

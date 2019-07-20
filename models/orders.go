@@ -12,7 +12,7 @@ import (
 
 type OrderDB interface {
 	GetOrders() ([]*mookiespb.Order, error)
-	CompleteOrder(id int32) error
+	CompleteOrder(id int64) error
 	SubmitOrder(o *mookiespb.Order) error
 }
 
@@ -86,7 +86,7 @@ func (o *orderDB) SubmitOrder(order *mookiespb.Order) error {
 		return err
 	}
 
-	order.Id = int32(id)
+	order.Id = id
 	if order.GetItems() != nil {
 		err = submitOrderItems(tx, order)
 		if err != nil {
@@ -114,7 +114,7 @@ func submitOrderItems(tx *sql.Tx, order *mookiespb.Order) error {
 		if err != nil {
 			return err
 		}
-		item.OrderItemID = int32(orderItemID)
+		item.OrderItemID = orderItemID
 
 		if item.GetOptions() != nil {
 			err = submitOrderItemOptions(tx, item)
@@ -189,7 +189,7 @@ func (o *orderDB) getOrderItems(order *mookiespb.Order) error {
 	return nil
 }
 
-func (o *orderDB) getOrderItemOptions(item *mookiespb.Item, id int32) error {
+func (o *orderDB) getOrderItemOptions(item *mookiespb.Item, id int64) error {
 	err := o.db.Select(&item.Options, fmt.Sprintf(
 		`
 		SELECT options.name,options.price 
@@ -209,7 +209,7 @@ func (o *orderDB) getOrderItemOptions(item *mookiespb.Item, id int32) error {
 	return nil
 }
 
-func (o *orderDB) CompleteOrder(id int32) error {
+func (o *orderDB) CompleteOrder(id int64) error {
 	o.Lock()
 	defer o.Unlock()
 	tx, err := o.db.Begin()

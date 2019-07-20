@@ -11,8 +11,9 @@ import (
 
 type MenuDB interface {
 	SeedMenu() error
-	CreateMenuItem(*mookiespb.Item) error
-	DeleteMenuItem(int32) error
+	CreateMenuItem(*mookiespb.Item) (int64, error)
+	DeleteMenuItem(int64) error
+	UpdateMenuItem(*mookiespb.Item) error
 	// CreateMenuItemOption() error
 	GetMenu() (*mookiespb.Menu, error)
 }
@@ -153,27 +154,35 @@ func (m *menuDB) GetMenu() (*mookiespb.Menu, error) {
 }
 
 // need to reload
-func (m *menuDB) CreateMenuItem(item *mookiespb.Item) error {
+func (m *menuDB) CreateMenuItem(item *mookiespb.Item) (int64, error) {
 	m.Lock()
 	defer m.Unlock()
-	fmt.Println("inserting item", item)
 
 	res, err := m.db.Exec(
 		"INSERT INTO items (name, price, category_id) VALUES (?,?,?)",
 		item.GetName(), item.GetPrice(), item.GetCategoryID())
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	_, err = res.LastInsertId()
+	return res.LastInsertId()
+}
+
+func (m *menuDB) UpdateMenuItem(item *mookiespb.Item) error {
+	m.Lock()
+	defer m.Unlock()
+
+	_, err := m.db.Exec(
+		"UPDATE items SET name = ?, price = ?, category_id = ? WHERE id = ?",
+		item.GetName(), item.GetPrice(), item.GetCategoryID(), item.GetId())
+
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
-func (m *menuDB) DeleteMenuItem(id int32) error {
+func (m *menuDB) DeleteMenuItem(id int64) error {
 	m.Lock()
 	defer m.Unlock()
 
