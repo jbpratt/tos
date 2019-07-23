@@ -53,7 +53,7 @@ var completeCmd = &cobra.Command{
 
 func completeOrder(c mookiespb.OrderServiceClient) (string, error) {
 	req := &mookiespb.CompleteOrderRequest{
-		Id: int32(orderID),
+		Id: int64(orderID),
 	}
 	res, err := c.CompleteOrder(context.Background(), req)
 	if err != nil {

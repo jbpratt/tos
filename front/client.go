@@ -50,7 +50,7 @@ type layout struct {
 	DebugStrings []string
 
 	//item creation
-	catID int32
+	catID int64
 
 	Error error
 
@@ -213,7 +213,7 @@ func (l *layout) CreateMenuItem(item *mookiespb.Item) error {
 	return nil
 }
 
-func (l *layout) DeleteMenuItem(id int32) error {
+func (l *layout) DeleteMenuItem(id int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 	defer cancel()
 
@@ -311,7 +311,7 @@ func (l *layout) newMenuItemPopup(w *nucular.Window) {
 	}
 
 	w.Row(30).Dynamic(1)
-	l.catID = int32(w.ComboSimple(catList, int(l.catID), 30))
+	l.catID = int64(w.ComboSimple(catList, int(l.catID), 30))
 
 	w.Row(30).Static(w.Bounds.W-90, 10, 83)
 	l.CustomOptionNameEditor.Edit(w)

@@ -71,7 +71,7 @@ func TestCreateMenuItem(t *testing.T) {
 		Price:      399,
 	}
 
-	err = menuService.CreateMenuItem(item)
+	_, err = menuService.CreateMenuItem(item)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -95,7 +95,7 @@ func TestDeleteMenuItem(t *testing.T) {
 		Price:      399,
 	}
 
-	err = menuService.CreateMenuItem(item)
+	_, err = menuService.CreateMenuItem(item)
 	if err != nil {
 		t.Fatal(err)
 	}

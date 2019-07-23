@@ -67,7 +67,7 @@ func TestCreateMenuItem(t *testing.T) {
 	mMenuClient.EXPECT().CreateMenuItem(
 		gomock.Any(),
 		req,
-	).Return(&mookiespb.Response{Response: "Item has been created"}, nil)
+	).Return(&mookiespb.CreateMenuItemResponse{Id: 1}, nil)
 
 	if err := testCreateMenuItem(mMenuClient); err != nil {
 		t.Fatalf("Test failed: %v", err)
@@ -178,7 +178,7 @@ func testCreateMenuItem(client mookiespb.MenuServiceClient) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	want := &mookiespb.Response{Response: "Item has been created"}
+	want := &mookiespb.CreateMenuItemResponse{Id: 1}
 	req := &mookiespb.Item{Name: "Create item test", Price: 695}
 
 	got, err := client.CreateMenuItem(ctx, req)
