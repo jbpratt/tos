@@ -1,19 +1,14 @@
 # TOS
+This is a distributed ticket order system. Currently, there are two established clients and one server that handles database interactions. There are various commands located in `Makefile` for building and starting, as well as in `scripts` are helper scripts. 
 
 ### Setup
-
-
-### TODO:
-- [ ] Client GUI code needs cleaning up
-- [ ] Document and try to solve server not accepting order on restart
-- [ ] Determine proper restart order and script
-- [ ] Additional GRPC features
-  - [x] Keep alive
-  - [ ] Auth
-  - [ ] Encryption
+- `docker-compose up -d` to start the server + monitoring services
+- `sh scripts/deploy.sh` to deploy the system through ssh
+- `sh scripts/local_deploy.sh` to start the system locally
+- To start the server, run `make server` then run `./bin/server --database=mookies.db`
 
 ### Debugging
-`GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info GODEBUG=http2debug=2`
+`export GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info GODEBUG=http2debug=2`
 
 ### License
 ```

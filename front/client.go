@@ -23,6 +23,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
+	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"golang.org/x/mobile/event/key"
 	"google.golang.org/grpc"
@@ -135,6 +136,7 @@ func main() {
 	opts = append(opts,
 		grpc.WithUnaryInterceptor(grpcMetrics.UnaryClientInterceptor()),
 		grpc.WithKeepaliveParams(kacp),
+		grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor()),
 	)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)

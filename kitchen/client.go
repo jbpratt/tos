@@ -22,6 +22,7 @@ import (
 
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 
+	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	mookiespb "github.com/jbpratt78/tos/protofiles"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -107,7 +108,9 @@ func connectToServer() (*grpc.ClientConn, error) {
 
 	opts = append(opts,
 		grpc.WithStreamInterceptor(grpcMetrics.StreamClientInterceptor()),
+		grpc.WithStreamInterceptor(grpc_retry.StreamClientInterceptor()),
 		grpc.WithUnaryInterceptor(grpcMetrics.UnaryClientInterceptor()),
+		grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor()),
 		grpc.WithKeepaliveParams(kacp),
 	)
 
