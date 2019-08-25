@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package mookiespb;
 
+import "google/api/annotations.proto";
+
 message Item {
   string name = 1;
   int64 id = 2;
@@ -72,15 +74,38 @@ message DeleteMenuItemRequest {
 
 // All unary requests
 service MenuService{
-  rpc GetMenu(Empty) returns (Menu) {};
+  rpc GetMenu(Empty) returns (Menu) {
+    option (google.api.http) = {
+      get: "/v1/menu"
+    };
+  }
 
-  rpc CreateMenuItem(Item) returns (CreateMenuItemResponse) {};
+  rpc CreateMenuItem(Item) returns (CreateMenuItemResponse) {
+    option (google.api.http) = {
+      post: "/v1/menu/item"
+      body: "*"
+    };
+  }
 
-  rpc UpdateMenuItem(Item) returns (Response) {};
+  rpc UpdateMenuItem(Item) returns (Response) {
+    option (google.api.http) = {
+      put: "/v1/menu/item"
+      body: "*"
+    };
+  };
 
-  rpc DeleteMenuItem(DeleteMenuItemRequest) returns (Response) {};
+  rpc DeleteMenuItem(DeleteMenuItemRequest) returns (Response) {
+    option (google.api.http) = {
+      delete: "/v1/menu/item"
+    };
+  };
 
-  rpc CreateMenuItemOption(Option) returns (Response) {};
+  rpc CreateMenuItemOption(Option) returns (Response) {
+    option (google.api.http) = {
+      post: "/v1/menu/item/option"
+      body: "*"
+    };
+  };
 }
 
 service OrderService {

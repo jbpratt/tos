@@ -1,4 +1,5 @@
 PKG := "github.com/jbpratt78/tos"
+GOPATH = /home/jbpratt/go
 SERVER_OUT := "bin/server"
 FRONT_CLIENT_OUT := "bin/front"
 BACK_CLIENT_OUT := "bin/kitchen"
@@ -42,6 +43,15 @@ start:
 	@rm -rf ./bin/server
 
 gen:
-	@protoc protofiles/mookies.proto --go_out=plugins=grpc:.
+	protoc -I/usr/local/include -I. \
+		-I${GOPATH}/src \
+		-I${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+		--go_out=plugins=grpc:. \
+		protofiles/mookies.proto
 	@protoc-go-inject-tag -input=protofiles/mookies.pb.go
+	@protoc -I/usr/local/include -I. \
+  	-I${GOPATH}/src \
+  	-I${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+  	--grpc-gateway_out=logtostderr=true:. \
+		protofiles/mookies.proto
 	@mockgen -source=protofiles/mookies.pb.go > mock/proto_mock.go
