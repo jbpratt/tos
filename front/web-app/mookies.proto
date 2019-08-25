@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package mookiespb;
+
+message Item {
+  string name = 1;
+  int64 id = 2;
+  float price = 3;
+  // @inject_tag: db:"category_id"
+  int64 categoryID = 4;
+  // @inject_tag: db:"order_item_id"
+  int64 orderItemID = 5;
+  repeated Option options = 6;
+}
+
+message Option {
+  string name = 1;
+  int64 id = 2;
+  float price = 3;
+  bool selected = 4;
+}
+
+message Category {
+  string name = 1;
+  int64 id = 2;
+  repeated Item items = 3;
+}
+
+message Menu {  
+  repeated Category categories = 1;
+}
+
+message Order {
+  int64 id = 1;
+  string name = 2;
+  repeated Item items = 3;
+  float total = 4;
+  string status = 5;
+  // @inject_tag: db:"time_ordered"
+  string time_ordered = 6;
+  // @inject_tag: db:"time_complete"
+  string time_complete = 7;
+} 
+  
+message Response {
+  string response = 1;
+}
+
+message CreateMenuItemResponse {
+  int64 id = 1;
+}
+
+message CompleteOrderRequest {
+  int64 id = 1;
+}
+
+message OrdersRequest {
+  string request = 1;
+}
+
+message OrdersResponse {
+  repeated Order orders = 1;
+}
+
+message Empty {
+
+}
+
+message DeleteMenuItemRequest {
+  int64 id = 1;
+}
+
+// All unary requests
+service MenuService{
+  rpc GetMenu(Empty) returns (Menu) {};
+
+  rpc CreateMenuItem(Item) returns (CreateMenuItemResponse) {};
+
+  rpc UpdateMenuItem(Item) returns (Response) {};
+
+  rpc DeleteMenuItem(DeleteMenuItemRequest) returns (Response) {};
+
+  rpc CreateMenuItemOption(Option) returns (Response) {};
+}
+
+service OrderService {
+  // Unary 
+  rpc SubmitOrder(Order) returns (Response) {};
+
+  rpc ActiveOrders(Empty) returns (OrdersResponse) {};
+
+  rpc CompleteOrder(CompleteOrderRequest) returns (Response) {};
+
+  // server streaming
+  rpc SubscribeToOrders(Empty) returns (stream Order) {};
+}

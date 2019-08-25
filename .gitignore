@@ -5,3 +5,4 @@ vendor/
 cert/
 client.exe
 *.db
+**/node_modules/
