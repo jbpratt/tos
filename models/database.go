@@ -4,6 +4,7 @@ import (
 	mookiespb "github.com/jbpratt78/tos/protofiles"
 )
 
+// Menu is a struct used for seeding the database
 var Menu = []*mookiespb.Category{
 	{
 		Name: "Sandwiches",

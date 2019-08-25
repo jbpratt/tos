@@ -21,6 +21,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Address is the server address to dial when making a connection
 var Address string
 
 // rootCmd represents the base command when called without any subcommands

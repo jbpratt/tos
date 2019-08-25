@@ -331,8 +331,8 @@ func (s *server) loadData() error {
 	return nil
 }
 
-func NewServer() (*server, error) {
-	services, err := NewServices()
+func newServer() (*server, error) {
+	services, err := newServices()
 	if err != nil {
 		return nil, err
 	}
@@ -344,7 +344,7 @@ func NewServer() (*server, error) {
 	return server, nil
 }
 
-func NewServices() (*models.Services, error) {
+func newServices() (*models.Services, error) {
 	services, err := models.NewServices(
 		models.WithSqlite(*dbp),
 		models.WithMenu(),
@@ -408,7 +408,7 @@ func main() {
 		),
 	)
 
-	server, err := NewServer()
+	server, err := newServer()
 	if err != nil {
 		logger.Fatal(err)
 	}

@@ -10,12 +10,15 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// OrderDB is everything that interacts with the database
+// involving the orders
 type OrderDB interface {
 	GetOrders() ([]*mookiespb.Order, error)
 	CompleteOrder(id int64) error
 	SubmitOrder(o *mookiespb.Order) error
 }
 
+// OrderService is the abstraction of the db layer
 type OrderService interface {
 	OrderDB
 }
@@ -57,6 +60,8 @@ CREATE TABLE IF NOT EXISTS order_item_options (
   FOREIGN KEY (option_id) REFERENCES options(id)
 );`
 
+// NewOrderService creates a new order service for interacting
+// with the database
 func NewOrderService(db *sqlx.DB) (OrderService, error) {
 	_, err := db.Exec(orderSchema)
 	if err != nil {
