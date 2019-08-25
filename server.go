@@ -194,7 +194,7 @@ func (s *server) SubmitOrder(ctx context.Context,
 
 	res := &mookiespb.Response{Response: "Order has been placed.."}
 
-	go publish(s.ps, o, topicOrder)
+	publish(s.ps, o, topicOrder)
 
 	return res, s.loadData()
 }
@@ -210,6 +210,7 @@ func (s *server) SubscribeToOrders(req *mookiespb.Empty,
 			logger.Printf("Sending order to client: %v\n", o)
 			err := stream.Send(o.(*mookiespb.Order))
 			if err != nil {
+				s.ps.Unsub(ch, topicOrder)
 				return status.Errorf(codes.Internal,
 					"stream.Send(%v) failed with %v", o, err)
 			}
