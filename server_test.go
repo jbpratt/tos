@@ -12,7 +12,7 @@ func TestServer(t *testing.T) {
 	*dbp = ":memory:"
 	*prnt = false
 
-	s, err := NewServer()
+	s, err := newServer()
 	if err != nil {
 		t.Fatalf("NewServer() failed with %v", err)
 	}

@@ -292,7 +292,7 @@ func (l *layout) itemOptionPopup(w *nucular.Window) {
 			}
 			if count > 2 || count < 2 {
 				l.Error = errors.New("Item has too many or too few options")
-				w.Master().PopupOpen("Error", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{400, 100, 300, 150}, true, l.errorPopup)
+				w.Master().PopupOpen("Error", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{X: 400, Y: 100, W: 300, H: 150}, true, l.errorPopup)
 			}
 		}
 		w.Close()
@@ -369,7 +369,7 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 	w.Label(time.Now().Format("3:04PM"), "CC")
 	if w.Button(label.T("settings"), false) {
 		w.Master().PopupOpen("Select options:",
-			nucular.WindowMovable, rect.Rect{200, 100, 230, 200}, true, l.settings)
+			nucular.WindowMovable, rect.Rect{X: 200, Y: 100, W: 230, H: 200}, true, l.settings)
 	}
 	// creates a row of height 20 with 1 column
 	w.Row(20).Dynamic(1)
@@ -418,7 +418,7 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 							l.order.Items = append(l.order.Items, l.CurrentItem)
 						} else {
 							w.Master().PopupOpen("Select options:",
-								nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{(w.Bounds.W / 2) - 115, 100, 230, (len(item.GetOptions()) * 40) + 140}, true, l.itemOptionPopup)
+								nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{X: (w.Bounds.W / 2) - 115, Y: 100, W: 230, H: (len(item.GetOptions()) * 40) + 140}, true, l.itemOptionPopup)
 						}
 					}
 					newRow++
@@ -429,7 +429,7 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 				}
 				if sw.Button(label.T(wrapText("Create new item", int(float64(sw.Bounds.W)/4.0/8.0))), false) {
 					l.catID = category.Id - 1
-					w.Master().PopupOpen("Create new Item:", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{(w.Bounds.W / 2) - 115, 100, 230, (5 * 40) + 140}, true, l.newMenuItemPopup)
+					w.Master().PopupOpen("Create new Item:", nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar, rect.Rect{X: (w.Bounds.W / 2) - 115, Y: 100, W: 230, H: (5 * 40) + 140}, true, l.newMenuItemPopup)
 				}
 				sw.TreePop()
 			}
@@ -589,7 +589,7 @@ func (l *layout) sendOrder(w *nucular.Window) {
 		l.Error = errors.New("Please give the order a name")
 		w.Master().PopupOpen("Error",
 			nucular.WindowMovable|nucular.WindowTitle|nucular.WindowDynamic|nucular.WindowNoScrollbar,
-			rect.Rect{20, 100, 230, 150}, true, l.errorPopup)
+			rect.Rect{X: 20, Y: 100, W: 230, H: 150}, true, l.errorPopup)
 	}
 }
 

@@ -222,7 +222,7 @@ func (l *layout) overviewLayout(w *nucular.Window) {
 	w.Label(fmt.Sprintf("selected: %v", l.CompleteOrderIndex), "LC")
 	w.Label(time.Now().Format("3:04PM"), "CC")
 	if w.Button(label.T("settings"), false) {
-		w.Master().PopupOpen("Settings:", nucular.WindowMovable, rect.Rect{200, 100, 230, 200}, true, l.settings)
+		w.Master().PopupOpen("Settings:", nucular.WindowMovable, rect.Rect{X: 200, Y: 100, W: 230, H: 200}, true, l.settings)
 	}
 	w.Row(20).Dynamic(1)
 	w.Label("Orders:", "LC")

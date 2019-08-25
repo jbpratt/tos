@@ -9,6 +9,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// MenuDB is everything that interacts with the database
+// involving the menu
 type MenuDB interface {
 	SeedMenu() error
 	CreateMenuItem(*mookiespb.Item) (int64, error)
@@ -18,6 +20,7 @@ type MenuDB interface {
 	GetMenu() (*mookiespb.Menu, error)
 }
 
+// MenuService the the abstraction for the MenuDB
 type MenuService interface {
 	MenuDB
 }
@@ -63,6 +66,7 @@ CREATE TABLE IF NOT EXISTS item_options (
   FOREIGN KEY (option_id) REFERENCES options(id)
 );`
 
+// NewMenuService creates a menu service for interacting with the database
 func NewMenuService(db *sqlx.DB) (MenuService, error) {
 	_, err := db.Exec(menuSchema)
 	if err != nil {
