@@ -22,8 +22,8 @@ static_resources:
               routes:
               - match: { prefix: "/" }
                 route:
-                  cluster: greeter_service
-                  max_grpc_timeout: 0s
+                  cluster: menu_service
+                  max_grpc_timeout: 6s
               cors:
                 allow_origin:
                 - "*"
@@ -36,8 +36,8 @@ static_resources:
           - name: envoy.cors
           - name: envoy.router
   clusters:
-  - name: greeter_service
-    connect_timeout: 0.25s
+  - name: menu_service
+    connect_timeout: 15.0s
     type: logical_dns
     http2_protocol_options: {}
     lb_policy: round_robin

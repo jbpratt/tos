@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package mookiespb;
 
-import "google/api/annotations.proto";
-
 message Item {
   string name = 1;
   int64 id = 2;
@@ -28,9 +26,7 @@ message Category {
   repeated Item items = 3;
 }
 
-message Menu {  
-  repeated Category categories = 1;
-}
+message Menu { repeated Category categories = 1; }
 
 message Order {
   int64 id = 1;
@@ -42,74 +38,37 @@ message Order {
   string time_ordered = 6;
   // @inject_tag: db:"time_complete"
   string time_complete = 7;
-} 
-  
-message Response {
-  string response = 1;
 }
 
-message CreateMenuItemResponse {
-  int64 id = 1;
-}
+message Response { string response = 1; }
 
-message CompleteOrderRequest {
-  int64 id = 1;
-}
+message CreateMenuItemResponse { int64 id = 1; }
 
-message OrdersRequest {
-  string request = 1;
-}
+message CompleteOrderRequest { int64 id = 1; }
 
-message OrdersResponse {
-  repeated Order orders = 1;
-}
+message OrdersRequest { string request = 1; }
 
-message Empty {
+message OrdersResponse { repeated Order orders = 1; }
 
-}
+message Empty {}
 
-message DeleteMenuItemRequest {
-  int64 id = 1;
-}
+message DeleteMenuItemRequest { int64 id = 1; }
 
 // All unary requests
-service MenuService{
-  rpc GetMenu(Empty) returns (Menu) {
-    option (google.api.http) = {
-      get: "/v1/menu"
-    };
-  }
+service MenuService {
+  rpc GetMenu(Empty) returns (Menu) {}
 
-  rpc CreateMenuItem(Item) returns (CreateMenuItemResponse) {
-    option (google.api.http) = {
-      post: "/v1/menu/item"
-      body: "*"
-    };
-  }
+  rpc CreateMenuItem(Item) returns (CreateMenuItemResponse) {}
 
-  rpc UpdateMenuItem(Item) returns (Response) {
-    option (google.api.http) = {
-      put: "/v1/menu/item"
-      body: "*"
-    };
-  };
+  rpc UpdateMenuItem(Item) returns (Response) {};
 
-  rpc DeleteMenuItem(DeleteMenuItemRequest) returns (Response) {
-    option (google.api.http) = {
-      delete: "/v1/menu/item"
-    };
-  };
+  rpc DeleteMenuItem(DeleteMenuItemRequest) returns (Response) {};
 
-  rpc CreateMenuItemOption(Option) returns (Response) {
-    option (google.api.http) = {
-      post: "/v1/menu/item/option"
-      body: "*"
-    };
-  };
+  rpc CreateMenuItemOption(Option) returns (Response) {};
 }
 
 service OrderService {
-  // Unary 
+  // Unary
   rpc SubmitOrder(Order) returns (Response) {};
 
   rpc ActiveOrders(Empty) returns (OrdersResponse) {};
