@@ -22,7 +22,7 @@ static_resources:
               routes:
               - match: { prefix: "/" }
                 route:
-                  cluster: echo_service
+                  cluster: greeter_service
                   max_grpc_timeout: 0s
               cors:
                 allow_origin:
@@ -36,9 +36,10 @@ static_resources:
           - name: envoy.cors
           - name: envoy.router
   clusters:
-  - name: echo_service
+  - name: greeter_service
     connect_timeout: 0.25s
     type: logical_dns
     http2_protocol_options: {}
     lb_policy: round_robin
-    hosts: [{ socket_address: { address: node-server, port_value: 9090 }}]
+    # win/mac hosts: Use address: host.docker.internal instead of address: localhost in the line below
+    hosts: [{ socket_address: { address: localhost, port_value: 9090 }}]
