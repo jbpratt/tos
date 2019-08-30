@@ -20,7 +20,6 @@ class MenuApp {
                         console.log(response);
                     }, MenuApp.INTERVAL);
                 }
-
             });
     }
 
@@ -31,6 +30,6 @@ class MenuApp {
 
 }
 
-const menuService = new MenuServiceClient('http://localhost:50051');
+const menuService = new MenuServiceClient('http://localhost:8080');
 const menuApp = new MenuApp(menuService);
 menuApp.load();

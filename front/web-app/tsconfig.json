@@ -10,7 +10,7 @@
     ],
   },
   "include": [
-    "src/client.ts",
+    "src/index.ts",
     "generated/mookies_pb.d.ts",
     "generated/mookies_pb_service.d.ts"
   ],

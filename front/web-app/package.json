@@ -2,8 +2,11 @@
   "name": "tos-front-client",
   "version": "1.0.0",
   "description": "front client for ticket order system",
-  "main": "greeter.ts",
+  "main": "src/client.ts",
   "scripts": {
+    "start": "webpack-dev-server --mode development",
+    "watch": "webpack --watch",
+    "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
