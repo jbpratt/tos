@@ -14,6 +14,7 @@ import (
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/jbpratt78/tos/models"
 	mookiespb "github.com/jbpratt78/tos/protofiles"
 	"github.com/knq/escpos"
@@ -41,7 +42,8 @@ var (
 	tls      = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
 	prnt     = flag.Bool("print", true, "Use printer for complete orders")
 	promAddr = flag.String("prom", ":9001", "Port to run metrics HTTP server")
-	listen   = flag.String("listen", ":50051", "listen address")
+	webAddr  = flag.String("web", ":9090", "Port to run grpc-web HTTP server")
+	addr     = flag.String("addr", ":50051", "listen address")
 	dbp      = flag.String("database", "/tmp/mookies.db", "database to use")
 	crt      = flag.String("crt", "cert/server.crt", "TLS cert to use")
 	key      = flag.String("key", "cert/server.key", "TLS key to use")
@@ -373,11 +375,11 @@ func init() {
 func main() {
 	flag.Parse()
 
-	lis, err := net.Listen("tcp", *listen)
+	lis, err := net.Listen("tcp", *addr)
 	if err != nil {
 		logger.Fatalf("Failed to listen: %v\n", err)
 	}
-	logger.Printf("Listening on %q...\n", *listen)
+	logger.Printf("Listening on %q...\n", *addr)
 
 	var opts []grpc.ServerOption
 	if *tls {
@@ -414,12 +416,23 @@ func main() {
 	}
 	defer server.services.Close()
 
-	httpServer := &http.Server{
+	promHTTPServer := &http.Server{
 		Handler: promhttp.HandlerFor(reg, promhttp.HandlerOpts{}),
 		Addr:    *promAddr,
 	}
 
 	s := grpc.NewServer(opts...)
+
+	wrappedServer := grpcweb.WrapServer(s)
+	handler := func(resp http.ResponseWriter, req *http.Request) {
+		setupResponse(&resp, req)
+		wrappedServer.ServeHTTP(resp, req)
+	}
+
+	httpServer := http.Server{
+		Handler: http.HandlerFunc(handler),
+		Addr:    *webAddr,
+	}
 
 	mookiespb.RegisterMenuServiceServer(s, server)
 	mookiespb.RegisterOrderServiceServer(s, server)
@@ -427,12 +440,24 @@ func main() {
 	grpcMetrics.InitializeMetrics(s)
 
 	go func() {
+		if err := promHTTPServer.ListenAndServe(); err != nil {
+			logger.Fatalf("Prom http server failed to start: %v", err)
+		}
+	}()
+
+	go func() {
 		if err := httpServer.ListenAndServe(); err != nil {
-			logger.Fatal("Unable to start a http server.")
+			logger.Fatalf("grpc-web http server failed to start: %v", err)
 		}
 	}()
 
 	if err := s.Serve(lis); err != nil {
-		logger.Fatalf("Failed to serve: %v", err)
+		logger.Fatalf("gRPC server failed to serve: %v", err)
 	}
+}
+
+func setupResponse(w *http.ResponseWriter, req *http.Request) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, x-grpc-web")
 }
