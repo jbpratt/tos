@@ -11,14 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aarzilli/nucular"
-	"github.com/aarzilli/nucular/label"
-	"github.com/aarzilli/nucular/rect"
-	"github.com/aarzilli/nucular/style"
-	nstyle "github.com/aarzilli/nucular/style"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"golang.org/x/mobile/event/key"
 
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 
@@ -31,15 +25,6 @@ import (
 )
 
 type layout struct {
-	ShowMenu    bool
-	Titlebar    bool
-	Border      bool
-	Resize      bool
-	Movable     bool
-	NoScrollbar bool
-	Minimizable bool
-	Close       bool
-
 	CompleteOrderIndex int
 
 	// orders
@@ -50,21 +35,12 @@ type layout struct {
 	DebugEnabled bool
 	DebugStrings []string
 
-	Theme  nstyle.Theme
 	client mookiespb.OrderServiceClient
 }
 
 func newLayout() (l *layout) {
 	l = &layout{}
-	l.ShowMenu = true
-	l.Titlebar = true
-	l.Border = true
-	l.Resize = true
-	l.Movable = true
-	l.NoScrollbar = false
-	l.Close = true
 	l.CompleteOrderIndex = 0
-	l.Theme = style.WhiteTheme
 
 	return l
 }
@@ -79,7 +55,6 @@ var (
 	tls  = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
 	cert = flag.String("cert", "cert/server.crt", "The file containing the CA root cert file")
 	addr = flag.String("addr", "server:50051", "server address to dial")
-	wnd  nucular.MasterWindow
 
 	log grpclog.LoggerV2
 	reg = prometheus.NewRegistry()
@@ -152,11 +127,6 @@ func main() {
 		}
 	}()
 
-	groupFlags := nucular.WindowFlags(0)
-	groupFlags |= nucular.WindowNoScrollbar
-	wnd = nucular.NewMasterWindow(groupFlags, "Mookies", l.basicDemo)
-	wnd.SetStyle(style.FromTheme(l.Theme, 1))
-	wnd.Main()
 }
 
 func (l *layout) completeOrder(order *mookiespb.Order, i int) error {
@@ -212,77 +182,6 @@ func (l *layout) subscribeToOrders() error {
 		}
 		l.Orders = append(l.Orders, order)
 		log.Infof("Received order: %v\n", order)
-		wnd.Changed()
-	}
-}
-
-func (l *layout) overviewLayout(w *nucular.Window) {
-	l.keybindings(w)
-	w.Row(30).Ratio(0.3, 0.6, 0.1)
-	w.Label(fmt.Sprintf("selected: %v", l.CompleteOrderIndex), "LC")
-	w.Label(time.Now().Format("3:04PM"), "CC")
-	if w.Button(label.T("settings"), false) {
-		w.Master().PopupOpen("Settings:", nucular.WindowMovable, rect.Rect{X: 200, Y: 100, W: 230, H: 200}, true, l.settings)
-	}
-	w.Row(20).Dynamic(1)
-	w.Label("Orders:", "LC")
-
-	groupFlags := nucular.WindowFlags(0)
-	// looks like there is no option to only have a horizontal scrollbar
-	//groupFlags |= nucular.WindowNoScrollbar
-
-	// create group that contains all orders
-	w.Row(0).Dynamic(1)
-	if ordersWindow := w.GroupBegin("orders", groupFlags); ordersWindow != nil {
-		// create a row with a column for every order
-		widths := make([]int, len(l.Orders))
-		for index := 0; index < len(widths); index++ {
-			widths[index] = 200
-		}
-		ordersWindow.Row(ordersWindow.Bounds.H - 15).Static(widths...)
-		for i, order := range l.Orders {
-			groupFlags = nucular.WindowFlags(0)
-			groupFlags |= nucular.WindowNoHScrollbar
-			groupFlags |= nucular.WindowBorder
-			// create group for each order
-			if singleOrderWindow := ordersWindow.GroupBegin(fmt.Sprint(order.Id), groupFlags); singleOrderWindow != nil {
-				singleOrderWindow.Row(20).Dynamic(1)
-				orderTitle := fmt.Sprintf("%v : %v", i+1, order.GetName())
-				singleOrderWindow.Label(orderTitle, "CC")
-				singleOrderWindow.Row(20).Dynamic(1)
-				if singleOrderWindow.Button(label.T("DONE"), false) {
-					l.completeOrder(order, i)
-				}
-
-				for _, item := range order.Items {
-					lines := strings.Split(wrapText(item.Name, 22), "\n")
-					for i, line := range lines {
-						singleOrderWindow.Row(12).Dynamic(1)
-						if i == 0 {
-							singleOrderWindow.Label("• "+line, "LT")
-						} else {
-							singleOrderWindow.Label("  "+line, "LT")
-						}
-					}
-					for _, option := range item.GetOptions() {
-						if !option.GetSelected() {
-							continue
-						}
-						lines := strings.Split(wrapText(option.GetName(), 20), "\n")
-						for i, line := range lines {
-							singleOrderWindow.Row(12).Dynamic(1)
-							if i == 0 {
-								singleOrderWindow.Label("  • "+line, "LT")
-							} else {
-								singleOrderWindow.Label("    "+line, "LT")
-							}
-						}
-					}
-				}
-				singleOrderWindow.GroupEnd()
-			}
-		}
-		ordersWindow.GroupEnd()
 	}
 }
 
@@ -303,72 +202,11 @@ func wrapText(text string, width int) string {
 	return output
 }
 
-func (l *layout) basicDemo(w *nucular.Window) {
-	l.overviewLayout(w)
-}
-
 func (l *layout) debug(message string, v ...interface{}) {
 	msg := fmt.Sprintf(message, v...)
 	log.Infof(msg)
 	// append to debug slice
 	l.DebugStrings = append(l.DebugStrings, msg)
-}
-
-func (l *layout) keybindings(w *nucular.Window) {
-	mw := w.Master()
-	if in := w.Input(); in != nil {
-		k := in.Keyboard
-		for _, e := range k.Keys {
-			// TODO: set numpad code on Pi
-			// TODO: swap scaling keys to be accesible from numpad
-			scaling := mw.Style().Scaling
-			switch {
-			case (e.Modifiers == key.ModControl || e.Modifiers == key.ModControl|key.ModShift) && (e.Code == key.CodeEqualSign):
-				mw.Style().Scale(scaling + 0.1)
-			case (e.Modifiers == key.ModControl || e.Modifiers == key.ModControl|key.ModShift) && (e.Code == key.CodeHyphenMinus):
-				mw.Style().Scale(scaling - 0.1)
-			case (e.Code == key.CodeF12):
-				l.DebugEnabled = !l.DebugEnabled
-			case (e.Code == key.CodeKeypad0 || e.Code == key.Code0):
-				l.addToCompleteOrderIndex(0)
-			case (e.Code == key.CodeKeypad1 || e.Code == key.Code1):
-				l.addToCompleteOrderIndex(1)
-			case (e.Code == key.CodeKeypad2 || e.Code == key.Code2):
-				l.addToCompleteOrderIndex(2)
-			case (e.Code == key.CodeKeypad3 || e.Code == key.Code3):
-				l.addToCompleteOrderIndex(3)
-			case (e.Code == key.CodeKeypad4 || e.Code == key.Code4):
-				l.addToCompleteOrderIndex(4)
-			case (e.Code == key.CodeKeypad5 || e.Code == key.Code5):
-				l.addToCompleteOrderIndex(5)
-			case (e.Code == key.CodeKeypad6 || e.Code == key.Code6):
-				l.addToCompleteOrderIndex(6)
-			case (e.Code == key.CodeKeypad7 || e.Code == key.Code7):
-				l.addToCompleteOrderIndex(7)
-			case (e.Code == key.CodeKeypad8 || e.Code == key.Code8):
-				l.addToCompleteOrderIndex(8)
-			case (e.Code == key.CodeKeypad9 || e.Code == key.Code9):
-				l.addToCompleteOrderIndex(9)
-			case (e.Code == key.CodeKeypadFullStop || e.Code == key.CodeDeleteBackspace):
-				log.Infoln("delete pressed")
-				l.resetCompleteOrderIndex()
-			case (e.Code == key.CodeKeypadEnter || e.Code == key.CodeReturnEnter):
-				index := l.CompleteOrderIndex - 1
-				log.Infof("enter pressed with index %v\n", index)
-				if index >= len(l.Orders) || index < 0 {
-					// TODO add popup
-					log.Infoln("no order at that index")
-					l.resetCompleteOrderIndex()
-				} else {
-					log.Infoln("calling complete")
-					order := l.Orders[index]
-					l.completeOrder(order, index)
-					l.resetCompleteOrderIndex()
-				}
-			}
-
-		}
-	}
 }
 
 func (l *layout) addToCompleteOrderIndex(i int) error {
@@ -382,26 +220,4 @@ func (l *layout) addToCompleteOrderIndex(i int) error {
 
 func (l *layout) resetCompleteOrderIndex() {
 	l.CompleteOrderIndex = 0
-}
-
-func (l *layout) settings(w *nucular.Window) {
-	w.Row(25).Dynamic(1)
-	newtheme := l.Theme
-	if w.OptionText("Default Theme", newtheme == nstyle.DefaultTheme) {
-		newtheme = nstyle.DefaultTheme
-	}
-	if w.OptionText("White Theme", newtheme == nstyle.WhiteTheme) {
-		newtheme = nstyle.WhiteTheme
-	}
-	if w.OptionText("Red Theme", newtheme == nstyle.RedTheme) {
-		newtheme = nstyle.RedTheme
-	}
-	if w.OptionText("Dark Theme", newtheme == nstyle.DarkTheme) {
-		newtheme = nstyle.DarkTheme
-	}
-	if newtheme != l.Theme {
-		l.Theme = newtheme
-		w.Master().SetStyle(nstyle.FromTheme(l.Theme, w.Master().Style().Scaling))
-		w.Close()
-	}
 }
