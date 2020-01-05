@@ -6,7 +6,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
 	github.com/cskr/pubsub v1.0.2
 	github.com/davecgh/go-spew v1.1.1
-	github.com/favadi/protoc-go-inject-tag v1.0.0 // indirect
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
 	github.com/gogo/protobuf v1.3.0 // indirect
 	github.com/golang/mock v1.3.1

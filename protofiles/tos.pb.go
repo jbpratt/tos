@@ -29,9 +29,9 @@ type Item struct {
 	Id    int64   `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	Price float32 `protobuf:"fixed32,3,opt,name=price,proto3" json:"price,omitempty"`
 	// @inject_tag: db:"category_id"
-	CategoryID int64 `protobuf:"varint,4,opt,name=categoryID,proto3" json:"categoryID,omitempty"`
+	CategoryID int64 `protobuf:"varint,4,opt,name=categoryID,proto3" json:"categoryID,omitempty" db:"category_id"`
 	// @inject_tag: db:"order_item_id"
-	OrderItemID          int64     `protobuf:"varint,5,opt,name=orderItemID,proto3" json:"orderItemID,omitempty"`
+	OrderItemID          int64     `protobuf:"varint,5,opt,name=orderItemID,proto3" json:"orderItemID,omitempty" db:"order_item_id"`
 	Options              []*Option `protobuf:"bytes,6,rep,name=options,proto3" json:"options,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
@@ -269,9 +269,9 @@ type Order struct {
 	Total  float32 `protobuf:"fixed32,4,opt,name=total,proto3" json:"total,omitempty"`
 	Status string  `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
 	// @inject_tag: db:"time_ordered"
-	TimeOrdered string `protobuf:"bytes,6,opt,name=time_ordered,json=timeOrdered,proto3" json:"time_ordered,omitempty"`
+	TimeOrdered string `protobuf:"bytes,6,opt,name=time_ordered,json=timeOrdered,proto3" json:"time_ordered,omitempty" db:"time_ordered"`
 	// @inject_tag: db:"time_complete"
-	TimeComplete         string   `protobuf:"bytes,7,opt,name=time_complete,json=timeComplete,proto3" json:"time_complete,omitempty"`
+	TimeComplete         string   `protobuf:"bytes,7,opt,name=time_complete,json=timeComplete,proto3" json:"time_complete,omitempty" db:"time_complete"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`

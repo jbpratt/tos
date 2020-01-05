@@ -1,15 +1,15 @@
 package models
 
 import (
-	mookiespb "github.com/jbpratt78/tos/protofiles"
+	tospb "github.com/jbpratt78/tos/protofiles"
 )
 
 // Menu is a struct used for seeding the database
-var Menu = []*mookiespb.Category{
+var Menu = []*tospb.Category{
 	{
 		Name: "Sandwiches",
-		Items: []*mookiespb.Item{
-			{Name: "LG Smoked Pulled Pork", Price: 495, Options: []*mookiespb.Option{
+		Items: []*tospb.Item{
+			{Name: "LG Smoked Pulled Pork", Price: 495, Options: []*tospb.Option{
 				{Name: "pickles", Price: 0, Selected: true},
 				{Name: "bbq sauce", Price: 0, Selected: true},
 				{Name: "white sauce", Price: 0, Selected: false},
@@ -21,7 +21,7 @@ var Menu = []*mookiespb.Category{
 				{Name: "cheese", Price: 25, Selected: false},
 				{Name: "onion", Price: 25, Selected: false},
 			}},
-			{Name: "RG Smoked Pulled Pork", Price: 395, Options: []*mookiespb.Option{
+			{Name: "RG Smoked Pulled Pork", Price: 395, Options: []*tospb.Option{
 				{Name: "pickles", Price: 0, Selected: true},
 				{Name: "bbq sauce", Price: 0, Selected: true},
 				{Name: "white sauce", Price: 0, Selected: false},
@@ -33,7 +33,7 @@ var Menu = []*mookiespb.Category{
 				{Name: "cheese", Price: 25, Selected: false},
 				{Name: "onion", Price: 25, Selected: false},
 			}},
-			{Name: "LG Smoked Chicken Breast", Price: 495, Options: []*mookiespb.Option{
+			{Name: "LG Smoked Chicken Breast", Price: 495, Options: []*tospb.Option{
 				{Name: "pickles", Price: 0, Selected: false},
 				{Name: "bbq sauce", Price: 0, Selected: false},
 				{Name: "white sauce", Price: 0, Selected: false},
@@ -45,7 +45,7 @@ var Menu = []*mookiespb.Category{
 				{Name: "cheese", Price: 25, Selected: false},
 				{Name: "onion", Price: 25, Selected: false},
 			}},
-			{Name: "RG Smoked Chicken Breast", Price: 395, Options: []*mookiespb.Option{
+			{Name: "RG Smoked Chicken Breast", Price: 395, Options: []*tospb.Option{
 				{Name: "pickles", Price: 0, Selected: false},
 				{Name: "bbq sauce", Price: 0, Selected: false},
 				{Name: "white sauce", Price: 0, Selected: false},
@@ -57,7 +57,7 @@ var Menu = []*mookiespb.Category{
 				{Name: "cheese", Price: 25, Selected: false},
 				{Name: "onion", Price: 25, Selected: false},
 			}},
-			{Name: "'The Molly'", Price: 395, Options: []*mookiespb.Option{
+			{Name: "'The Molly'", Price: 395, Options: []*tospb.Option{
 				{Name: "pickles", Price: 0, Selected: true},
 				{Name: "bbq sauce", Price: 0, Selected: true},
 				{Name: "white sauce", Price: 0, Selected: true},
@@ -69,7 +69,7 @@ var Menu = []*mookiespb.Category{
 				{Name: "cheese", Price: 25, Selected: false},
 				{Name: "onion", Price: 25, Selected: false},
 			}},
-			{Name: "LG Hamburger", Price: 495, Options: []*mookiespb.Option{
+			{Name: "LG Hamburger", Price: 495, Options: []*tospb.Option{
 				{Name: "pickles", Price: 0, Selected: true},
 				{Name: "bbq sauce", Price: 0, Selected: true},
 				{Name: "white sauce", Price: 0, Selected: false},
@@ -79,7 +79,7 @@ var Menu = []*mookiespb.Category{
 				{Name: "tomato", Price: 25, Selected: false},
 				{Name: "lettuce", Price: 25, Selected: false},
 			}},
-			{Name: "Hamburger", Price: 395, Options: []*mookiespb.Option{
+			{Name: "Hamburger", Price: 395, Options: []*tospb.Option{
 				{Name: "pickles", Price: 0, Selected: true},
 				{Name: "bbq sauce", Price: 0, Selected: true},
 				{Name: "white sauce", Price: 0, Selected: false},
@@ -89,7 +89,7 @@ var Menu = []*mookiespb.Category{
 				{Name: "tomato", Price: 25, Selected: false},
 				{Name: "lettuce", Price: 25, Selected: false},
 			}},
-			{Name: "LG Cheeseburger", Price: 550, Options: []*mookiespb.Option{
+			{Name: "LG Cheeseburger", Price: 550, Options: []*tospb.Option{
 				{Name: "pickles", Price: 0, Selected: true},
 				{Name: "bbq sauce", Price: 0, Selected: true},
 				{Name: "white sauce", Price: 0, Selected: false},
@@ -99,7 +99,7 @@ var Menu = []*mookiespb.Category{
 				{Name: "tomato", Price: 25, Selected: false},
 				{Name: "lettuce", Price: 25, Selected: false},
 			}},
-			{Name: "Cheeseburger", Price: 425, Options: []*mookiespb.Option{
+			{Name: "Cheeseburger", Price: 425, Options: []*tospb.Option{
 				{Name: "pickles", Price: 0, Selected: true},
 				{Name: "bbq sauce", Price: 0, Selected: true},
 				{Name: "white sauce", Price: 0, Selected: false},
@@ -109,7 +109,7 @@ var Menu = []*mookiespb.Category{
 				{Name: "tomato", Price: 25, Selected: false},
 				{Name: "lettuce", Price: 25, Selected: false},
 			}},
-			{Name: "Grilled Cheese", Price: 300, Options: []*mookiespb.Option{
+			{Name: "Grilled Cheese", Price: 300, Options: []*tospb.Option{
 				{Name: "pickles", Price: 0, Selected: true},
 				{Name: "bbq sauce", Price: 0, Selected: true},
 				{Name: "white sauce", Price: 0, Selected: false},
@@ -119,7 +119,7 @@ var Menu = []*mookiespb.Category{
 				{Name: "tomato", Price: 25, Selected: false},
 				{Name: "lettuce", Price: 25, Selected: false},
 			}},
-			{Name: "Pulled Pork Melt", Price: 395, Options: []*mookiespb.Option{
+			{Name: "Pulled Pork Melt", Price: 395, Options: []*tospb.Option{
 				{Name: "pickles", Price: 0, Selected: true},
 				{Name: "bbq sauce", Price: 0, Selected: true},
 				{Name: "white sauce", Price: 0, Selected: false},
@@ -133,8 +133,8 @@ var Menu = []*mookiespb.Category{
 	},
 	{
 		Name: "Plates",
-		Items: []*mookiespb.Item{
-			{Name: "Smoked Pulled Pork", Price: 990, Options: []*mookiespb.Option{
+		Items: []*tospb.Item{
+			{Name: "Smoked Pulled Pork", Price: 990, Options: []*tospb.Option{
 				{Name: "potato salad", Price: 0, Selected: false},
 				{Name: "baked beans", Price: 0, Selected: false},
 				{Name: "coleslaw", Price: 0, Selected: false},
@@ -142,7 +142,7 @@ var Menu = []*mookiespb.Category{
 				{Name: "fries", Price: 0, Selected: false},
 				{Name: "baked potato", Price: 100, Selected: false},
 			}},
-			{Name: "RG Rib", Price: 995, Options: []*mookiespb.Option{
+			{Name: "RG Rib", Price: 995, Options: []*tospb.Option{
 				{Name: "potato salad", Price: 0, Selected: false},
 				{Name: "baked beans", Price: 0, Selected: false},
 				{Name: "coleslaw", Price: 0, Selected: false},
@@ -150,7 +150,7 @@ var Menu = []*mookiespb.Category{
 				{Name: "fries", Price: 0, Selected: false},
 				{Name: "baked potato", Price: 100, Selected: false},
 			}},
-			{Name: "½ Smoked Chicken", Price: 995, Options: []*mookiespb.Option{
+			{Name: "½ Smoked Chicken", Price: 995, Options: []*tospb.Option{
 				{Name: "potato salad", Price: 0, Selected: false},
 				{Name: "baked beans", Price: 0, Selected: false},
 				{Name: "coleslaw", Price: 0, Selected: false},
@@ -158,7 +158,7 @@ var Menu = []*mookiespb.Category{
 				{Name: "fries", Price: 0, Selected: false},
 				{Name: "baked potato", Price: 100, Selected: false},
 			}},
-			{Name: "Smoked Chicken Breast", Price: 725, Options: []*mookiespb.Option{
+			{Name: "Smoked Chicken Breast", Price: 725, Options: []*tospb.Option{
 				{Name: "potato salad", Price: 0, Selected: false},
 				{Name: "baked beans", Price: 0, Selected: false},
 				{Name: "coleslaw", Price: 0, Selected: false},
@@ -166,7 +166,7 @@ var Menu = []*mookiespb.Category{
 				{Name: "fries", Price: 0, Selected: false},
 				{Name: "baked potato", Price: 100, Selected: false},
 			}},
-			{Name: "Smoked Wing (8 wings)", Price: 999, Options: []*mookiespb.Option{
+			{Name: "Smoked Wing (8 wings)", Price: 999, Options: []*tospb.Option{
 				{Name: "potato salad", Price: 0, Selected: false},
 				{Name: "baked beans", Price: 0, Selected: false},
 				{Name: "coleslaw", Price: 0, Selected: false},
@@ -174,14 +174,14 @@ var Menu = []*mookiespb.Category{
 				{Name: "fries", Price: 0, Selected: false},
 				{Name: "baked potato", Price: 100, Selected: false},
 			}},
-			{Name: "BBQ Loaded Nachos", Price: 875, Options: []*mookiespb.Option{
+			{Name: "BBQ Loaded Nachos", Price: 875, Options: []*tospb.Option{
 				{Name: "cheddar cheese", Price: 0, Selected: true},
 				{Name: "green onions", Price: 0, Selected: true},
 				{Name: "jalapeños", Price: 0, Selected: true},
 				{Name: "bbq sauce", Price: 0, Selected: false},
 				{Name: "white sauce", Price: 0, Selected: false},
 			}},
-			{Name: "Chicken Loaded Nachos", Price: 875, Options: []*mookiespb.Option{
+			{Name: "Chicken Loaded Nachos", Price: 875, Options: []*tospb.Option{
 				{Name: "cheddar cheese", Price: 0, Selected: true},
 				{Name: "green onions", Price: 0, Selected: true},
 				{Name: "jalapeños", Price: 0, Selected: true},
@@ -192,8 +192,8 @@ var Menu = []*mookiespb.Category{
 	},
 	{
 		Name: "Baskets",
-		Items: []*mookiespb.Item{
-			{Name: "Smoked Wing", Price: 500, Options: []*mookiespb.Option{
+		Items: []*tospb.Item{
+			{Name: "Smoked Wing", Price: 500, Options: []*tospb.Option{
 				{Name: "potato salad", Price: 0, Selected: false},
 				{Name: "baked beans", Price: 0, Selected: false},
 				{Name: "coleslaw", Price: 0, Selected: false},
@@ -201,7 +201,7 @@ var Menu = []*mookiespb.Category{
 				{Name: "fries", Price: 0, Selected: false},
 				{Name: "baked potato", Price: 100, Selected: false},
 			}},
-			{Name: "Rib", Price: 500, Options: []*mookiespb.Option{
+			{Name: "Rib", Price: 500, Options: []*tospb.Option{
 				{Name: "potato salad", Price: 0, Selected: false},
 				{Name: "baked beans", Price: 0, Selected: false},
 				{Name: "coleslaw", Price: 0, Selected: false},
@@ -213,36 +213,36 @@ var Menu = []*mookiespb.Category{
 	},
 	{
 		Name: "Potatoes",
-		Items: []*mookiespb.Item{
-			{Name: "Loaded Pork", Price: 899, Options: []*mookiespb.Option{
+		Items: []*tospb.Item{
+			{Name: "Loaded Pork", Price: 899, Options: []*tospb.Option{
 				{Name: "cheese", Price: 0, Selected: true},
 				{Name: "bacon bits", Price: 0, Selected: true},
 				{Name: "green onions", Price: 0, Selected: true},
 				{Name: "butter", Price: 0, Selected: true},
 				{Name: "sour cream", Price: 0, Selected: true},
 			}},
-			{Name: "Loaded Chicken", Price: 899, Options: []*mookiespb.Option{
+			{Name: "Loaded Chicken", Price: 899, Options: []*tospb.Option{
 				{Name: "cheese", Price: 0, Selected: true},
 				{Name: "bacon bits", Price: 0, Selected: true},
 				{Name: "green onions", Price: 0, Selected: true},
 				{Name: "butter", Price: 0, Selected: true},
 				{Name: "sour cream", Price: 0, Selected: true},
 			}},
-			{Name: "Loaded Potato (no meat)", Price: 699, Options: []*mookiespb.Option{
+			{Name: "Loaded Potato (no meat)", Price: 699, Options: []*tospb.Option{
 				{Name: "cheese", Price: 0, Selected: true},
 				{Name: "bacon bits", Price: 0, Selected: true},
 				{Name: "green onions", Price: 0, Selected: true},
 				{Name: "butter", Price: 0, Selected: true},
 				{Name: "sour cream", Price: 0, Selected: true},
 			}},
-			{Name: "(Pork) Smothered and Covered Fries", Price: 899, Options: []*mookiespb.Option{
+			{Name: "(Pork) Smothered and Covered Fries", Price: 899, Options: []*tospb.Option{
 				{Name: "cheese", Price: 0, Selected: true},
 				{Name: "bacon bits", Price: 0, Selected: true},
 				{Name: "green onions", Price: 0, Selected: true},
 				{Name: "butter", Price: 0, Selected: true},
 				{Name: "sour cream", Price: 0, Selected: true},
 			}},
-			{Name: "(Chicken) Smothered and Covered Fries", Price: 899, Options: []*mookiespb.Option{
+			{Name: "(Chicken) Smothered and Covered Fries", Price: 899, Options: []*tospb.Option{
 				{Name: "cheese", Price: 0, Selected: true},
 				{Name: "bacon bits", Price: 0, Selected: true},
 				{Name: "green onions", Price: 0, Selected: true},
@@ -253,7 +253,7 @@ var Menu = []*mookiespb.Category{
 	},
 	{
 		Name: "Sides",
-		Items: []*mookiespb.Item{
+		Items: []*tospb.Item{
 			{Name: "SM Cole Slaw", Price: 300},
 			{Name: "LG Cole Slaw", Price: 600},
 			{Name: "SM Baked Beans", Price: 300},
@@ -266,14 +266,14 @@ var Menu = []*mookiespb.Category{
 	},
 	{
 		Name: "Drinks",
-		Items: []*mookiespb.Item{
+		Items: []*tospb.Item{
 			{Name: "Canned Drink", Price: 100},
 			{Name: "Bottled Water", Price: 150},
 		},
 	},
 	{
 		Name: "Desserts",
-		Items: []*mookiespb.Item{
+		Items: []*tospb.Item{
 			{Name: "Oreo Dream", Price: 350},
 			{Name: "Lemon Delight", Price: 350},
 			{Name: "Strawberry Pizza", Price: 350},
@@ -284,7 +284,7 @@ var Menu = []*mookiespb.Category{
 	},
 	{
 		Name: "Sauces",
-		Items: []*mookiespb.Item{
+		Items: []*tospb.Item{
 			{Name: "Extra Ranch", Price: 50},
 			{Name: "Extra White", Price: 50},
 			{Name: "Extra Buffalo Wing", Price: 50},
