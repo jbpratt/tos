@@ -1,5 +1,16 @@
 #!/bin/bash
 
-protoc ../protofiles/mookies.proto --go_out=plugins=grpc:. && protoc-go-inject-tag -input=../protofiles/mookies.pb.go
+set -e
+pushd "$(/bin/pwd)" > /dev/null
 
-python3 -m grpc_tools.protoc -I ../protofiles/ --python_out=printing/ --grpc_python_out=printing/ ../protofiles/mookies.proto mookies-tos
+PROTOFILE="./protofiles/tos.proto"
+OUT_DIR="./protofiles"
+
+protoc "${PROTOFILE}" \
+  --go_out "plugins=grpc:${OUT_DIR}" \
+  --js_out "import_style=commonjs:${OUT_DIR}" \
+  --grpc-web_out "import_style=commonjs,mode=grpcwebtext:${OUT_DIR}"
+
+protoc-go-inject-tag -input="${PROTOFILE}"
+
+popd > /dev/null

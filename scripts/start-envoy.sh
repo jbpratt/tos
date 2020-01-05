@@ -1,1 +1,0 @@
-docker run -d -p 8080:8080 -p 9901:9901 tos/envoy 

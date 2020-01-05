@@ -17,10 +17,7 @@ func TestServer(t *testing.T) {
 		t.Fatalf("NewServer() failed with %v", err)
 	}
 
-	defer func() {
-		s.services.Close()
-
-	}()
+	defer s.services.Close()
 
 	if err = s.loadData(); err != nil {
 		t.Fatalf("server.loadData() failed with %v", err)

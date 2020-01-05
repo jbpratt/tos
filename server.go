@@ -44,7 +44,7 @@ var (
 	promAddr = flag.String("prom", ":9001", "Port to run metrics HTTP server")
 	webAddr  = flag.String("web", ":9090", "Port to run grpc-web HTTP server")
 	addr     = flag.String("addr", ":50051", "listen address")
-	dbp      = flag.String("database", "/tmp/mookies.db", "database to use")
+	dbp      = flag.String("database", "/tmp/tos.db", "database to use")
 	crt      = flag.String("crt", "cert/server.crt", "TLS cert to use")
 	key      = flag.String("key", "cert/server.key", "TLS key to use")
 	lpDev    = flag.String("p", "/dev/usb/lp0", "Printer dev file")
@@ -410,6 +410,10 @@ func main() {
 		),
 	)
 
+	if *dbp == "/tmp/tos.db" {
+
+	}
+
 	server, err := newServer()
 	if err != nil {
 		logger.Fatal(err)
@@ -433,6 +437,7 @@ func main() {
 		Handler: http.HandlerFunc(handler),
 		Addr:    *webAddr,
 	}
+	logger.Println("gRPC web proxy listening at ", *webAddr)
 
 	mookiespb.RegisterMenuServiceServer(s, server)
 	mookiespb.RegisterOrderServiceServer(s, server)

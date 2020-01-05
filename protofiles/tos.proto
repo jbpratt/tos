@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package mookiespb;
+package tospb;
 
 message Item {
   string name = 1;
