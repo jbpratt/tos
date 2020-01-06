@@ -16,7 +16,7 @@ import (
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/jbpratt78/tos/models"
-	mookiespb "github.com/jbpratt78/tos/protofiles"
+	tospb "github.com/jbpratt78/tos/protofiles"
 	"github.com/knq/escpos"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/prometheus/client_golang/prometheus"
@@ -30,8 +30,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-const topicOrder = "orders"
-const topicComplete = "complete"
+const (
+	topicOrder    = "orders"
+	topicComplete = "complete"
+)
 
 var (
 	reg         = prometheus.NewRegistry()
@@ -53,13 +55,13 @@ var (
 
 type server struct {
 	services *models.Services
-	orders   []*mookiespb.Order
-	menu     *mookiespb.Menu
+	orders   []*tospb.Order
+	menu     *tospb.Menu
 	ps       *pubsub.PubSub
 }
 
 func (s *server) GetMenu(ctx context.Context,
-	empty *mookiespb.Empty) (*mookiespb.Menu, error) {
+	empty *tospb.Empty) (*tospb.Menu, error) {
 
 	if len(s.menu.GetCategories()) == 0 {
 		return nil, status.Error(codes.NotFound, "menu is empty")
@@ -68,7 +70,7 @@ func (s *server) GetMenu(ctx context.Context,
 }
 
 func (s *server) CreateMenuItem(ctx context.Context,
-	req *mookiespb.Item) (*mookiespb.CreateMenuItemResponse, error) {
+	req *tospb.Item) (*tospb.CreateMenuItemResponse, error) {
 
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "no item provided")
@@ -103,12 +105,11 @@ func (s *server) CreateMenuItem(ctx context.Context,
 			"services..CreateMenuItem(%v) returned %v", req, err)
 	}
 
-	res := &mookiespb.CreateMenuItemResponse{Id: id}
-	return res, s.loadData()
+	return &tospb.CreateMenuItemResponse{Id: id}, s.loadData()
 }
 
 func (s *server) UpdateMenuItem(ctx context.Context,
-	req *mookiespb.Item) (*mookiespb.Response, error) {
+	req *tospb.Item) (*tospb.Response, error) {
 
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "item id not provided")
@@ -119,18 +120,16 @@ func (s *server) UpdateMenuItem(ctx context.Context,
 			"req must have itemid (non 0)")
 	}
 
-	err := s.services.Menu.UpdateMenuItem(req)
-	if err != nil {
+	if err := s.services.Menu.UpdateMenuItem(req); err != nil {
 		return nil, status.Errorf(codes.Internal,
 			"services..UpdateMenuItem(%v) returned %v", req, err)
 	}
 
-	res := &mookiespb.Response{Response: "success"}
-	return res, s.loadData()
+	return &tospb.Response{Response: "success"}, s.loadData()
 }
 
 func (s *server) DeleteMenuItem(ctx context.Context,
-	req *mookiespb.DeleteMenuItemRequest) (*mookiespb.Response, error) {
+	req *tospb.DeleteMenuItemRequest) (*tospb.Response, error) {
 
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
@@ -142,18 +141,16 @@ func (s *server) DeleteMenuItem(ctx context.Context,
 			"req must have itemid (non 0)")
 	}
 
-	err := s.services.Menu.DeleteMenuItem(req.GetId())
-	if err != nil {
+	if err := s.services.Menu.DeleteMenuItem(req.GetId()); err != nil {
 		return nil, status.Errorf(codes.Internal,
 			"services..UpdateMenuItem(%v) returned %v", req, err)
 	}
 
-	res := &mookiespb.Response{Response: "success"}
-	return res, s.loadData()
+	return &tospb.Response{Response: "success"}, s.loadData()
 }
 
 func (s *server) CreateMenuItemOption(ctx context.Context,
-	req *mookiespb.Option) (*mookiespb.Response, error) {
+	req *tospb.Option) (*tospb.Response, error) {
 
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
@@ -164,7 +161,7 @@ func (s *server) CreateMenuItemOption(ctx context.Context,
 }
 
 func (s *server) SubmitOrder(ctx context.Context,
-	req *mookiespb.Order) (*mookiespb.Response, error) {
+	req *tospb.Order) (*tospb.Response, error) {
 
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
@@ -189,20 +186,17 @@ func (s *server) SubmitOrder(ctx context.Context,
 	o := req
 	o.Status = "active"
 
-	err := s.services.Order.SubmitOrder(o)
-	if err != nil {
+	if err := s.services.Order.SubmitOrder(o); err != nil {
 		return nil, status.Errorf(codes.Internal, "internal err: %v", err)
 	}
 
-	res := &mookiespb.Response{Response: "Order has been placed.."}
-
 	publish(s.ps, o, topicOrder)
 
-	return res, s.loadData()
+	return &tospb.Response{Response: "Order has been placed.."}, s.loadData()
 }
 
-func (s *server) SubscribeToOrders(req *mookiespb.Empty,
-	stream mookiespb.OrderService_SubscribeToOrdersServer) error {
+func (s *server) SubscribeToOrders(req *tospb.Empty,
+	stream tospb.OrderService_SubscribeToOrdersServer) error {
 
 	logger.Infoln("Client has subscribed to orders")
 
@@ -210,7 +204,7 @@ func (s *server) SubscribeToOrders(req *mookiespb.Empty,
 	for {
 		if o, ok := <-ch; ok {
 			logger.Printf("Sending order to client: %v\n", o)
-			err := stream.Send(o.(*mookiespb.Order))
+			err := stream.Send(o.(*tospb.Order))
 			if err != nil {
 				s.ps.Unsub(ch, topicOrder)
 				return status.Errorf(codes.Internal,
@@ -220,12 +214,12 @@ func (s *server) SubscribeToOrders(req *mookiespb.Empty,
 	}
 }
 
-func publish(ps *pubsub.PubSub, order *mookiespb.Order, topic string) {
+func publish(ps *pubsub.PubSub, order *tospb.Order, topic string) {
 	ps.Pub(order, topic)
 }
 
 func (s *server) CompleteOrder(ctx context.Context,
-	req *mookiespb.CompleteOrderRequest) (*mookiespb.Response, error) {
+	req *tospb.CompleteOrderRequest) (*tospb.Response, error) {
 
 	if req.GetId() == 0 {
 		return nil, status.Errorf(codes.InvalidArgument,
@@ -246,17 +240,14 @@ func (s *server) CompleteOrder(ctx context.Context,
 		}
 	}
 
-	err := s.services.Order.CompleteOrder(req.GetId())
-	if err != nil {
+	if err := s.services.Order.CompleteOrder(req.GetId()); err != nil {
 		return nil, err
 	}
 
-	res := &mookiespb.Response{Response: "Order marked as complete"}
-
-	return res, s.loadData()
+	return &tospb.Response{Response: "Order marked as complete"}, s.loadData()
 }
 
-func printOrder(o *mookiespb.Order) error {
+func printOrder(o *tospb.Order) error {
 	f, err := os.OpenFile(*lpDev, os.O_RDWR, 0)
 	if err != nil {
 		return err
@@ -288,16 +279,14 @@ func printOrder(o *mookiespb.Order) error {
 }
 
 func (s *server) ActiveOrders(
-	ctx context.Context, empty *mookiespb.Empty) (*mookiespb.OrdersResponse, error) {
+	ctx context.Context, empty *tospb.Empty) (*tospb.OrdersResponse, error) {
 
 	if s.orders == nil {
 		return nil, status.Errorf(codes.Internal,
 			"ActiveOrders() failed: server.orders has not been initialized")
 	}
 
-	res := &mookiespb.OrdersResponse{Orders: s.orders}
-
-	return res, nil
+	return &tospb.OrdersResponse{Orders: s.orders}, nil
 }
 
 func (s *server) loadData() error {
@@ -307,8 +296,7 @@ func (s *server) loadData() error {
 	}
 
 	if len(menu.GetCategories()) == 0 {
-		err = s.services.Menu.SeedMenu()
-		if err != nil {
+		if err = s.services.Menu.SeedMenu(); err != nil {
 			return err
 		}
 
@@ -327,7 +315,7 @@ func (s *server) loadData() error {
 
 	s.orders = orders
 	if s.orders == nil {
-		s.orders = []*mookiespb.Order{}
+		s.orders = []*tospb.Order{}
 	}
 
 	return nil
@@ -339,8 +327,7 @@ func newServer() (*server, error) {
 		return nil, err
 	}
 	server := &server{services: services, ps: pubsub.New(0)}
-	err = server.loadData()
-	if err != nil {
+	if err = server.loadData(); err != nil {
 		return nil, err
 	}
 	return server, nil
@@ -439,8 +426,8 @@ func main() {
 	}
 	logger.Println("gRPC web proxy listening at ", *webAddr)
 
-	mookiespb.RegisterMenuServiceServer(s, server)
-	mookiespb.RegisterOrderServiceServer(s, server)
+	tospb.RegisterMenuServiceServer(s, server)
+	tospb.RegisterOrderServiceServer(s, server)
 
 	grpcMetrics.InitializeMetrics(s)
 

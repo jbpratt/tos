@@ -1,17 +1,3 @@
-// Copyright © 2019 NAME HERE <EMAIL ADDRESS>
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package cmd
 
 import (
@@ -19,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	mookiespb "github.com/jbpratt78/tos/protofiles"
+	tospb "github.com/jbpratt78/tos/protofiles"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
@@ -36,8 +22,7 @@ var menuCmd = &cobra.Command{
 		}
 		defer cc.Close()
 
-		c := mookiespb.NewMenuServiceClient(cc)
-		categories, err := doMenuRequest(c)
+		categories, err := doMenuRequest(tospb.NewMenuServiceClient(cc))
 		if err != nil {
 			log.Fatalf("Failed to get menu: %v", err)
 		}
@@ -45,11 +30,9 @@ var menuCmd = &cobra.Command{
 	},
 }
 
-func doMenuRequest(c mookiespb.MenuServiceClient) ([]*mookiespb.Category, error) {
+func doMenuRequest(c tospb.MenuServiceClient) ([]*tospb.Category, error) {
 	fmt.Println("Starting to request menu...")
-	req := &mookiespb.Empty{}
-
-	res, err := c.GetMenu(context.Background(), req)
+	res, err := c.GetMenu(context.Background(), &tospb.Empty{})
 	if err != nil {
 		return nil, err
 	}
@@ -58,14 +41,4 @@ func doMenuRequest(c mookiespb.MenuServiceClient) ([]*mookiespb.Category, error)
 
 func init() {
 	rootCmd.AddCommand(menuCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// menuCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// menuCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

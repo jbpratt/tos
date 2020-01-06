@@ -1,17 +1,3 @@
-// Copyright © 2019 NAME HERE <EMAIL ADDRESS>
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package cmd
 
 import (
@@ -19,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	mookiespb "github.com/jbpratt78/tos/protofiles"
+	tospb "github.com/jbpratt78/tos/protofiles"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
@@ -37,10 +23,9 @@ var orderCmd = &cobra.Command{
 			log.Fatalf("Failed to dial: %v", err)
 		}
 
-		orderClient := mookiespb.NewOrderServiceClient(cc)
-
 		defer cc.Close()
-		res, err := doSubmitOrderRequest(orderClient)
+
+		res, err := doSubmitOrderRequest(tospb.NewOrderServiceClient(cc))
 		if err != nil {
 			log.Fatalf("Failed to submit order: %v", err)
 		}
@@ -48,12 +33,12 @@ var orderCmd = &cobra.Command{
 	},
 }
 
-func doSubmitOrderRequest(c mookiespb.OrderServiceClient) (string, error) {
+func doSubmitOrderRequest(c tospb.OrderServiceClient) (string, error) {
 	go fmt.Println("Starting order request")
-	req := &mookiespb.Order{
+	req := &tospb.Order{
 		Name: name,
-		Items: []*mookiespb.Item{
-			{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Options: []*mookiespb.Option{
+		Items: []*tospb.Item{
+			{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Options: []*tospb.Option{
 				{Name: "pickles", Price: 0, Selected: true, Id: 1},
 			}},
 		},
