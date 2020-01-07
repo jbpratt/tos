@@ -13,6 +13,7 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/rivo/tview"
 
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 
@@ -27,6 +28,8 @@ import (
 type layout struct {
 	CompleteOrderIndex int
 
+	ui *tview.Application
+
 	// orders
 	Orders             []*mookiespb.Order
 	LastCompletedOrder *mookiespb.Order
@@ -38,11 +41,8 @@ type layout struct {
 	client mookiespb.OrderServiceClient
 }
 
-func newLayout() (l *layout) {
-	l = &layout{}
-	l.CompleteOrderIndex = 0
-
-	return l
+func newLayout() *layout {
+	return &layout{CompleteOrderIndex: 0, ui: tview.NewApplication()}
 }
 
 var (
@@ -115,8 +115,7 @@ func main() {
 	l := newLayout()
 	l.client = mookiespb.NewOrderServiceClient(cc)
 
-	err = l.requestOrders()
-	if err != nil {
+	if err = l.requestOrders(); err != nil {
 		log.Fatal(err)
 	}
 	go func() {
@@ -127,6 +126,10 @@ func main() {
 		}
 	}()
 
+	box := tview.NewBox().SetBorder(true).SetTitle("TOS Kitchen")
+	if err := l.ui.SetRoot(box, true).Run(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (l *layout) completeOrder(order *mookiespb.Order, i int) error {
