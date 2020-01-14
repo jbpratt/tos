@@ -13,8 +13,7 @@ import (
 // menuCmd represents the menu command
 var menuCmd = &cobra.Command{
 	Use:   "menu",
-	Short: "A brief description of your command",
-	Long:  `.`,
+	Short: "retrieve the entire menu",
 	Run: func(cmd *cobra.Command, args []string) {
 		cc, err := grpc.Dial(Address, grpc.WithInsecure())
 		if err != nil {

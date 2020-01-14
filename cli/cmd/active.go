@@ -13,8 +13,7 @@ import (
 // activeCmd represents the active command
 var activeCmd = &cobra.Command{
 	Use:   "active",
-	Short: "A brief description of your command",
-	Long:  `A  quickly create a Cobra application.`,
+	Short: "get all active orders",
 	Run: func(cmd *cobra.Command, args []string) {
 		cc, err := grpc.Dial(Address, grpc.WithInsecure())
 		if err != nil {

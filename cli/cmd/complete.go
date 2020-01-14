@@ -15,8 +15,7 @@ var orderID int
 // completeCmd represents the complete command
 var completeCmd = &cobra.Command{
 	Use:   "complete",
-	Short: "A brief description of your command",
-	Long:  "Complete an order by supplying the order ID",
+	Short: "complete an order by supplying the order ID",
 	Run: func(cmd *cobra.Command, args []string) {
 		if orderID == 0 {
 			log.Fatal("must supply an order ID")

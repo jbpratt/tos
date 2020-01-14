@@ -13,7 +13,7 @@ var Address string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "tos",
-	Short: "CLI client tool for interacting with the mookies-tos GRPC server",
+	Short: "CLI client tool for interacting with the tos GRPC server",
 	Long:  "",
 }
 

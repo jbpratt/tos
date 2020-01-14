@@ -16,7 +16,6 @@ var name string
 var orderCmd = &cobra.Command{
 	Use:   "order",
 	Short: "Place an order",
-	Long:  `Place an order`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cc, err := grpc.Dial(Address, grpc.WithInsecure())
 		if err != nil {

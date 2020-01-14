@@ -13,36 +13,35 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/rivo/tview"
 
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 
 	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
-	mookiespb "github.com/jbpratt78/tos/protofiles"
+	tospb "github.com/jbpratt78/tos/protofiles"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/keepalive"
+
+	"github.com/jroimartin/gocui"
 )
 
-type layout struct {
+type app struct {
 	CompleteOrderIndex int
 
-	ui *tview.Application
-
 	// orders
-	Orders             []*mookiespb.Order
-	LastCompletedOrder *mookiespb.Order
+	Orders             []*tospb.Order
+	LastCompletedOrder *tospb.Order
 
 	// debug
 	DebugEnabled bool
 	DebugStrings []string
 
-	client mookiespb.OrderServiceClient
+	client tospb.OrderServiceClient
 }
 
-func newLayout() *layout {
-	return &layout{CompleteOrderIndex: 0, ui: tview.NewApplication()}
+func newapp() *app {
+	return &app{CompleteOrderIndex: 0}
 }
 
 var (
@@ -58,6 +57,8 @@ var (
 
 	log grpclog.LoggerV2
 	reg = prometheus.NewRegistry()
+
+	orders []*tospb.Order
 )
 
 func init() {
@@ -65,7 +66,7 @@ func init() {
 	grpclog.SetLoggerV2(log)
 }
 
-func connectToServer() (*grpc.ClientConn, error) {
+func connecttospberver() (*grpc.ClientConn, error) {
 	var opts []grpc.DialOption
 	if *tls {
 		creds, err := credentials.NewClientTLSFromFile(*cert, "")
@@ -95,7 +96,7 @@ func connectToServer() (*grpc.ClientConn, error) {
 func main() {
 	flag.Parse()
 
-	cc, err := connectToServer()
+	cc, err := connecttospberver()
 	if err != nil {
 		log.Fatalf("Failed to dial: %v", err)
 	}
@@ -112,8 +113,8 @@ func main() {
 		}
 	}()
 
-	l := newLayout()
-	l.client = mookiespb.NewOrderServiceClient(cc)
+	l := newapp()
+	l.client = tospb.NewOrderServiceClient(cc)
 
 	if err = l.requestOrders(); err != nil {
 		log.Fatal(err)
@@ -126,17 +127,44 @@ func main() {
 		}
 	}()
 
-	box := tview.NewBox().SetBorder(true).SetTitle("TOS Kitchen")
-	if err := l.ui.SetRoot(box, true).Run(); err != nil {
+	g, err := gocui.NewGui(gocui.OutputNormal)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer g.Close()
+	g.SetManagerFunc(layout)
+
+	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
 		log.Fatal(err)
 	}
 }
 
-func (l *layout) completeOrder(order *mookiespb.Order, i int) error {
+func layout(g *gocui.Gui) error {
+	maxX, maxY := g.Size()
+	if v, err := g.SetView("hello", maxX/2-7, maxY/2, maxX/2+7, maxY/2+2); err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		for _, order := range orders {
+			fmt.Fprintln(v, order.Id)
+		}
+	}
+	return nil
+}
+
+func quit(g *gocui.Gui, v *gocui.View) error {
+	return gocui.ErrQuit
+}
+
+func (l *app) completeOrder(order *tospb.Order, i int) error {
 	id := order.GetId()
 	log.Infoln("Starting complete order request...")
 	// take this order req in as param
-	req := &mookiespb.CompleteOrderRequest{
+	req := &tospb.CompleteOrderRequest{
 		Id: id,
 	}
 	res, err := l.client.CompleteOrder(context.Background(), req)
@@ -151,22 +179,23 @@ func (l *layout) completeOrder(order *mookiespb.Order, i int) error {
 	return nil
 }
 
-func (l *layout) requestOrders() error {
-	req := &mookiespb.Empty{}
+func (l *app) requestOrders() error {
+	req := &tospb.Empty{}
 
 	res, err := l.client.ActiveOrders(context.Background(), req)
 	if err != nil {
 		return err
 	}
 	l.Orders = res.GetOrders()
+	orders = l.Orders
 	log.Infof("Response from Orders: %v\n", l.Orders)
 	return nil
 }
 
-func (l *layout) subscribeToOrders() error {
+func (l *app) subscribeToOrders() error {
 
 	log.Infoln("Subscribing to orders...")
-	req := &mookiespb.Empty{}
+	req := &tospb.Empty{}
 
 	stream, err := l.client.SubscribeToOrders(context.Background(), req)
 	if err != nil {
@@ -205,14 +234,14 @@ func wrapText(text string, width int) string {
 	return output
 }
 
-func (l *layout) debug(message string, v ...interface{}) {
+func (l *app) debug(message string, v ...interface{}) {
 	msg := fmt.Sprintf(message, v...)
 	log.Infof(msg)
 	// append to debug slice
 	l.DebugStrings = append(l.DebugStrings, msg)
 }
 
-func (l *layout) addToCompleteOrderIndex(i int) error {
+func (l *app) addToCompleteOrderIndex(i int) error {
 	if i > 9 {
 		return errors.New("number too large")
 	}
@@ -221,6 +250,6 @@ func (l *layout) addToCompleteOrderIndex(i int) error {
 	return nil
 }
 
-func (l *layout) resetCompleteOrderIndex() {
+func (l *app) resetCompleteOrderIndex() {
 	l.CompleteOrderIndex = 0
 }

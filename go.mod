@@ -13,10 +13,12 @@ require (
 	github.com/improbable-eng/grpc-web v0.12.0
 	github.com/jbpratt78/tos v0.0.0-20200105230015-ff8975ae9459
 	github.com/jmoiron/sqlx v1.2.0
+	github.com/jroimartin/gocui v0.4.0
 	github.com/knq/escpos v0.0.0-20181203001140-764ed299d98c
+	github.com/mattn/go-runewidth v0.0.4 // indirect
 	github.com/mattn/go-sqlite3 v2.0.2+incompatible
+	github.com/nsf/termbox-go v0.0.0-20191229070316-58d4fcbce2a7 // indirect
 	github.com/prometheus/client_golang v1.3.0
-	github.com/rivo/tview v0.0.0-20191231100700-c6236f442139
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5
 	google.golang.org/grpc v1.26.0
