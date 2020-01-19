@@ -7,9 +7,9 @@ PROTOFILE="./protofiles/tos.proto"
 OUT_DIR="."
 
 protoc "${PROTOFILE}" \
-  --go_out "plugins=grpc:${OUT_DIR}" #\
-#  --js_out "import_style=commonjs:${OUT_DIR}" \
-#  --grpc-web_out "import_style=commonjs,mode=grpcwebtext:${OUT_DIR}"
+  --go_out "plugins=grpc:${OUT_DIR}" \
+  --js_out "import_style=commonjs:${OUT_DIR}" \
+  --grpc-web_out "import_style=commonjs,mode=grpcwebtext:${OUT_DIR}"
 
 protoc-go-inject-tag -input="./protofiles/tos.pb.go"
 
