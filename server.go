@@ -15,8 +15,8 @@ import (
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
-	"github.com/jbpratt78/tos/models"
 	tospb "github.com/jbpratt78/tos/protofiles"
+	"github.com/jbpratt78/tos/services"
 	"github.com/knq/escpos"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/prometheus/client_golang/prometheus"
@@ -54,7 +54,7 @@ var (
 )
 
 type server struct {
-	services *models.Services
+	services *services.Services
 	orders   []*tospb.Order
 	menu     *tospb.Menu
 	ps       *pubsub.PubSub
@@ -324,11 +324,11 @@ func newServer() (*server, error) {
 	return server, nil
 }
 
-func newServices() (*models.Services, error) {
-	services, err := models.NewServices(
-		models.WithSqlite(*dbp),
-		models.WithMenu(),
-		models.WithOrder(),
+func newServices() (*services.Services, error) {
+	services, err := services.NewServices(
+		services.WithSqlite(*dbp),
+		services.WithMenu(),
+		services.WithOrder(),
 	)
 	if err != nil {
 		return nil, err
