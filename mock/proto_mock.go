@@ -6,11 +6,12 @@ package mock_mookiespb
 
 import (
 	context "context"
+	reflect "reflect"
+
 	gomock "github.com/golang/mock/gomock"
 	protofiles "github.com/jbpratt78/tos/protofiles"
 	grpc "google.golang.org/grpc"
 	metadata "google.golang.org/grpc/metadata"
-	reflect "reflect"
 )
 
 // MockMenuServiceClient is a mock of MenuServiceClient interface

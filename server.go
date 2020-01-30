@@ -62,7 +62,6 @@ type server struct {
 
 func (s *server) GetMenu(ctx context.Context,
 	empty *tospb.Empty) (*tospb.Menu, error) {
-
 	if len(s.menu.GetCategories()) == 0 {
 		return nil, status.Error(codes.NotFound, "menu is empty")
 	}
@@ -71,7 +70,6 @@ func (s *server) GetMenu(ctx context.Context,
 
 func (s *server) CreateMenuItem(ctx context.Context,
 	req *tospb.Item) (*tospb.CreateMenuItemResponse, error) {
-
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "no item provided")
 	}
@@ -110,7 +108,6 @@ func (s *server) CreateMenuItem(ctx context.Context,
 
 func (s *server) UpdateMenuItem(ctx context.Context,
 	req *tospb.Item) (*tospb.Response, error) {
-
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "item id not provided")
 	}
@@ -130,7 +127,6 @@ func (s *server) UpdateMenuItem(ctx context.Context,
 
 func (s *server) DeleteMenuItem(ctx context.Context,
 	req *tospb.DeleteMenuItemRequest) (*tospb.Response, error) {
-
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
 			"req must not be nil")
@@ -151,7 +147,6 @@ func (s *server) DeleteMenuItem(ctx context.Context,
 
 func (s *server) CreateMenuItemOption(ctx context.Context,
 	req *tospb.Option) (*tospb.Response, error) {
-
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
 			"item option not provided")
@@ -162,7 +157,6 @@ func (s *server) CreateMenuItemOption(ctx context.Context,
 
 func (s *server) SubmitOrder(ctx context.Context,
 	req *tospb.Order) (*tospb.Response, error) {
-
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
 			"order not provided")
@@ -197,7 +191,6 @@ func (s *server) SubmitOrder(ctx context.Context,
 
 func (s *server) SubscribeToOrders(req *tospb.Empty,
 	stream tospb.OrderService_SubscribeToOrdersServer) error {
-
 	logger.Infoln("Client has subscribed to orders")
 
 	ch := s.ps.Sub(topicOrder)
@@ -220,7 +213,6 @@ func publish(ps *pubsub.PubSub, order *tospb.Order, topic string) {
 
 func (s *server) CompleteOrder(ctx context.Context,
 	req *tospb.CompleteOrderRequest) (*tospb.Response, error) {
-
 	if req.GetId() == 0 {
 		return nil, status.Errorf(codes.InvalidArgument,
 			"order id must be non zero")
@@ -280,7 +272,6 @@ func printOrder(o *tospb.Order) error {
 
 func (s *server) ActiveOrders(
 	ctx context.Context, empty *tospb.Empty) (*tospb.OrdersResponse, error) {
-
 	if s.orders == nil {
 		return nil, status.Errorf(codes.Internal,
 			"ActiveOrders() failed: server.orders has not been initialized")
@@ -398,7 +389,6 @@ func main() {
 	)
 
 	if *dbp == "/tmp/tos.db" {
-
 	}
 
 	server, err := newServer()

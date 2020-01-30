@@ -139,7 +139,6 @@ func submitOrderItemOptions(tx *sql.Tx, item *mookiespb.Item) error {
 				"INSERT INTO order_item_options (order_item_id, option_id) VALUES (?, ?)",
 				item.GetOrderItemID(), option.GetId(),
 			)
-
 			if err != nil {
 				tx.Rollback()
 				return err

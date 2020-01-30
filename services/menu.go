@@ -176,7 +176,6 @@ func (m *menuDB) UpdateMenuItem(item *mookiespb.Item) error {
 	_, err := m.db.Exec(
 		"UPDATE items SET name = ?, price = ?, category_id = ? WHERE id = ?",
 		item.GetName(), item.GetPrice(), item.GetCategoryID(), item.GetId())
-
 	if err != nil {
 		return err
 	}

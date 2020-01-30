@@ -104,7 +104,8 @@ func main() {
 
 	httpServer := &http.Server{
 		Handler: promhttp.HandlerFor(reg, promhttp.HandlerOpts{}),
-		Addr:    fmt.Sprintf("0.0.0.0:%d", 9004)}
+		Addr:    fmt.Sprintf("0.0.0.0:%d", 9004),
+	}
 
 	// Start your http server for prometheus.
 	go func() {
@@ -193,7 +194,6 @@ func (l *app) requestOrders() error {
 }
 
 func (l *app) subscribeToOrders() error {
-
 	log.Infoln("Subscribing to orders...")
 	req := &tospb.Empty{}
 

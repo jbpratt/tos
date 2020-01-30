@@ -6,17 +6,20 @@ package tospb
 import (
 	context "context"
 	fmt "fmt"
+	math "math"
+
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	math "math"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
-var _ = proto.Marshal
-var _ = fmt.Errorf
-var _ = math.Inf
+var (
+	_ = proto.Marshal
+	_ = fmt.Errorf
+	_ = math.Inf
+)
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the proto package it is being compiled against.
@@ -48,15 +51,19 @@ func (*Item) Descriptor() ([]byte, []int) {
 func (m *Item) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Item.Unmarshal(m, b)
 }
+
 func (m *Item) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Item.Marshal(b, m, deterministic)
 }
+
 func (m *Item) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_Item.Merge(m, src)
 }
+
 func (m *Item) XXX_Size() int {
 	return xxx_messageInfo_Item.Size(m)
 }
+
 func (m *Item) XXX_DiscardUnknown() {
 	xxx_messageInfo_Item.DiscardUnknown(m)
 }
@@ -125,15 +132,19 @@ func (*Option) Descriptor() ([]byte, []int) {
 func (m *Option) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Option.Unmarshal(m, b)
 }
+
 func (m *Option) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Option.Marshal(b, m, deterministic)
 }
+
 func (m *Option) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_Option.Merge(m, src)
 }
+
 func (m *Option) XXX_Size() int {
 	return xxx_messageInfo_Option.Size(m)
 }
+
 func (m *Option) XXX_DiscardUnknown() {
 	xxx_messageInfo_Option.DiscardUnknown(m)
 }
@@ -187,15 +198,19 @@ func (*Category) Descriptor() ([]byte, []int) {
 func (m *Category) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Category.Unmarshal(m, b)
 }
+
 func (m *Category) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Category.Marshal(b, m, deterministic)
 }
+
 func (m *Category) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_Category.Merge(m, src)
 }
+
 func (m *Category) XXX_Size() int {
 	return xxx_messageInfo_Category.Size(m)
 }
+
 func (m *Category) XXX_DiscardUnknown() {
 	xxx_messageInfo_Category.DiscardUnknown(m)
 }
@@ -240,15 +255,19 @@ func (*Menu) Descriptor() ([]byte, []int) {
 func (m *Menu) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Menu.Unmarshal(m, b)
 }
+
 func (m *Menu) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Menu.Marshal(b, m, deterministic)
 }
+
 func (m *Menu) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_Menu.Merge(m, src)
 }
+
 func (m *Menu) XXX_Size() int {
 	return xxx_messageInfo_Menu.Size(m)
 }
+
 func (m *Menu) XXX_DiscardUnknown() {
 	xxx_messageInfo_Menu.DiscardUnknown(m)
 }
@@ -287,15 +306,19 @@ func (*Order) Descriptor() ([]byte, []int) {
 func (m *Order) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Order.Unmarshal(m, b)
 }
+
 func (m *Order) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Order.Marshal(b, m, deterministic)
 }
+
 func (m *Order) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_Order.Merge(m, src)
 }
+
 func (m *Order) XXX_Size() int {
 	return xxx_messageInfo_Order.Size(m)
 }
+
 func (m *Order) XXX_DiscardUnknown() {
 	xxx_messageInfo_Order.DiscardUnknown(m)
 }
@@ -368,15 +391,19 @@ func (*Response) Descriptor() ([]byte, []int) {
 func (m *Response) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Response.Unmarshal(m, b)
 }
+
 func (m *Response) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Response.Marshal(b, m, deterministic)
 }
+
 func (m *Response) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_Response.Merge(m, src)
 }
+
 func (m *Response) XXX_Size() int {
 	return xxx_messageInfo_Response.Size(m)
 }
+
 func (m *Response) XXX_DiscardUnknown() {
 	xxx_messageInfo_Response.DiscardUnknown(m)
 }
@@ -407,15 +434,19 @@ func (*CreateMenuItemResponse) Descriptor() ([]byte, []int) {
 func (m *CreateMenuItemResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateMenuItemResponse.Unmarshal(m, b)
 }
+
 func (m *CreateMenuItemResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateMenuItemResponse.Marshal(b, m, deterministic)
 }
+
 func (m *CreateMenuItemResponse) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_CreateMenuItemResponse.Merge(m, src)
 }
+
 func (m *CreateMenuItemResponse) XXX_Size() int {
 	return xxx_messageInfo_CreateMenuItemResponse.Size(m)
 }
+
 func (m *CreateMenuItemResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_CreateMenuItemResponse.DiscardUnknown(m)
 }
@@ -446,15 +477,19 @@ func (*CompleteOrderRequest) Descriptor() ([]byte, []int) {
 func (m *CompleteOrderRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CompleteOrderRequest.Unmarshal(m, b)
 }
+
 func (m *CompleteOrderRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CompleteOrderRequest.Marshal(b, m, deterministic)
 }
+
 func (m *CompleteOrderRequest) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_CompleteOrderRequest.Merge(m, src)
 }
+
 func (m *CompleteOrderRequest) XXX_Size() int {
 	return xxx_messageInfo_CompleteOrderRequest.Size(m)
 }
+
 func (m *CompleteOrderRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_CompleteOrderRequest.DiscardUnknown(m)
 }
@@ -485,15 +520,19 @@ func (*OrdersRequest) Descriptor() ([]byte, []int) {
 func (m *OrdersRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OrdersRequest.Unmarshal(m, b)
 }
+
 func (m *OrdersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OrdersRequest.Marshal(b, m, deterministic)
 }
+
 func (m *OrdersRequest) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_OrdersRequest.Merge(m, src)
 }
+
 func (m *OrdersRequest) XXX_Size() int {
 	return xxx_messageInfo_OrdersRequest.Size(m)
 }
+
 func (m *OrdersRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_OrdersRequest.DiscardUnknown(m)
 }
@@ -524,15 +563,19 @@ func (*OrdersResponse) Descriptor() ([]byte, []int) {
 func (m *OrdersResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OrdersResponse.Unmarshal(m, b)
 }
+
 func (m *OrdersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OrdersResponse.Marshal(b, m, deterministic)
 }
+
 func (m *OrdersResponse) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_OrdersResponse.Merge(m, src)
 }
+
 func (m *OrdersResponse) XXX_Size() int {
 	return xxx_messageInfo_OrdersResponse.Size(m)
 }
+
 func (m *OrdersResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_OrdersResponse.DiscardUnknown(m)
 }
@@ -562,15 +605,19 @@ func (*Empty) Descriptor() ([]byte, []int) {
 func (m *Empty) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Empty.Unmarshal(m, b)
 }
+
 func (m *Empty) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Empty.Marshal(b, m, deterministic)
 }
+
 func (m *Empty) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_Empty.Merge(m, src)
 }
+
 func (m *Empty) XXX_Size() int {
 	return xxx_messageInfo_Empty.Size(m)
 }
+
 func (m *Empty) XXX_DiscardUnknown() {
 	xxx_messageInfo_Empty.DiscardUnknown(m)
 }
@@ -594,15 +641,19 @@ func (*DeleteMenuItemRequest) Descriptor() ([]byte, []int) {
 func (m *DeleteMenuItemRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteMenuItemRequest.Unmarshal(m, b)
 }
+
 func (m *DeleteMenuItemRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DeleteMenuItemRequest.Marshal(b, m, deterministic)
 }
+
 func (m *DeleteMenuItemRequest) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_DeleteMenuItemRequest.Merge(m, src)
 }
+
 func (m *DeleteMenuItemRequest) XXX_Size() int {
 	return xxx_messageInfo_DeleteMenuItemRequest.Size(m)
 }
+
 func (m *DeleteMenuItemRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_DeleteMenuItemRequest.DiscardUnknown(m)
 }
@@ -676,8 +727,10 @@ var fileDescriptor_79767780450b268d = []byte{
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
-var _ context.Context
-var _ grpc.ClientConn
+var (
+	_ context.Context
+	_ grpc.ClientConn
+)
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
@@ -763,15 +816,19 @@ type UnimplementedMenuServiceServer struct {
 func (*UnimplementedMenuServiceServer) GetMenu(ctx context.Context, req *Empty) (*Menu, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMenu not implemented")
 }
+
 func (*UnimplementedMenuServiceServer) CreateMenuItem(ctx context.Context, req *Item) (*CreateMenuItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateMenuItem not implemented")
 }
+
 func (*UnimplementedMenuServiceServer) UpdateMenuItem(ctx context.Context, req *Item) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateMenuItem not implemented")
 }
+
 func (*UnimplementedMenuServiceServer) DeleteMenuItem(ctx context.Context, req *DeleteMenuItemRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMenuItem not implemented")
 }
+
 func (*UnimplementedMenuServiceServer) CreateMenuItemOption(ctx context.Context, req *Option) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateMenuItemOption not implemented")
 }
@@ -995,12 +1052,15 @@ type UnimplementedOrderServiceServer struct {
 func (*UnimplementedOrderServiceServer) SubmitOrder(ctx context.Context, req *Order) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubmitOrder not implemented")
 }
+
 func (*UnimplementedOrderServiceServer) ActiveOrders(ctx context.Context, req *Empty) (*OrdersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ActiveOrders not implemented")
 }
+
 func (*UnimplementedOrderServiceServer) CompleteOrder(ctx context.Context, req *CompleteOrderRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CompleteOrder not implemented")
 }
+
 func (*UnimplementedOrderServiceServer) SubscribeToOrders(req *Empty, srv OrderService_SubscribeToOrdersServer) error {
 	return status.Errorf(codes.Unimplemented, "method SubscribeToOrders not implemented")
 }

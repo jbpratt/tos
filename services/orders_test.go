@@ -31,7 +31,8 @@ func TestOrderServiceFull(t *testing.T) {
 		{Name: "13089 lfak", Total: 1000, Status: "active", TimeOrdered: time.Now().Format("2006-01-02 15:04:05")},
 		{Name: "q", Total: 1, Status: "active", TimeOrdered: time.Now().Format("2006-01-02 15:04:05")},
 		{Name: "", Total: 9182091809182, Status: "active", TimeOrdered: time.Now().Format("2006-01-02 15:04:05")},
-		{Name: "majora", Status: "active", TimeOrdered: time.Now().Format("2006-01-03 15:04:05"),
+		{
+			Name: "majora", Status: "active", TimeOrdered: time.Now().Format("2006-01-03 15:04:05"),
 			Items: []*mookiespb.Item{
 				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Options: []*mookiespb.Option{
 					{Name: "pickles", Price: 0, Selected: true, Id: 1},
