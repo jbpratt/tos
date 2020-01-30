@@ -31,8 +31,8 @@ import (
 )
 
 const (
-	topicOrder    = "orders"
-	topicComplete = "complete"
+	topicOrder = "orders"
+	// topicComplete = "complete"
 )
 
 var (
@@ -252,7 +252,6 @@ func printOrder(o *tospb.Order) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
 
 	bw := bufio.NewWriter(f)
 
@@ -275,7 +274,8 @@ func printOrder(o *tospb.Order) error {
 
 	w.Flush()
 	bw.Flush()
-	return nil
+
+	return f.Close()
 }
 
 func (s *server) ActiveOrders(
