@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	mookiespb "github.com/jbpratt78/tos/protofiles"
+	tospb "github.com/jbpratt78/tos/protofiles"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -13,11 +13,11 @@ import (
 // involving the menu
 type MenuDB interface {
 	SeedMenu() error
-	CreateMenuItem(*mookiespb.Item) (int64, error)
+	CreateMenuItem(*tospb.Item) (int64, error)
 	DeleteMenuItem(int64) error
-	UpdateMenuItem(*mookiespb.Item) error
+	UpdateMenuItem(*tospb.Item) error
 	// CreateMenuItemOption() error
-	GetMenu() (*mookiespb.Menu, error)
+	GetMenu() (*tospb.Menu, error)
 }
 
 // MenuService the the abstraction for the MenuDB
@@ -128,11 +128,11 @@ func (m *menuDB) SeedMenu() error {
 }
 
 // TODO: stop using fmt.Sprintf to format queries
-func (m *menuDB) GetMenu() (*mookiespb.Menu, error) {
+func (m *menuDB) GetMenu() (*tospb.Menu, error) {
 	m.RLock()
 	defer m.RUnlock()
-	var categories []*mookiespb.Category
-	menu := &mookiespb.Menu{
+	var categories []*tospb.Category
+	menu := &tospb.Menu{
 		Categories: categories,
 	}
 	if err := m.db.Select(&menu.Categories, "SELECT * from categories"); err != nil {
@@ -157,7 +157,7 @@ func (m *menuDB) GetMenu() (*mookiespb.Menu, error) {
 }
 
 // need to reload
-func (m *menuDB) CreateMenuItem(item *mookiespb.Item) (int64, error) {
+func (m *menuDB) CreateMenuItem(item *tospb.Item) (int64, error) {
 	m.Lock()
 	defer m.Unlock()
 
@@ -171,7 +171,7 @@ func (m *menuDB) CreateMenuItem(item *mookiespb.Item) (int64, error) {
 	return res.LastInsertId()
 }
 
-func (m *menuDB) UpdateMenuItem(item *mookiespb.Item) error {
+func (m *menuDB) UpdateMenuItem(item *tospb.Item) error {
 	m.Lock()
 	defer m.Unlock()
 

@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
-	mookiespb "github.com/jbpratt78/tos/protofiles"
+	tospb "github.com/jbpratt78/tos/protofiles"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -25,15 +25,15 @@ func TestOrderServiceFull(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	testCases := []*mookiespb.Order{
+	testCases := []*tospb.Order{
 		{Name: "test", Total: 799, Status: "active", TimeOrdered: time.Now().Format("2006-01-02 15:04:05")},
 		{Name: "13089 lfak", Total: 1000, Status: "active", TimeOrdered: time.Now().Format("2006-01-02 15:04:05")},
 		{Name: "q", Total: 1, Status: "active", TimeOrdered: time.Now().Format("2006-01-02 15:04:05")},
 		{Name: "", Total: 9182091809182, Status: "active", TimeOrdered: time.Now().Format("2006-01-02 15:04:05")},
 		{
 			Name: "majora", Status: "active", TimeOrdered: time.Now().Format("2006-01-03 15:04:05"),
-			Items: []*mookiespb.Item{
-				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Options: []*mookiespb.Option{
+			Items: []*tospb.Item{
+				{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Options: []*tospb.Option{
 					{Name: "pickles", Price: 0, Selected: true, Id: 1},
 				}},
 			},

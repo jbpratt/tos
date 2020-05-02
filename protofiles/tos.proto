@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package tospb;
+option go_package = "protofiles;tospb";
 
 message Item {
   string name = 1;

@@ -16,6 +16,7 @@ require (
 	github.com/konsorten/go-windows-terminal-sequences v1.0.3 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/prometheus/client_golang v1.6.0
+	github.com/rivo/tview v0.0.0-20200414130344-8e06c826b3a5
 	github.com/rs/cors v1.7.0 // indirect
 	github.com/sirupsen/logrus v1.5.0
 	github.com/spf13/cobra v1.0.0
@@ -25,5 +26,6 @@ require (
 	golang.org/x/text v0.3.2 // indirect
 	google.golang.org/genproto v0.0.0-20200430143042-b979b6f78d84 // indirect
 	google.golang.org/grpc v1.29.1
+	google.golang.org/protobuf v1.21.0
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
