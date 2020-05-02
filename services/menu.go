@@ -135,14 +135,16 @@ func (m *menuDB) GetMenu() (*mookiespb.Menu, error) {
 	menu := &mookiespb.Menu{
 		Categories: categories,
 	}
-	err := m.db.Select(&menu.Categories, "SELECT * from categories")
+	if err := m.db.Select(&menu.Categories, "SELECT * from categories"); err != nil {
+		return nil, err
+	}
 	for _, category := range menu.GetCategories() {
-		if err = m.db.Select(&category.Items,
+		if err := m.db.Select(&category.Items,
 			fmt.Sprintf("SELECT * FROM items WHERE category_id = %v", category.GetId())); err != nil {
 			return nil, err
 		}
 		for _, item := range category.GetItems() {
-			if err = m.db.Select(&item.Options, fmt.Sprintf(
+			if err := m.db.Select(&item.Options, fmt.Sprintf(
 				`
 				SELECT name,price,selected,options.id 
 				FROM options JOIN item_options as io ON options.id = io.option_id 
@@ -188,6 +190,9 @@ func (m *menuDB) DeleteMenuItem(id int64) error {
 
 	res, err := m.db.Exec(
 		"DELETE FROM items WHERE id = ?", id)
+	if err != nil {
+		return err
+	}
 
 	aff, err := res.RowsAffected()
 	if err != nil {

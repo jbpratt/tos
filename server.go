@@ -253,7 +253,7 @@ func printOrder(o *tospb.Order) error {
 	p.SetSmooth(1)
 	p.SetFontSize(1, 2)
 	p.SetFont("A")
-	p.Write("Mookies Smokehouse")
+	p.Write("TOS")
 	p.Formfeed()
 
 	p.Write(o.GetName())
@@ -389,6 +389,7 @@ func main() {
 	)
 
 	if *dbp == "/tmp/tos.db" {
+		logger.Println("using tmp database")
 	}
 
 	server, err := newServer()

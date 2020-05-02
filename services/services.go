@@ -15,12 +15,12 @@ type Services struct {
 	db    *sqlx.DB
 }
 
-// ServicesConfig is used for determing use of which services and db
-type ServicesConfig func(*Services) error
+// Config is used for determing use of which services and db
+type Config func(*Services) error
 
 // NewServices creates a Service struct with all of the
 // ServiceConfigs passed into it
-func NewServices(cfgs ...ServicesConfig) (*Services, error) {
+func NewServices(cfgs ...Config) (*Services, error) {
 	var s Services
 	for _, cfg := range cfgs {
 		if err := cfg(&s); err != nil {
@@ -31,7 +31,7 @@ func NewServices(cfgs ...ServicesConfig) (*Services, error) {
 }
 
 // WithSqlite takes in a path and opens the database
-func WithSqlite(path string) ServicesConfig {
+func WithSqlite(path string) Config {
 	return func(s *Services) error {
 		db, err := sqlx.Open("sqlite3", path)
 		if err != nil {
@@ -44,7 +44,7 @@ func WithSqlite(path string) ServicesConfig {
 }
 
 // WithMenu is used for calling NewMenuService with a specific db
-func WithMenu() ServicesConfig {
+func WithMenu() Config {
 	return func(s *Services) error {
 		menu, err := NewMenuService(s.db)
 		if err != nil {
@@ -56,7 +56,7 @@ func WithMenu() ServicesConfig {
 }
 
 // WithOrder is used for calling NewOrderService with a specific db
-func WithOrder() ServicesConfig {
+func WithOrder() Config {
 	return func(s *Services) error {
 		order, err := NewOrderService(s.db)
 		if err != nil {

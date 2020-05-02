@@ -10,7 +10,6 @@ import (
 
 func TestSeedMenu(t *testing.T) {
 	db, err := sqlx.Open("sqlite3", ":memory:")
-	defer db.Close()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -23,11 +22,14 @@ func TestSeedMenu(t *testing.T) {
 	if err = menuService.SeedMenu(); err != nil {
 		t.Fatal(err)
 	}
+
+	if err := db.Close(); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestGetMenu(t *testing.T) {
 	db, err := sqlx.Open("sqlite3", ":memory:")
-	defer db.Close()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -49,11 +51,13 @@ func TestGetMenu(t *testing.T) {
 	if menu == nil {
 		t.Error(err)
 	}
+	if err := db.Close(); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestCreateMenuItem(t *testing.T) {
 	db, err := sqlx.Open("sqlite3", ":memory:")
-	defer db.Close()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -73,11 +77,13 @@ func TestCreateMenuItem(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	if err := db.Close(); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestDeleteMenuItem(t *testing.T) {
 	db, err := sqlx.Open("sqlite3", ":memory:")
-	defer db.Close()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -99,6 +105,9 @@ func TestDeleteMenuItem(t *testing.T) {
 	}
 
 	if err = menuService.DeleteMenuItem(1); err != nil {
+		t.Fatal(err)
+	}
+	if err := db.Close(); err != nil {
 		t.Fatal(err)
 	}
 }

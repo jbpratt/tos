@@ -8,14 +8,11 @@ server: dep gen
 	@go build -i -v -o $(SERVER_OUT) $(SERVER_PKG_BUILD)
 
 dep:
-	@go get -u github.com/golang/protobuf/protoc-gen-go
-	@go get -u
+	@go get github.com/golang/protobuf/protoc-gen-go
+	@go get ./...
 
 lint:
-	@golint -set_exit_status ${PKG_LIST}
-
-vet:
-	@go vet ${PKG_LIST}
+	@staticcheck ./...
 
 deploy: start
 	$(sh ./scripts/start_system.sh)

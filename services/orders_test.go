@@ -11,7 +11,6 @@ import (
 
 func TestOrderServiceFull(t *testing.T) {
 	db, err := sqlx.Open("sqlite3", ":memory:")
-	defer db.Close()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,5 +58,9 @@ func TestOrderServiceFull(t *testing.T) {
 	if len(got) != len(testCases) {
 		spew.Dump(got)
 		t.Fatalf("GetOrders() = %d; want %d", len(got), len(testCases))
+	}
+
+	if err := db.Close(); err != nil {
+		t.Fatal(err)
 	}
 }
