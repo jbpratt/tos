@@ -1,4 +1,4 @@
-PKG := "github.com/jbpratt78/tos"
+PKG := "github.com/jbpratt/tos"
 SERVER_OUT := "bin/server"
 SERVER_PKG_BUILD := "${PKG}"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)

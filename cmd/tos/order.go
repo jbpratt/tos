@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	tospb "github.com/jbpratt78/tos/protofiles"
+	tospb "github.com/jbpratt/tos/protofiles"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )

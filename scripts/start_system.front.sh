@@ -3,7 +3,7 @@
 echo "Starting server..."
 docker-compose up -d
 ssh server <<EOF
-  cd go/src/github.com/jbpratt78/tos
+  cd go/src/github.com/jbpratt/tos
   docker-compose up -d
   sleep 2s
 EOF

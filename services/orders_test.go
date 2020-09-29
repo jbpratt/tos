@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
-	tospb "github.com/jbpratt78/tos/protofiles"
+	tospb "github.com/jbpratt/tos/protofiles"
 	"github.com/jmoiron/sqlx"
 )
 

@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	tospb "github.com/jbpratt78/tos/protofiles"
+	tospb "github.com/jbpratt/tos/protofiles"
 	"github.com/jmoiron/sqlx"
 )
 

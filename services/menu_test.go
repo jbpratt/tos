@@ -3,7 +3,7 @@ package services
 import (
 	"testing"
 
-	tospb "github.com/jbpratt78/tos/protofiles"
+	tospb "github.com/jbpratt/tos/protofiles"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 )

@@ -1,7 +1,7 @@
 package services
 
 import (
-	tospb "github.com/jbpratt78/tos/protofiles"
+	tospb "github.com/jbpratt/tos/protofiles"
 )
 
 // Menu is a struct used for seeding the database

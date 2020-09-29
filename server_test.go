@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-	tospb "github.com/jbpratt78/tos/protofiles"
+	tospb "github.com/jbpratt/tos/protofiles"
 )
 
 func TestServer(t *testing.T) {
