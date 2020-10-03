@@ -21,9 +21,6 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 public struct Tospb_Item {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
 
   public var name: String = String()
 
@@ -45,9 +42,6 @@ public struct Tospb_Item {
 }
 
 public struct Tospb_Option {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
 
   public var name: String = String()
 
@@ -63,9 +57,6 @@ public struct Tospb_Option {
 }
 
 public struct Tospb_Category {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
 
   public var name: String = String()
 
@@ -79,9 +70,6 @@ public struct Tospb_Category {
 }
 
 public struct Tospb_Menu {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
 
   public var categories: [Tospb_Category] = []
 
@@ -91,9 +79,6 @@ public struct Tospb_Menu {
 }
 
 public struct Tospb_Order {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
 
   public var id: Int64 = 0
 
@@ -117,9 +102,6 @@ public struct Tospb_Order {
 }
 
 public struct Tospb_Response {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
 
   public var response: String = String()
 
@@ -129,9 +111,6 @@ public struct Tospb_Response {
 }
 
 public struct Tospb_CreateMenuItemResponse {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
 
   public var id: Int64 = 0
 
@@ -141,9 +120,6 @@ public struct Tospb_CreateMenuItemResponse {
 }
 
 public struct Tospb_CompleteOrderRequest {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
 
   public var id: Int64 = 0
 
@@ -153,9 +129,6 @@ public struct Tospb_CompleteOrderRequest {
 }
 
 public struct Tospb_OrdersRequest {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
 
   public var request: String = String()
 
@@ -165,10 +138,7 @@ public struct Tospb_OrdersRequest {
 }
 
 public struct Tospb_OrdersResponse {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
+    
   public var orders: [Tospb_Order] = []
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -177,9 +147,6 @@ public struct Tospb_OrdersResponse {
 }
 
 public struct Tospb_Empty {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -187,9 +154,6 @@ public struct Tospb_Empty {
 }
 
 public struct Tospb_DeleteMenuItemRequest {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
 
   public var id: Int64 = 0
 
