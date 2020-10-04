@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"bufio"
@@ -12,11 +12,10 @@ import (
 
 	"github.com/cskr/pubsub"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/improbable-eng/grpc-web/go/grpcweb"
+	"github.com/jbpratt/tos/pkg/db"
+	services "github.com/jbpratt/tos/pkg/db"
 	tospb "github.com/jbpratt/tos/protofiles"
-	"github.com/jbpratt/tos/services"
 	"github.com/knq/escpos"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/prometheus/client_golang/prometheus"
@@ -24,10 +23,10 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/status"
+	"grpc.go4.org/credentials"
 )
 
 const (
@@ -44,32 +43,35 @@ var (
 	tls      = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
 	prnt     = flag.Bool("print", true, "Use printer for complete orders")
 	promAddr = flag.String("prom", ":9001", "Port to run metrics HTTP server")
-	webAddr  = flag.String("web", ":9090", "Port to run grpc-web HTTP server")
 	addr     = flag.String("addr", ":50051", "listen address")
 	dbp      = flag.String("database", "/tmp/tos.db", "database to use")
 	crt      = flag.String("crt", "cert/server.crt", "TLS cert to use")
 	key      = flag.String("key", "cert/server.key", "TLS key to use")
 	lpDev    = flag.String("p", "/dev/usb/lp0", "Printer dev file")
-	logger   *logrus.Logger
 )
 
 type server struct {
-	services *services.Services
+	services *db.Services
 	orders   []*tospb.Order
 	menu     *tospb.Menu
 	ps       *pubsub.PubSub
+	logger   *logrus.Logger
 }
 
-func (s *server) GetMenu(ctx context.Context,
-	empty *tospb.Empty) (*tospb.Menu, error) {
+func (s *server) GetMenu(
+	ctx context.Context,
+	empty *tospb.Empty,
+) (*tospb.Menu, error) {
 	if len(s.menu.GetCategories()) == 0 {
 		return nil, status.Error(codes.NotFound, "menu is empty")
 	}
 	return s.menu, nil
 }
 
-func (s *server) CreateMenuItem(ctx context.Context,
-	req *tospb.Item) (*tospb.CreateMenuItemResponse, error) {
+func (s *server) CreateMenuItem(
+	ctx context.Context,
+	req *tospb.Item,
+) (*tospb.CreateMenuItemResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "no item provided")
 	}
@@ -106,8 +108,10 @@ func (s *server) CreateMenuItem(ctx context.Context,
 	return &tospb.CreateMenuItemResponse{Id: id}, s.loadData()
 }
 
-func (s *server) UpdateMenuItem(ctx context.Context,
-	req *tospb.Item) (*tospb.Response, error) {
+func (s *server) UpdateMenuItem(
+	ctx context.Context,
+	req *tospb.Item,
+) (*tospb.Response, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "item id not provided")
 	}
@@ -125,8 +129,10 @@ func (s *server) UpdateMenuItem(ctx context.Context,
 	return &tospb.Response{Response: "success"}, s.loadData()
 }
 
-func (s *server) DeleteMenuItem(ctx context.Context,
-	req *tospb.DeleteMenuItemRequest) (*tospb.Response, error) {
+func (s *server) DeleteMenuItem(
+	ctx context.Context,
+	req *tospb.DeleteMenuItemRequest,
+) (*tospb.Response, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
 			"req must not be nil")
@@ -145,8 +151,10 @@ func (s *server) DeleteMenuItem(ctx context.Context,
 	return &tospb.Response{Response: "success"}, s.loadData()
 }
 
-func (s *server) CreateMenuItemOption(ctx context.Context,
-	req *tospb.Option) (*tospb.Response, error) {
+func (s *server) CreateMenuItemOption(
+	ctx context.Context,
+	req *tospb.Option,
+) (*tospb.Response, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
 			"item option not provided")
@@ -155,8 +163,10 @@ func (s *server) CreateMenuItemOption(ctx context.Context,
 	return nil, status.Error(codes.Unimplemented, "not implemented")
 }
 
-func (s *server) SubmitOrder(ctx context.Context,
-	req *tospb.Order) (*tospb.Response, error) {
+func (s *server) SubmitOrder(
+	ctx context.Context,
+	req *tospb.Order,
+) (*tospb.Response, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
 			"order not provided")
@@ -189,14 +199,16 @@ func (s *server) SubmitOrder(ctx context.Context,
 	return &tospb.Response{Response: "Order has been placed.."}, s.loadData()
 }
 
-func (s *server) SubscribeToOrders(req *tospb.Empty,
-	stream tospb.OrderService_SubscribeToOrdersServer) error {
-	logger.Infoln("Client has subscribed to orders")
+func (s *server) SubscribeToOrders(
+	req *tospb.Empty,
+	stream tospb.OrderService_SubscribeToOrdersServer,
+) error {
+	s.logger.Infoln("Client has subscribed to orders")
 
 	ch := s.ps.Sub(topicOrder)
 	for {
 		if o, ok := <-ch; ok {
-			logger.Printf("Sending order to client: %v\n", o)
+			s.logger.Infof("Sending order to client: %v\n", o)
 			err := stream.Send(o.(*tospb.Order))
 			if err != nil {
 				s.ps.Unsub(ch, topicOrder)
@@ -211,8 +223,10 @@ func publish(ps *pubsub.PubSub, order *tospb.Order, topic string) {
 	ps.Pub(order, topic)
 }
 
-func (s *server) CompleteOrder(ctx context.Context,
-	req *tospb.CompleteOrderRequest) (*tospb.Response, error) {
+func (s *server) CompleteOrder(
+	ctx context.Context,
+	req *tospb.CompleteOrderRequest,
+) (*tospb.Response, error) {
 	if req.GetId() == 0 {
 		return nil, status.Errorf(codes.InvalidArgument,
 			"order id must be non zero")
@@ -271,7 +285,9 @@ func printOrder(o *tospb.Order) error {
 }
 
 func (s *server) ActiveOrders(
-	ctx context.Context, empty *tospb.Empty) (*tospb.OrdersResponse, error) {
+	ctx context.Context,
+	empty *tospb.Empty,
+) (*tospb.OrdersResponse, error) {
 	if s.orders == nil {
 		return nil, status.Errorf(codes.Internal,
 			"ActiveOrders() failed: server.orders has not been initialized")
@@ -312,7 +328,7 @@ func (s *server) loadData() error {
 	return nil
 }
 
-func newServer() (*server, error) {
+func NewServer() (*server, error) {
 	services, err := newServices()
 	if err != nil {
 		return nil, err
@@ -350,12 +366,12 @@ func init() {
 	reg.MustRegister(grpcMetrics)
 }
 
-func main() {
+func (s *server) Run() error {
 	flag.Parse()
 
 	lis, err := net.Listen("tcp", *addr)
 	if err != nil {
-		logger.Fatalf("Failed to listen: %v\n", err)
+		return fmt.Errorf("Failed to listen: %v\n", err)
 	}
 	logger.Printf("Listening on %q...\n", *addr)
 
@@ -363,7 +379,7 @@ func main() {
 	if *tls {
 		creds, err := credentials.NewServerTLSFromFile(*crt, *key)
 		if err != nil {
-			logger.Fatalf("Could not load server/key pair: %s", err)
+			return fmt.Errorf("Could not load server/key pair: %s", err)
 		}
 		opts = []grpc.ServerOption{grpc.Creds(creds)}
 	}
@@ -405,18 +421,6 @@ func main() {
 
 	s := grpc.NewServer(opts...)
 
-	wrappedServer := grpcweb.WrapServer(s)
-	handler := func(resp http.ResponseWriter, req *http.Request) {
-		setupResponse(&resp, req)
-		wrappedServer.ServeHTTP(resp, req)
-	}
-
-	httpServer := http.Server{
-		Handler: http.HandlerFunc(handler),
-		Addr:    *webAddr,
-	}
-	logger.Println("gRPC web proxy listening at ", *webAddr)
-
 	tospb.RegisterMenuServiceServer(s, server)
 	tospb.RegisterOrderServiceServer(s, server)
 
@@ -424,23 +428,12 @@ func main() {
 
 	go func() {
 		if err := promHTTPServer.ListenAndServe(); err != nil {
-			logger.Fatalf("Prom http server failed to start: %v", err)
-		}
-	}()
-
-	go func() {
-		if err := httpServer.ListenAndServe(); err != nil {
-			logger.Fatalf("grpc-web http server failed to start: %v", err)
+			return fmt.Errorf("Prom http server failed to start: %v", err)
 		}
 	}()
 
 	if err := s.Serve(lis); err != nil {
-		logger.Fatalf("gRPC server failed to serve: %v", err)
+		return fmt.Errorf("gRPC server failed to serve: %v", err)
 	}
-}
-
-func setupResponse(w *http.ResponseWriter, req *http.Request) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, x-grpc-web")
+	return nil
 }
