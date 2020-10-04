@@ -7,6 +7,9 @@ struct ContentView: View {
 }
 
 struct Menu: View {
+
+    @State private var selection: Set<Tospb_Category> = []
+
     var menu: Tospb_Menu
     init() {
         self.menu = loadMenu()
@@ -16,24 +19,45 @@ struct Menu: View {
         ScrollView {
             VStack(alignment: .leading){
                 ForEach(menu.categories, id: \.self) { cat in
-                    Category(category: cat)
+                    CategoryView(category: cat, isExpanded: self.selection.contains(cat))
+                        .onTapGesture { self.selectDeselect(cat) }
+                        .animation(.linear(duration: 0.2))
                 }.padding()
             }
         }
     }
+
+    func selectDeselect(_ category: Tospb_Category) {
+        if selection.contains(category) {
+            selection.remove(category)
+        } else {
+            selection.insert(category)
+        }
+    }
 }
 
-struct Category: View {
+struct CategoryView: View {
     var category: Tospb_Category
 
+    let isExpanded: Bool
+
     var body: some View {
-        VStack {
-            Text(category.name).font(.largeTitle)
-            ForEach(category.items, id: \.self) { item in
-                HStack {
-                    Text(item.name)
-                    Spacer()
-                    Text(String(format: "%.2f", item.price / 100))
+        HStack {
+            content
+            Spacer()
+        }.contentShape(Rectangle())
+    }
+
+    private var content: some View {
+        VStack(alignment: .leading) {
+            Text(category.name).font(.headline)
+            if isExpanded {
+                ForEach(category.items, id: \.self) { item in
+                    HStack {
+                        Text(item.name)
+                        Spacer()
+                        Text(String(format: "%.2f", item.price / 100))
+                    }
                 }
             }
         }
@@ -58,6 +82,7 @@ let jsonMenu = """
  "categories": [
   {
    "name": "Sandwiches",
+   "id": 1,
    "items": [
     {
      "name": "LG Smoked Pulled Pork",
@@ -493,6 +518,7 @@ let jsonMenu = """
   },
   {
    "name": "Plates",
+   "id": 2,
    "items": [
     {
      "name": "Smoked Pulled Pork",
@@ -671,6 +697,7 @@ let jsonMenu = """
   },
   {
    "name": "Baskets",
+   "id": 3,
    "items": [
     {
      "name": "Smoked Wing",
@@ -726,6 +753,7 @@ let jsonMenu = """
   },
   {
    "name": "Potatoes",
+   "id": 4,
    "items": [
     {
      "name": "Loaded Pork",
@@ -861,6 +889,7 @@ let jsonMenu = """
   },
   {
    "name": "Sides",
+   "id": 5,
    "items": [
     {
      "name": "SM Cole Slaw",
@@ -898,6 +927,7 @@ let jsonMenu = """
   },
   {
    "name": "Drinks",
+   "id": 6,
    "items": [
     {
      "name": "Canned Drink",
@@ -911,6 +941,7 @@ let jsonMenu = """
   },
   {
    "name": "Desserts",
+   "id": 7,
    "items": [
     {
      "name": "Oreo Dream",
@@ -940,6 +971,7 @@ let jsonMenu = """
   },
   {
    "name": "Sauces",
+   "id": 8,
    "items": [
     {
      "name": "Extra Ranch",
