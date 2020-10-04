@@ -9,6 +9,8 @@ struct ContentView: View {
 struct Menu: View {
 
     @State private var selection: Set<Tospb_Category> = []
+    
+    @State var itemSelected: Tospb_Item?
 
     var menu: Tospb_Menu
     init() {
@@ -16,13 +18,20 @@ struct Menu: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading){
-                ForEach(menu.categories, id: \.self) { cat in
-                    CategoryView(category: cat, isExpanded: self.selection.contains(cat))
-                        .onTapGesture { self.selectDeselect(cat) }
-                        .animation(.linear(duration: 0.2))
-                }.padding()
+        ZStack {
+            ScrollView {
+                VStack(alignment: .leading){
+                    ForEach(menu.categories, id: \.self) { cat in
+                        CategoryView(category: cat, isExpanded: self.selection.contains(cat), itemSelected: self.$itemSelected)
+                            .onTapGesture { self.selectDeselect(cat) }
+                            .animation(.linear(duration: 0.2))
+                    }.padding()
+                }
+            }
+            
+            if self.itemSelected != nil {
+                PopupMenu(item: self.itemSelected!)
+                    .padding(.horizontal)
             }
         }
     }
@@ -40,12 +49,15 @@ struct CategoryView: View {
     var category: Tospb_Category
 
     let isExpanded: Bool
+    
+    @Binding var itemSelected: Tospb_Item?
 
     var body: some View {
         HStack {
             content
             Spacer()
-        }.contentShape(Rectangle())
+        }
+        .contentShape(Rectangle())
     }
 
     private var content: some View {
@@ -58,6 +70,11 @@ struct CategoryView: View {
                         Spacer()
                         Text(String(format: "%.2f", item.price / 100))
                     }
+                    .padding(.top, 10)
+                    .onTapGesture {
+                        self.itemSelected = item
+                        print(item.name)
+                    }
                 }
             }
         }
@@ -67,6 +84,38 @@ struct CategoryView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+    }
+}
+
+struct PopupMenu: View {
+    
+    var item: Tospb_Item
+    
+    var body: some View {
+        VStack {
+            ForEach(item.options, id: \.self) { item in
+                HStack {
+                    Text(item.name)
+                    Spacer()
+                    Text(String(format: "%.2f", item.price / 100))
+                    Image(systemName: "checkmark")
+                }
+                .padding(.top, 10)
+                .onTapGesture {
+                    print(item.name)
+                }
+            }
+            Button(action: {
+                
+            }) {
+                Text("Add to order")
+            }
+            .padding(.top, 10)
+        }// VStack
+        .padding(15)
+        .background(RoundedRectangle(cornerRadius: 4)
+                        .stroke(Color.black, lineWidth: 2)
+                        .background(Color.white))
     }
 }
 
