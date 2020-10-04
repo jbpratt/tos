@@ -94,28 +94,45 @@ struct PopupMenu: View {
     var body: some View {
         VStack {
             ForEach(item.options, id: \.self) { item in
-                HStack {
-                    Text(item.name)
-                    Spacer()
-                    Text(String(format: "%.2f", item.price / 100))
-                    Image(systemName: "checkmark")
+                OptionView(opt: item, isSelected: true)
+                .padding(.top, 10)
+            }
+            HStack {
+                Button(action: {}) {
+                    Text("Add to order")
                 }
                 .padding(.top, 10)
-                .onTapGesture {
-                    print(item.name)
+                Spacer()
+                Button(action: {}) {
+                    Text("Close")
                 }
+                .padding(.top, 10)
             }
-            Button(action: {
-                
-            }) {
-                Text("Add to order")
-            }
-            .padding(.top, 10)
+            .buttonStyle(BorderlessButtonStyle())
         }// VStack
         .padding(15)
         .background(RoundedRectangle(cornerRadius: 4)
                         .stroke(Color.black, lineWidth: 2)
                         .background(Color.white))
+    }
+}
+
+struct OptionView: View {
+
+    var opt: Tospb_Option
+    @State var isSelected: Bool
+
+    var body: some View {
+        HStack {
+            Text(opt.name)
+            Spacer()
+            Text(String(format: "%.2f", opt.price / 100))
+            if isSelected {
+                Image(systemName: "checkmark")
+            }
+        }.onTapGesture {
+            isSelected = !isSelected
+        }
     }
 }
 
