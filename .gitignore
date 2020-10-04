@@ -6,3 +6,4 @@ cert/
 client.exe
 *.db
 **/node_modules/
+.DS_Store
