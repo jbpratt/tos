@@ -11,6 +11,8 @@ struct Menu: View {
     @State private var selection: Set<Tospb_Category> = []
     
     @State var itemSelected: Tospb_Item?
+    
+    @State var popupOpen = false
 
     var menu: Tospb_Menu
     init() {
@@ -22,15 +24,15 @@ struct Menu: View {
             ScrollView {
                 VStack(alignment: .leading){
                     ForEach(menu.categories, id: \.self) { cat in
-                        CategoryView(category: cat, isExpanded: self.selection.contains(cat), itemSelected: self.$itemSelected)
+                        CategoryView(category: cat, isExpanded: self.selection.contains(cat), itemSelected: self.$itemSelected, popupOpen: self.$popupOpen)
                             .onTapGesture { self.selectDeselect(cat) }
                             .animation(.linear(duration: 0.2))
                     }.padding()
                 }
             }
             
-            if self.itemSelected != nil {
-                PopupMenu(item: self.itemSelected!)
+            if self.itemSelected != nil && self.popupOpen == true {
+                PopupMenu(item: self.itemSelected!, popupOpen: self.$popupOpen)
                     .padding(.horizontal)
             }
         }
@@ -51,6 +53,8 @@ struct CategoryView: View {
     let isExpanded: Bool
     
     @Binding var itemSelected: Tospb_Item?
+    
+    @Binding var popupOpen: Bool
 
     var body: some View {
         HStack {
@@ -73,6 +77,7 @@ struct CategoryView: View {
                     .padding(.top, 10)
                     .onTapGesture {
                         self.itemSelected = item
+                        self.popupOpen = true
                         print(item.name)
                     }
                 }
@@ -91,6 +96,8 @@ struct PopupMenu: View {
     
     var item: Tospb_Item
     
+    @Binding var popupOpen: Bool
+    
     var body: some View {
         VStack {
             ForEach(item.options, id: \.self) { item in
@@ -103,7 +110,9 @@ struct PopupMenu: View {
                 }
                 .padding(.top, 10)
                 Spacer()
-                Button(action: {}) {
+                Button(action: {
+                    self.popupOpen = false
+                }) {
                     Text("Close")
                 }
                 .padding(.top, 10)
