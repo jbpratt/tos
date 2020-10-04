@@ -2,25 +2,23 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Menu()
+        MenuView()
     }
 }
 
-struct Menu: View {
-
+struct MenuView: View {
     @State private var selection: Set<Tospb_Category> = []
-    
-    @State var itemSelected: Tospb_Item?
+    @State private var itemSelected: Tospb_Item?
+    private var menu: Tospb_Menu
 
-    var menu: Tospb_Menu
     init() {
-        self.menu = loadMenu()
+        menu = loadMenu()
     }
 
     var body: some View {
         ZStack {
             ScrollView {
-                VStack(alignment: .leading){
+                VStack(alignment: .leading) {
                     ForEach(menu.categories, id: \.self) { cat in
                         CategoryView(category: cat, isExpanded: self.selection.contains(cat), itemSelected: self.$itemSelected)
                             .onTapGesture { self.selectDeselect(cat) }
@@ -28,9 +26,9 @@ struct Menu: View {
                     }.padding()
                 }
             }
-            
+
             if self.itemSelected != nil {
-                PopupMenu(item: self.itemSelected!, itemSelected: self.$itemSelected)
+                PopupMenu(item: self.$itemSelected)
                     .padding(.horizontal)
             }
         }
@@ -49,7 +47,7 @@ struct CategoryView: View {
     var category: Tospb_Category
 
     let isExpanded: Bool
-    
+
     @Binding var itemSelected: Tospb_Item?
 
     var body: some View {
@@ -88,41 +86,38 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 struct PopupMenu: View {
-    
-    var item: Tospb_Item
-    
-    @Binding var itemSelected: Tospb_Item?
-    
+    @Binding var item: Tospb_Item?
+
     var body: some View {
         VStack {
-            ForEach(item.options, id: \.self) { item in
-                OptionView(opt: item, isSelected: true)
-                .padding(.top, 10)
+            if item != nil {
+                ForEach(item!.options, id: \.self) { item in
+                    OptionView(opt: item, isSelected: true)
+                        .padding(.top, 10)
+                }
             }
             HStack {
                 Button(action: {}) {
                     Text("Add to order")
                 }
-                .padding(.top, 10)
                 Spacer()
                 Button(action: {
-                    self.itemSelected = nil
+                    self.item = nil
                 }) {
                     Text("Close")
                 }
-                .padding(.top, 10)
             }
             .buttonStyle(BorderlessButtonStyle())
-        }// VStack
+            .padding(10)
+        } // VStack
         .padding(15)
         .background(RoundedRectangle(cornerRadius: 4)
-                        .stroke(Color.black, lineWidth: 2)
-                        .background(Color.white))
+            .stroke(Color.black, lineWidth: 2)
+            .background(Color.white))
     }
 }
 
 struct OptionView: View {
-
     var opt: Tospb_Option
     @State var isSelected: Bool
 
