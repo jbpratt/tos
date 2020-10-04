@@ -80,51 +80,53 @@ func (m *menuDB) SeedMenu() error {
 	m.Lock()
 	defer m.Unlock()
 
-	tx, err := m.db.Begin()
-	if err != nil {
-		return err
-	}
-
-	for i, category := range Menu {
-		_, err := tx.Exec("INSERT INTO categories (name) VALUES (?)", category.GetName())
+	/*
+		tx, err := m.db.Begin()
 		if err != nil {
-			tx.Rollback()
 			return err
 		}
-		for _, item := range category.GetItems() {
-			result, err := tx.Exec(
-				"INSERT INTO items (name, price, category_id) VALUES (?,?,?)",
-				item.GetName(), item.GetPrice(), i+1)
+
+		for i, category := range Menu {
+			_, err := tx.Exec("INSERT INTO categories (name) VALUES (?)", category.GetName())
 			if err != nil {
 				tx.Rollback()
 				return err
 			}
-			itemid, _ := result.LastInsertId()
-			for _, option := range item.GetOptions() {
-				res, err := tx.Exec(
-					"INSERT INTO options (name, price, selected) VALUES (?,?,?)",
-					option.GetName(), option.GetPrice(), option.GetSelected())
+			for _, item := range category.GetItems() {
+				result, err := tx.Exec(
+					"INSERT INTO items (name, price, category_id) VALUES (?,?,?)",
+					item.GetName(), item.GetPrice(), i+1)
 				if err != nil {
 					tx.Rollback()
 					return err
 				}
-				optionid, _ := res.LastInsertId()
-				_, err = tx.Exec(
-					"INSERT INTO item_options (item_id, option_id) VALUES (?,?)",
-					itemid, optionid)
-				if err != nil {
-					tx.Rollback()
-					return err
+				itemid, _ := result.LastInsertId()
+				for _, option := range item.GetOptions() {
+					res, err := tx.Exec(
+						"INSERT INTO options (name, price, selected) VALUES (?,?,?)",
+						option.GetName(), option.GetPrice(), option.GetSelected())
+					if err != nil {
+						tx.Rollback()
+						return err
+					}
+					optionid, _ := res.LastInsertId()
+					_, err = tx.Exec(
+						"INSERT INTO item_options (item_id, option_id) VALUES (?,?)",
+						itemid, optionid)
+					if err != nil {
+						tx.Rollback()
+						return err
+					}
 				}
 			}
 		}
-	}
 
-	if err = tx.Commit(); err != nil {
-		return err
-	}
+		if err = tx.Commit(); err != nil {
+			return err
+		}
+	*/
 
-	return nil
+	return errors.New("unimplemented")
 }
 
 // TODO: stop using fmt.Sprintf to format queries

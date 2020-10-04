@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"context"
@@ -12,7 +12,7 @@ func TestServer(t *testing.T) {
 	*dbp = ":memory:"
 	*prnt = false
 
-	s, err := newServer()
+	s, err := NewServer()
 	if err != nil {
 		t.Fatalf("NewServer() failed with %v", err)
 	}

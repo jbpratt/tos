@@ -12,6 +12,7 @@ import (
 
 	"github.com/cskr/pubsub"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/jbpratt/tos/pkg/db"
 	services "github.com/jbpratt/tos/pkg/db"
@@ -23,10 +24,10 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/status"
-	"grpc.go4.org/credentials"
 )
 
 const (
@@ -253,37 +254,6 @@ func (s *server) CompleteOrder(
 	return &tospb.Response{Response: "Order marked as complete"}, s.loadData()
 }
 
-func printOrder(o *tospb.Order) error {
-	f, err := os.OpenFile(*lpDev, os.O_RDWR, 0)
-	if err != nil {
-		return err
-	}
-
-	bw := bufio.NewWriter(f)
-
-	w := bufio.NewReadWriter(nil, bw)
-	p := escpos.New(w)
-	p.Init()
-	p.SetSmooth(1)
-	p.SetFontSize(1, 2)
-	p.SetFont("A")
-	p.Write("TOS")
-	p.Formfeed()
-
-	p.Write(o.GetName())
-	p.Formfeed()
-	p.Write(fmt.Sprintf("%f", o.GetTotal()))
-	p.Formfeed()
-
-	p.Cut()
-	p.End()
-
-	w.Flush()
-	bw.Flush()
-
-	return f.Close()
-}
-
 func (s *server) ActiveOrders(
 	ctx context.Context,
 	empty *tospb.Empty,
@@ -329,11 +299,24 @@ func (s *server) loadData() error {
 }
 
 func NewServer() (*server, error) {
+	logger := logrus.StandardLogger()
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetFormatter(&logrus.TextFormatter{
+		ForceColors:     true,
+		FullTimestamp:   true,
+		TimestampFormat: time.RFC3339Nano,
+		DisableSorting:  true,
+	})
+	// maybe not?
+	// Should only be done from init functions
+	reg.MustRegister(grpcMetrics)
+	grpclog.SetLoggerV2(grpclog.NewLoggerV2(logger.Out, logger.Out, logger.Out))
+
 	services, err := newServices()
 	if err != nil {
 		return nil, err
 	}
-	server := &server{services: services, ps: pubsub.New(0)}
+	server := &server{services: services, ps: pubsub.New(0), logger: logger}
 	if err = server.loadData(); err != nil {
 		return nil, err
 	}
@@ -352,39 +335,25 @@ func newServices() (*services.Services, error) {
 	return services, nil
 }
 
-func init() {
-	logger = logrus.StandardLogger()
-	logrus.SetLevel(logrus.DebugLevel)
-	logrus.SetFormatter(&logrus.TextFormatter{
-		ForceColors:     true,
-		FullTimestamp:   true,
-		TimestampFormat: time.RFC3339Nano,
-		DisableSorting:  true,
-	})
-	// Should only be done from init functions
-	grpclog.SetLoggerV2(grpclog.NewLoggerV2(logger.Out, logger.Out, logger.Out))
-	reg.MustRegister(grpcMetrics)
-}
-
 func (s *server) Run() error {
 	flag.Parse()
 
 	lis, err := net.Listen("tcp", *addr)
 	if err != nil {
-		return fmt.Errorf("Failed to listen: %v\n", err)
+		return fmt.Errorf("failed to listen: %v", err)
 	}
-	logger.Printf("Listening on %q...\n", *addr)
+	s.logger.Printf("Listening on %q...\n", *addr)
 
 	var opts []grpc.ServerOption
 	if *tls {
 		creds, err := credentials.NewServerTLSFromFile(*crt, *key)
 		if err != nil {
-			return fmt.Errorf("Could not load server/key pair: %s", err)
+			return fmt.Errorf("could not load server/key pair: %s", err)
 		}
 		opts = []grpc.ServerOption{grpc.Creds(creds)}
 	}
 
-	logrusEntry := logrus.NewEntry(logger)
+	logrusEntry := logrus.NewEntry(s.logger)
 
 	opts = append(opts,
 		grpc.KeepaliveParams(kasp),
@@ -405,35 +374,62 @@ func (s *server) Run() error {
 	)
 
 	if *dbp == "/tmp/tos.db" {
-		logger.Println("using tmp database")
+		s.logger.Println("using tmp database")
 	}
 
-	server, err := newServer()
-	if err != nil {
-		logger.Fatal(err)
-	}
-	defer server.services.Close()
+	defer s.services.Close()
 
 	promHTTPServer := &http.Server{
 		Handler: promhttp.HandlerFor(reg, promhttp.HandlerOpts{}),
 		Addr:    *promAddr,
 	}
 
-	s := grpc.NewServer(opts...)
+	grpcServer := grpc.NewServer(opts...)
 
-	tospb.RegisterMenuServiceServer(s, server)
-	tospb.RegisterOrderServiceServer(s, server)
+	tospb.RegisterMenuServiceServer(grpcServer, s)
+	tospb.RegisterOrderServiceServer(grpcServer, s)
 
-	grpcMetrics.InitializeMetrics(s)
+	grpcMetrics.InitializeMetrics(grpcServer)
 
 	go func() {
 		if err := promHTTPServer.ListenAndServe(); err != nil {
-			return fmt.Errorf("Prom http server failed to start: %v", err)
+			s.logger.Fatalf("prom http server failed to start: %v\n", err)
 		}
 	}()
 
-	if err := s.Serve(lis); err != nil {
+	if err := grpcServer.Serve(lis); err != nil {
 		return fmt.Errorf("gRPC server failed to serve: %v", err)
 	}
 	return nil
+}
+
+func printOrder(o *tospb.Order) error {
+	f, err := os.OpenFile(*lpDev, os.O_RDWR, 0)
+	if err != nil {
+		return err
+	}
+
+	bw := bufio.NewWriter(f)
+
+	w := bufio.NewReadWriter(nil, bw)
+	p := escpos.New(w)
+	p.Init()
+	p.SetSmooth(1)
+	p.SetFontSize(1, 2)
+	p.SetFont("A")
+	p.Write("TOS")
+	p.Formfeed()
+
+	p.Write(o.GetName())
+	p.Formfeed()
+	p.Write(fmt.Sprintf("%f", o.GetTotal()))
+	p.Formfeed()
+
+	p.Cut()
+	p.End()
+
+	w.Flush()
+	bw.Flush()
+
+	return f.Close()
 }
