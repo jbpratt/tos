@@ -20,6 +20,9 @@
 		1E479F2C252B7A9400E21D20 /* GRPC in Frameworks */ = {isa = PBXBuildFile; productRef = 1E479F2B252B7A9400E21D20 /* GRPC */; };
 		1E479F2F252B7C9D00E21D20 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 1E479F2E252B7C9D00E21D20 /* SwiftProtobuf */; };
 		1E479F31252B7C9D00E21D20 /* SwiftProtobufPluginLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 1E479F30252B7C9D00E21D20 /* SwiftProtobufPluginLibrary */; };
+		1E479F34252B9BA500E21D20 /* MenuViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E479F33252B9BA500E21D20 /* MenuViewModel.swift */; };
+		1E479F36252B9C6500E21D20 /* OrderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E479F35252B9C6500E21D20 /* OrderViewModel.swift */; };
+		1E479F38252B9FF500E21D20 /* ChannelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E479F37252B9FF500E21D20 /* ChannelViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +59,9 @@
 		1E4439CC25295230002BB81B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1E479F26252B7A0D00E21D20 /* tos.grpc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = tos.grpc.swift; path = ../../../protofiles/tos.grpc.swift; sourceTree = "<group>"; };
 		1E479F28252B7A1700E21D20 /* tos.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = tos.pb.swift; path = ../../../protofiles/tos.pb.swift; sourceTree = "<group>"; };
+		1E479F33252B9BA500E21D20 /* MenuViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewModel.swift; sourceTree = "<group>"; };
+		1E479F35252B9C6500E21D20 /* OrderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderViewModel.swift; sourceTree = "<group>"; };
+		1E479F37252B9FF500E21D20 /* ChannelViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +115,7 @@
 		1E4439A72529522F002BB81B /* tos */ = {
 			isa = PBXGroup;
 			children = (
+				1E479F32252B9B8B00E21D20 /* ViewModels */,
 				1E479F28252B7A1700E21D20 /* tos.pb.swift */,
 				1E479F26252B7A0D00E21D20 /* tos.grpc.swift */,
 				1E4439A82529522F002BB81B /* AppDelegate.swift */,
@@ -146,6 +153,16 @@
 				1E4439CC25295230002BB81B /* Info.plist */,
 			);
 			path = tosUITests;
+			sourceTree = "<group>";
+		};
+		1E479F32252B9B8B00E21D20 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				1E479F33252B9BA500E21D20 /* MenuViewModel.swift */,
+				1E479F35252B9C6500E21D20 /* OrderViewModel.swift */,
+				1E479F37252B9FF500E21D20 /* ChannelViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -290,7 +307,10 @@
 				1E4439A92529522F002BB81B /* AppDelegate.swift in Sources */,
 				1E479F27252B7A0D00E21D20 /* tos.grpc.swift in Sources */,
 				1E4439AB2529522F002BB81B /* SceneDelegate.swift in Sources */,
+				1E479F34252B9BA500E21D20 /* MenuViewModel.swift in Sources */,
 				1E4439AD2529522F002BB81B /* ContentView.swift in Sources */,
+				1E479F36252B9C6500E21D20 /* OrderViewModel.swift in Sources */,
+				1E479F38252B9FF500E21D20 /* ChannelViewModel.swift in Sources */,
 				1E479F29252B7A1700E21D20 /* tos.pb.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

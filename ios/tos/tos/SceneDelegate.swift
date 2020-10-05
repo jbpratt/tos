@@ -1,10 +1,3 @@
-//
-//  SceneDelegate.swift
-//  tos
-//
-//  Created by John Pratt on 10/3/20.
-//
-
 import UIKit
 import SwiftUI
 

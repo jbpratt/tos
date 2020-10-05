@@ -4,10 +4,11 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var menuViewModel = MenuViewModel()
+    @ObservedObject var orderViewModel = OrderViewModel()
 
     var body: some View {
         NavigationView {
-            OrderView()
+            OrderView(viewModel: orderViewModel)
             MenuView(viewModel: menuViewModel)
                 .navigationBarTitle(Text("TOS"))
         }
@@ -15,6 +16,8 @@ struct ContentView: View {
 }
 
 struct OrderView: View {
+    @ObservedObject var viewModel: OrderViewModel
+
     var body: some View {
         Text("Orders")
     }
@@ -86,61 +89,6 @@ struct CategoryView: View {
                     }
                 }
             }
-        }
-    }
-}
-
-final class MenuViewModel: ObservableObject, Identifiable {
-    private let client: Tospb_MenuServiceClient
-    private let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
-    @Published private(set) var menu: Tospb_Menu? = nil
-
-    init() {
-        let channel = ClientConnection.insecure(group: group).connect(host: "localhost", port: 50051)
-        client = Tospb_MenuServiceClient(channel: channel)
-    }
-
-    deinit {
-        // this maybe should be defer'd
-        try? group.syncShutdownGracefully()
-    }
-
-    func getMenu() -> Tospb_Menu {
-        #if DEBUG
-            return loadMenu()
-        #else
-            let request = Tospb_Empty()
-            let call = client.getMenu(request)
-            let response = try? call.response.wait()
-            return response!
-        #endif
-    }
-
-    func createItem(_ item: Tospb_Item) {
-        do {
-            _ = try client.createMenuItem(item).response.wait()
-        } catch {
-            print("createMenuItem failed: \(error)")
-            return
-        }
-    }
-
-    func deleteItem(_ itemID: Int64) {
-        let req: Tospb_DeleteMenuItemRequest = .with {
-            $0.id = itemID
-        }
-        do {
-            _ = try client.deleteMenuItem(req).response.wait()
-        } catch {
-            print("deleteMenuItem failed: \(error)")
-        }
-    }
-
-    func updateItem(_ item: Tospb_Item) {
-        do {
-            _ = try client.updateMenuItem(item).response.wait()
-        } catch {
-            print("updateMenuItem failed: \(error)")
         }
     }
 }
