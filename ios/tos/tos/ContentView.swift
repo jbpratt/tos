@@ -1,34 +1,45 @@
+import GRPC
+import NIO
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var menuViewModel = MenuViewModel()
+
     var body: some View {
-        MenuView()
+        NavigationView {
+            OrderView()
+            MenuView(viewModel: menuViewModel)
+                .navigationBarTitle(Text("TOS"))
+        }
+    }
+}
+
+struct OrderView: View {
+    var body: some View {
+        Text("Orders")
     }
 }
 
 struct MenuView: View {
+    @ObservedObject var viewModel: MenuViewModel
+
     @State private var selection: Set<Tospb_Category> = []
     @State private var itemSelected: Tospb_Item?
-    private var menu: Tospb_Menu
-
-    init() {
-        menu = loadMenu()
-    }
 
     var body: some View {
         ZStack {
             ScrollView {
                 VStack(alignment: .leading) {
-                    ForEach(menu.categories, id: \.self) { cat in
-                        CategoryView(category: cat, isExpanded: self.selection.contains(cat), itemSelected: self.$itemSelected)
-                            .onTapGesture { self.selectDeselect(cat) }
+                    ForEach(viewModel.getMenu().categories, id: \.self) { cat in
+                        CategoryView(category: cat, isExpanded: selection.contains(cat), itemSelected: $itemSelected)
+                            .onTapGesture { selectDeselect(cat) }
                             .animation(.linear(duration: 0.2))
                     }.padding()
                 }
             }
 
-            if self.itemSelected != nil {
-                PopupMenu(item: self.$itemSelected)
+            if itemSelected != nil {
+                PopupMenu(item: $itemSelected)
                     .padding(.horizontal)
             }
         }
@@ -70,7 +81,7 @@ struct CategoryView: View {
                     }
                     .padding(.top, 10)
                     .onTapGesture {
-                        self.itemSelected = item
+                        itemSelected = item
                         print(item.name)
                     }
                 }
@@ -79,9 +90,58 @@ struct CategoryView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+final class MenuViewModel: ObservableObject, Identifiable {
+    private let client: Tospb_MenuServiceClient
+    private let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+    @Published private(set) var menu: Tospb_Menu? = nil
+
+    init() {
+        let channel = ClientConnection.insecure(group: group).connect(host: "localhost", port: 50051)
+        client = Tospb_MenuServiceClient(channel: channel)
+    }
+
+    deinit {
+        // this maybe should be defer'd
+        try? group.syncShutdownGracefully()
+    }
+
+    func getMenu() -> Tospb_Menu {
+        #if DEBUG
+            return loadMenu()
+        #else
+            let request = Tospb_Empty()
+            let call = client.getMenu(request)
+            let response = try? call.response.wait()
+            return response!
+        #endif
+    }
+
+    func createItem(_ item: Tospb_Item) {
+        do {
+            _ = try client.createMenuItem(item).response.wait()
+        } catch {
+            print("createMenuItem failed: \(error)")
+            return
+        }
+    }
+
+    func deleteItem(_ itemID: Int64) {
+        let req: Tospb_DeleteMenuItemRequest = .with {
+            $0.id = itemID
+        }
+        do {
+            _ = try client.deleteMenuItem(req).response.wait()
+        } catch {
+            print("deleteMenuItem failed: \(error)")
+        }
+    }
+
+    func updateItem(_ item: Tospb_Item) {
+        do {
+            _ = try client.updateMenuItem(item).response.wait()
+        } catch {
+            print("updateMenuItem failed: \(error)")
+        }
     }
 }
 
@@ -132,6 +192,12 @@ struct OptionView: View {
         }.onTapGesture {
             isSelected = !isSelected
         }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
     }
 }
 
