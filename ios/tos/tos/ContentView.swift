@@ -9,7 +9,7 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             OrderView(viewModel: orderViewModel)
-            MenuView(viewModel: menuViewModel)
+            MenuView(menuViewModel: menuViewModel, orderViewModel: orderViewModel)
                 .navigationBarTitle(Text("TOS"))
         }
     }
@@ -19,12 +19,44 @@ struct OrderView: View {
     @ObservedObject var viewModel: OrderViewModel
 
     var body: some View {
-        Text("Orders")
+        VStack {
+            Text("Orders")
+            if viewModel.currentOrder != nil {
+                ForEach(viewModel.currentOrder!.items, id: \.self) { item in
+                    OrderItemView(viewModel: viewModel, item: item)
+                }
+                .padding(20)
+            }
+            Spacer()
+            Button(action: {}) {
+                Text("Submit")
+            }.padding(.bottom, 20)
+        }
+    }
+}
+
+struct OrderItemView: View {
+    @ObservedObject var viewModel: OrderViewModel
+    var item: Tospb_Item
+
+    var body: some View {
+        HStack {
+            Text(item.name)
+            Spacer()
+            ItemPriceView(price: item.price)
+            Spacer()
+            Button(action: {
+                viewModel.removeFromOrder(item)
+            }) {
+                Text("x")
+            }
+        }
     }
 }
 
 struct MenuView: View {
-    @ObservedObject var viewModel: MenuViewModel
+    @ObservedObject var menuViewModel: MenuViewModel
+    @ObservedObject var orderViewModel: OrderViewModel
 
     @State private var selection: Set<Tospb_Category> = []
     @State private var itemSelected: Tospb_Item?
@@ -33,7 +65,7 @@ struct MenuView: View {
         ZStack {
             ScrollView {
                 VStack(alignment: .leading) {
-                    ForEach(viewModel.getMenu().categories, id: \.self) { cat in
+                    ForEach(menuViewModel.getMenu().categories, id: \.self) { cat in
                         CategoryView(category: cat, isExpanded: selection.contains(cat), itemSelected: $itemSelected)
                             .onTapGesture { selectDeselect(cat) }
                             .animation(.linear(duration: 0.2))
@@ -42,7 +74,7 @@ struct MenuView: View {
             }
 
             if itemSelected != nil {
-                PopupMenu(item: $itemSelected)
+                PopupMenu(viewModel: orderViewModel, item: $itemSelected)
                     .padding(.horizontal)
             }
         }
@@ -80,7 +112,7 @@ struct CategoryView: View {
                     HStack {
                         Text(item.name)
                         Spacer()
-                        Text(String(format: "%.2f", item.price / 100))
+                        ItemPriceView(price: item.price)
                     }
                     .padding(.top, 10)
                     .onTapGesture {
@@ -93,7 +125,16 @@ struct CategoryView: View {
     }
 }
 
+struct ItemPriceView: View {
+    var price: Float
+
+    var body: some View {
+        Text(String(format: "%.2f", price / 100))
+    }
+}
+
 struct PopupMenu: View {
+    @ObservedObject var viewModel: OrderViewModel
     @Binding var item: Tospb_Item?
 
     var body: some View {
@@ -105,12 +146,17 @@ struct PopupMenu: View {
                 }
             }
             HStack {
-                Button(action: {}) {
+                Button(action: {
+                    if item != nil {
+                        viewModel.addToOrder(item!)
+                        item = nil
+                    }
+                }) {
                     Text("Add to order")
                 }
                 Spacer()
                 Button(action: {
-                    self.item = nil
+                    item = nil
                 }) {
                     Text("Close")
                 }
@@ -133,7 +179,7 @@ struct OptionView: View {
         HStack {
             Text(opt.name)
             Spacer()
-            Text(String(format: "%.2f", opt.price / 100))
+            ItemPriceView(price: opt.price)
             if isSelected {
                 Image(systemName: "checkmark")
             }
