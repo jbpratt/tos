@@ -3,6 +3,14 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "Tospb_Item.totalPrice():ContentView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "(self.options.reduce(0, {x, y in x + y.price}) + self.price)/100">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "loadMenu():ContentView.swift">
          <PersistentStrings>
             <PersistentString

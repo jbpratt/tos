@@ -8,184 +8,27 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView {
-            OrderView(viewModel: orderViewModel)
-            MenuView(menuViewModel: menuViewModel, orderViewModel: orderViewModel)
-                .navigationBarTitle(Text("TOS"))
-        }
-    }
-}
-
-struct OrderView: View {
-    @ObservedObject var viewModel: OrderViewModel
-
-    var body: some View {
-        VStack {
-            Text("Orders")
-            if viewModel.currentOrder != nil {
-                ForEach(viewModel.currentOrder!.items, id: \.self) { item in
-                    OrderItemView(viewModel: viewModel, item: item)
-                }
-                .padding(20)
-            }
-            Spacer()
-            Button(action: {}) {
-                Text("Submit")
-            }.padding(.bottom, 20)
-        }
-    }
-}
-
-struct OrderItemView: View {
-    @ObservedObject var viewModel: OrderViewModel
-    var item: Tospb_Item
-
-    var body: some View {
-        HStack {
-            Text(item.name)
-            Spacer()
-            ItemPriceView(price: item.price)
-            Spacer()
-            Button(action: {
-                viewModel.removeFromOrder(item)
-            }) {
-                Text("x")
-            }
-        }
-    }
-}
-
-struct MenuView: View {
-    @ObservedObject var menuViewModel: MenuViewModel
-    @ObservedObject var orderViewModel: OrderViewModel
-
-    @State private var selection: Set<Tospb_Category> = []
-    @State private var itemSelected: Tospb_Item?
-
-    var body: some View {
-        ZStack {
-            ScrollView {
-                VStack(alignment: .leading) {
-                    ForEach(menuViewModel.getMenu().categories, id: \.self) { cat in
-                        CategoryView(category: cat, isExpanded: selection.contains(cat), itemSelected: $itemSelected)
-                            .onTapGesture { selectDeselect(cat) }
-                            .animation(.linear(duration: 0.2))
-                    }.padding()
-                }
-            }
-
-            if itemSelected != nil {
-                PopupMenu(viewModel: orderViewModel, item: $itemSelected)
-                    .padding(.horizontal)
-            }
-        }
-    }
-
-    func selectDeselect(_ category: Tospb_Category) {
-        if selection.contains(category) {
-            selection.remove(category)
-        } else {
-            selection.insert(category)
-        }
-    }
-}
-
-struct CategoryView: View {
-    var category: Tospb_Category
-
-    let isExpanded: Bool
-
-    @Binding var itemSelected: Tospb_Item?
-
-    var body: some View {
-        HStack {
-            content
-            Spacer()
-        }
-        .contentShape(Rectangle())
-    }
-
-    private var content: some View {
-        VStack(alignment: .leading) {
-            Text(category.name).font(.headline)
-            if isExpanded {
-                ForEach(category.items, id: \.self) { item in
-                    HStack {
-                        Text(item.name)
-                        Spacer()
-                        ItemPriceView(price: item.price)
+            VStack {
+                HStack {
+                    NavigationLink(destination: OrderView(viewModel: orderViewModel)) {
+                        Text("Order")
                     }
-                    .padding(.top, 10)
-                    .onTapGesture {
-                        itemSelected = item
-                        print(item.name)
-                    }
+                    Spacer()
                 }
+                .padding()
+                MenuView(menuViewModel: menuViewModel, orderViewModel: orderViewModel)
             }
+            .navigationBarHidden(true)
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
-struct ItemPriceView: View {
-    var price: Float
-
-    var body: some View {
-        Text(String(format: "%.2f", price / 100))
-    }
-}
-
-struct PopupMenu: View {
-    @ObservedObject var viewModel: OrderViewModel
-    @Binding var item: Tospb_Item?
-
-    var body: some View {
-        VStack {
-            if item != nil {
-                ForEach(item!.options, id: \.self) { item in
-                    OptionView(opt: item, isSelected: true)
-                        .padding(.top, 10)
-                }
-            }
-            HStack {
-                Button(action: {
-                    if item != nil {
-                        viewModel.addToOrder(item!)
-                        item = nil
-                    }
-                }) {
-                    Text("Add to order")
-                }
-                Spacer()
-                Button(action: {
-                    item = nil
-                }) {
-                    Text("Close")
-                }
-            }
-            .buttonStyle(BorderlessButtonStyle())
-            .padding(10)
-        } // VStack
-        .padding(15)
-        .background(RoundedRectangle(cornerRadius: 4)
-            .stroke(Color.black, lineWidth: 2)
-            .background(Color.white))
-    }
-}
-
-struct OptionView: View {
-    var opt: Tospb_Option
-    @State var isSelected: Bool
-
-    var body: some View {
-        HStack {
-            Text(opt.name)
-            Spacer()
-            ItemPriceView(price: opt.price)
-            if isSelected {
-                Image(systemName: "checkmark")
-            }
-        }.onTapGesture {
-            isSelected = !isSelected
-        }
+extension Tospb_Item {
+    func totalPrice() -> Float {
+        options.filter { $0.selected }.reduce(0) { x, y in
+            x + y.price
+        } + price
     }
 }
 
