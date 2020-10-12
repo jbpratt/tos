@@ -16,7 +16,7 @@ import (
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/jbpratt/tos/pkg/db"
 	services "github.com/jbpratt/tos/pkg/db"
-	tospb "github.com/jbpratt/tos/protofiles"
+	"github.com/jbpratt/tos/pkg/pb"
 	"github.com/knq/escpos"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/prometheus/client_golang/prometheus"
@@ -53,26 +53,20 @@ var (
 
 type server struct {
 	services *db.Services
-	orders   []*tospb.Order
-	menu     *tospb.Menu
+	orders   []*pb.Order
+	menu     *pb.Menu
 	ps       *pubsub.PubSub
 	logger   *logrus.Logger
 }
 
-func (s *server) GetMenu(
-	ctx context.Context,
-	empty *tospb.Empty,
-) (*tospb.Menu, error) {
+func (s *server) GetMenu(ctx context.Context, empty *pb.Empty) (*pb.Menu, error) {
 	if len(s.menu.GetCategories()) == 0 {
 		return nil, status.Error(codes.NotFound, "menu is empty")
 	}
 	return s.menu, nil
 }
 
-func (s *server) CreateMenuItem(
-	ctx context.Context,
-	req *tospb.Item,
-) (*tospb.CreateMenuItemResponse, error) {
+func (s *server) CreateMenuItem(ctx context.Context, req *pb.Item) (*pb.CreateMenuItemResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "no item provided")
 	}
@@ -106,13 +100,10 @@ func (s *server) CreateMenuItem(
 			"services..CreateMenuItem(%v) returned %v", req, err)
 	}
 
-	return &tospb.CreateMenuItemResponse{Id: id}, s.loadData()
+	return &pb.CreateMenuItemResponse{Id: id}, s.loadData()
 }
 
-func (s *server) UpdateMenuItem(
-	ctx context.Context,
-	req *tospb.Item,
-) (*tospb.Response, error) {
+func (s *server) UpdateMenuItem(ctx context.Context, req *pb.Item) (*pb.Response, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "item id not provided")
 	}
@@ -127,13 +118,13 @@ func (s *server) UpdateMenuItem(
 			"services..UpdateMenuItem(%v) returned %v", req, err)
 	}
 
-	return &tospb.Response{Response: "success"}, s.loadData()
+	return &pb.Response{Response: "success"}, s.loadData()
 }
 
 func (s *server) DeleteMenuItem(
 	ctx context.Context,
-	req *tospb.DeleteMenuItemRequest,
-) (*tospb.Response, error) {
+	req *pb.DeleteMenuItemRequest,
+) (*pb.Response, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
 			"req must not be nil")
@@ -149,13 +140,13 @@ func (s *server) DeleteMenuItem(
 			"services..UpdateMenuItem(%v) returned %v", req, err)
 	}
 
-	return &tospb.Response{Response: "success"}, s.loadData()
+	return &pb.Response{Response: "success"}, s.loadData()
 }
 
 func (s *server) CreateMenuItemOption(
 	ctx context.Context,
-	req *tospb.Option,
-) (*tospb.Response, error) {
+	req *pb.Option,
+) (*pb.Response, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
 			"item option not provided")
@@ -164,10 +155,7 @@ func (s *server) CreateMenuItemOption(
 	return nil, status.Error(codes.Unimplemented, "not implemented")
 }
 
-func (s *server) SubmitOrder(
-	ctx context.Context,
-	req *tospb.Order,
-) (*tospb.Response, error) {
+func (s *server) SubmitOrder(ctx context.Context, req *pb.Order) (*pb.Response, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
 			"order not provided")
@@ -197,20 +185,17 @@ func (s *server) SubmitOrder(
 
 	publish(s.ps, o, topicOrder)
 
-	return &tospb.Response{Response: "Order has been placed.."}, s.loadData()
+	return &pb.Response{Response: "Order has been placed.."}, s.loadData()
 }
 
-func (s *server) SubscribeToOrders(
-	req *tospb.Empty,
-	stream tospb.OrderService_SubscribeToOrdersServer,
-) error {
+func (s *server) SubscribeToOrders(req *pb.Empty, stream pb.OrderService_SubscribeToOrdersServer) error {
 	s.logger.Infoln("Client has subscribed to orders")
 
 	ch := s.ps.Sub(topicOrder)
 	for {
 		if o, ok := <-ch; ok {
 			s.logger.Infof("Sending order to client: %v\n", o)
-			err := stream.Send(o.(*tospb.Order))
+			err := stream.Send(o.(*pb.Order))
 			if err != nil {
 				s.ps.Unsub(ch, topicOrder)
 				return status.Errorf(codes.Internal,
@@ -220,14 +205,11 @@ func (s *server) SubscribeToOrders(
 	}
 }
 
-func publish(ps *pubsub.PubSub, order *tospb.Order, topic string) {
+func publish(ps *pubsub.PubSub, order *pb.Order, topic string) {
 	ps.Pub(order, topic)
 }
 
-func (s *server) CompleteOrder(
-	ctx context.Context,
-	req *tospb.CompleteOrderRequest,
-) (*tospb.Response, error) {
+func (s *server) CompleteOrder(ctx context.Context, req *pb.CompleteOrderRequest) (*pb.Response, error) {
 	if req.GetId() == 0 {
 		return nil, status.Errorf(codes.InvalidArgument,
 			"order id must be non zero")
@@ -251,19 +233,19 @@ func (s *server) CompleteOrder(
 		return nil, err
 	}
 
-	return &tospb.Response{Response: "Order marked as complete"}, s.loadData()
+	return &pb.Response{Response: "Order marked as complete"}, s.loadData()
 }
 
 func (s *server) ActiveOrders(
 	ctx context.Context,
-	empty *tospb.Empty,
-) (*tospb.OrdersResponse, error) {
+	empty *pb.Empty,
+) (*pb.OrdersResponse, error) {
 	if s.orders == nil {
 		return nil, status.Errorf(codes.Internal,
 			"ActiveOrders() failed: server.orders has not been initialized")
 	}
 
-	return &tospb.OrdersResponse{Orders: s.orders}, nil
+	return &pb.OrdersResponse{Orders: s.orders}, nil
 }
 
 func (s *server) loadData() error {
@@ -292,7 +274,7 @@ func (s *server) loadData() error {
 
 	s.orders = orders
 	if s.orders == nil {
-		s.orders = []*tospb.Order{}
+		s.orders = []*pb.Order{}
 	}
 
 	return nil
@@ -386,8 +368,8 @@ func (s *server) Run() error {
 
 	grpcServer := grpc.NewServer(opts...)
 
-	tospb.RegisterMenuServiceServer(grpcServer, s)
-	tospb.RegisterOrderServiceServer(grpcServer, s)
+	pb.RegisterMenuServiceServer(grpcServer, s)
+	pb.RegisterOrderServiceServer(grpcServer, s)
 
 	grpcMetrics.InitializeMetrics(grpcServer)
 
@@ -403,7 +385,7 @@ func (s *server) Run() error {
 	return nil
 }
 
-func printOrder(o *tospb.Order) error {
+func printOrder(o *pb.Order) error {
 	f, err := os.OpenFile(*lpDev, os.O_RDWR, 0)
 	if err != nil {
 		return err

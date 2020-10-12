@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	tospb "github.com/jbpratt/tos/protofiles"
+	"github.com/jbpratt/tos/pkg/pb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
@@ -27,7 +27,7 @@ var completeCmd = &cobra.Command{
 
 		defer cc.Close()
 
-		res, err := completeOrder(tospb.NewOrderServiceClient(cc))
+		res, err := completeOrder(pb.NewOrderServiceClient(cc))
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -35,8 +35,8 @@ var completeCmd = &cobra.Command{
 	},
 }
 
-func completeOrder(c tospb.OrderServiceClient) (string, error) {
-	req := &tospb.CompleteOrderRequest{
+func completeOrder(c pb.OrderServiceClient) (string, error) {
+	req := &pb.CompleteOrderRequest{
 		Id: int64(orderID),
 	}
 	res, err := c.CompleteOrder(context.Background(), req)

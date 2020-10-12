@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	tospb "github.com/jbpratt/tos/protofiles"
+	"github.com/jbpratt/tos/pkg/pb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
@@ -21,7 +21,7 @@ var menuCmd = &cobra.Command{
 		}
 		defer cc.Close()
 
-		categories, err := doMenuRequest(tospb.NewMenuServiceClient(cc))
+		categories, err := doMenuRequest(pb.NewMenuServiceClient(cc))
 		if err != nil {
 			log.Fatalf("Failed to get menu: %v", err)
 		}
@@ -29,9 +29,9 @@ var menuCmd = &cobra.Command{
 	},
 }
 
-func doMenuRequest(c tospb.MenuServiceClient) ([]*tospb.Category, error) {
+func doMenuRequest(c pb.MenuServiceClient) ([]*pb.Category, error) {
 	fmt.Println("Starting to request menu...")
-	res, err := c.GetMenu(context.Background(), &tospb.Empty{})
+	res, err := c.GetMenu(context.Background(), &pb.Empty{})
 	if err != nil {
 		return nil, err
 	}

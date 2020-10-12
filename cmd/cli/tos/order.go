@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	tospb "github.com/jbpratt/tos/protofiles"
+	"github.com/jbpratt/tos/pkg/pb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
@@ -24,7 +24,7 @@ var orderCmd = &cobra.Command{
 
 		defer cc.Close()
 
-		res, err := doSubmitOrderRequest(tospb.NewOrderServiceClient(cc))
+		res, err := doSubmitOrderRequest(pb.NewOrderServiceClient(cc))
 		if err != nil {
 			log.Fatalf("Failed to submit order: %v", err)
 		}
@@ -32,12 +32,12 @@ var orderCmd = &cobra.Command{
 	},
 }
 
-func doSubmitOrderRequest(c tospb.OrderServiceClient) (string, error) {
+func doSubmitOrderRequest(c pb.OrderServiceClient) (string, error) {
 	go fmt.Println("Starting order request")
-	req := &tospb.Order{
+	req := &pb.Order{
 		Name: name,
-		Items: []*tospb.Item{
-			{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Options: []*tospb.Option{
+		Items: []*pb.Item{
+			{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Options: []*pb.Option{
 				{Name: "pickles", Price: 0, Selected: true, Id: 1},
 			}},
 		},

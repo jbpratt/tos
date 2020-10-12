@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-	tospb "github.com/jbpratt/tos/protofiles"
+	"github.com/jbpratt/tos/pkg/pb"
 )
 
 func TestServer(t *testing.T) {
@@ -23,12 +23,12 @@ func TestServer(t *testing.T) {
 		t.Fatalf("server.loadData() failed with %v", err)
 	}
 
-	menu, err := s.GetMenu(context.Background(), &tospb.Empty{})
+	menu, err := s.GetMenu(context.Background(), &pb.Empty{})
 	if err != nil {
 		t.Errorf("server.GetMenu() failed with %v", err)
 	}
 
-	testItem := &tospb.Item{Name: "Test item", Price: 495, CategoryID: 1}
+	testItem := &pb.Item{Name: "Test item", Price: 495, CategoryID: 1}
 
 	res, err := s.CreateMenuItem(context.Background(), testItem)
 	if err != nil {
@@ -40,7 +40,7 @@ func TestServer(t *testing.T) {
 		t.Error("CreateMenuItem() failed to add a new item in the category")
 	}
 
-	testItem = &tospb.Item{Id: res.GetId(), Name: "New test item", Price: 555, CategoryID: 2}
+	testItem = &pb.Item{Id: res.GetId(), Name: "New test item", Price: 555, CategoryID: 2}
 
 	_, err = s.UpdateMenuItem(context.Background(), testItem)
 	if err != nil {
@@ -53,7 +53,7 @@ func TestServer(t *testing.T) {
 	}
 
 	_, err = s.DeleteMenuItem(context.Background(),
-		&tospb.DeleteMenuItemRequest{Id: res.GetId()})
+		&pb.DeleteMenuItemRequest{Id: res.GetId()})
 	if err != nil {
 		t.Errorf("server.DeleteMenuItem() failed with %v", err)
 	}
@@ -65,10 +65,10 @@ func TestServer(t *testing.T) {
 
 	// subscribe to orders
 
-	testOrders := []*tospb.Order{
-		{Items: []*tospb.Item{testItem}, Total: 555, Name: "order test"},
-		{Items: []*tospb.Item{testItem}, Total: 999, Name: "mfsjo813ma"},
-		{Items: []*tospb.Item{testItem}, Total: 1, Name: "majora"},
+	testOrders := []*pb.Order{
+		{Items: []*pb.Item{testItem}, Total: 555, Name: "order test"},
+		{Items: []*pb.Item{testItem}, Total: 999, Name: "mfsjo813ma"},
+		{Items: []*pb.Item{testItem}, Total: 1, Name: "majora"},
 	}
 
 	for _, o := range testOrders {
@@ -79,14 +79,14 @@ func TestServer(t *testing.T) {
 	}
 
 	// compare order from here to order received on subscribe
-	x, err := s.ActiveOrders(context.Background(), &tospb.Empty{})
+	x, err := s.ActiveOrders(context.Background(), &pb.Empty{})
 	if err != nil {
 		t.Errorf("ActiveOrders() failed with %v", err)
 	}
 
 	for _, o := range x.GetOrders() {
 		_, err = s.CompleteOrder(context.Background(),
-			&tospb.CompleteOrderRequest{Id: o.GetId()})
+			&pb.CompleteOrderRequest{Id: o.GetId()})
 		if err != nil {
 			spew.Dump(o)
 			t.Errorf("server.CompleteOrder() failed with %v", err)

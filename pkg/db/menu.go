@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"sync"
 
-	tospb "github.com/jbpratt/tos/protofiles"
+	"github.com/jbpratt/tos/pkg/pb"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -14,11 +14,11 @@ import (
 // involving the menu
 type MenuDB interface {
 	SeedMenu() error
-	CreateMenuItem(*tospb.Item) (int64, error)
+	CreateMenuItem(*pb.Item) (int64, error)
 	DeleteMenuItem(int64) error
-	UpdateMenuItem(*tospb.Item) error
+	UpdateMenuItem(*pb.Item) error
 	// CreateMenuItemOption() error
-	GetMenu() (*tospb.Menu, error)
+	GetMenu() (*pb.Menu, error)
 }
 
 // MenuService the the abstraction for the MenuDB
@@ -134,11 +134,11 @@ func (m *menuDB) SeedMenu() error {
 }
 
 // TODO: stop using fmt.Sprintf to format queries
-func (m *menuDB) GetMenu() (*tospb.Menu, error) {
+func (m *menuDB) GetMenu() (*pb.Menu, error) {
 	m.RLock()
 	defer m.RUnlock()
-	var categories []*tospb.Category
-	menu := &tospb.Menu{
+	var categories []*pb.Category
+	menu := &pb.Menu{
 		Categories: categories,
 	}
 	if err := m.db.Select(&menu.Categories, "SELECT * from categories"); err != nil {
@@ -163,7 +163,7 @@ func (m *menuDB) GetMenu() (*tospb.Menu, error) {
 }
 
 // need to reload
-func (m *menuDB) CreateMenuItem(item *tospb.Item) (int64, error) {
+func (m *menuDB) CreateMenuItem(item *pb.Item) (int64, error) {
 	m.Lock()
 	defer m.Unlock()
 
@@ -177,7 +177,7 @@ func (m *menuDB) CreateMenuItem(item *tospb.Item) (int64, error) {
 	return res.LastInsertId()
 }
 
-func (m *menuDB) UpdateMenuItem(item *tospb.Item) error {
+func (m *menuDB) UpdateMenuItem(item *pb.Item) error {
 	m.Lock()
 	defer m.Unlock()
 
@@ -212,8 +212,8 @@ func (m *menuDB) DeleteMenuItem(id int64) error {
 	return nil
 }
 
-func loadStaticMenu() (*tospb.Menu, error) {
-	var menu *tospb.Menu
+func loadStaticMenu() (*pb.Menu, error) {
+	var menu *pb.Menu = &pb.Menu{}
 	if err := json.Unmarshal([]byte(staticMenu), menu); err != nil {
 		return nil, err
 	}

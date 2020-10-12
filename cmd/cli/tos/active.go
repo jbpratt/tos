@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	tospb "github.com/jbpratt/tos/protofiles"
+	"github.com/jbpratt/tos/pkg/pb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
@@ -21,7 +21,7 @@ var activeCmd = &cobra.Command{
 		}
 		defer cc.Close()
 
-		res, err := requestOrders(tospb.NewOrderServiceClient(cc))
+		res, err := requestOrders(pb.NewOrderServiceClient(cc))
 		if err != nil {
 			log.Fatalf("Failed to submit order: %v", err)
 		}
@@ -29,8 +29,8 @@ var activeCmd = &cobra.Command{
 	},
 }
 
-func requestOrders(c tospb.OrderServiceClient) ([]*tospb.Order, error) {
-	res, err := c.ActiveOrders(context.Background(), &tospb.Empty{})
+func requestOrders(c pb.OrderServiceClient) ([]*pb.Order, error) {
+	res, err := c.ActiveOrders(context.Background(), &pb.Empty{})
 	if err != nil {
 		return nil, err
 	}

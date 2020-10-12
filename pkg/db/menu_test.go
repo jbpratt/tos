@@ -3,7 +3,7 @@ package db
 import (
 	"testing"
 
-	tospb "github.com/jbpratt/tos/protofiles"
+	"github.com/jbpratt/tos/pkg/pb"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -67,7 +67,7 @@ func TestCreateMenuItem(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	item := &tospb.Item{
+	item := &pb.Item{
 		Name:       "test",
 		CategoryID: 1,
 		Price:      399,
@@ -93,7 +93,7 @@ func TestDeleteMenuItem(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	item := &tospb.Item{
+	item := &pb.Item{
 		Name:       "test",
 		CategoryID: 1,
 		Price:      399,

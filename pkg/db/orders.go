@@ -6,16 +6,16 @@ import (
 	"sync"
 	"time"
 
-	tospb "github.com/jbpratt/tos/protofiles"
+	"github.com/jbpratt/tos/pkg/pb"
 	"github.com/jmoiron/sqlx"
 )
 
 // OrderDB is everything that interacts with the database
 // involving the orders
 type OrderDB interface {
-	GetOrders() ([]*tospb.Order, error)
+	GetOrders() ([]*pb.Order, error)
 	CompleteOrder(id int64) error
-	SubmitOrder(o *tospb.Order) error
+	SubmitOrder(o *pb.Order) error
 }
 
 // OrderService is the abstraction of the db layer
@@ -71,7 +71,7 @@ func NewOrderService(db *sqlx.DB) (OrderService, error) {
 	return &orderService{odb}, nil
 }
 
-func (o *orderDB) SubmitOrder(order *tospb.Order) error {
+func (o *orderDB) SubmitOrder(order *pb.Order) error {
 	o.Lock()
 	defer o.Unlock()
 	tx, err := o.db.Begin()
@@ -105,7 +105,7 @@ func (o *orderDB) SubmitOrder(order *tospb.Order) error {
 	return nil
 }
 
-func submitOrderItems(tx *sql.Tx, order *tospb.Order) error {
+func submitOrderItems(tx *sql.Tx, order *pb.Order) error {
 	for _, item := range order.GetItems() {
 		res, err := tx.Exec(
 			"INSERT INTO order_items (item_id, order_id) VALUES (?, ?)",
@@ -132,7 +132,7 @@ func submitOrderItems(tx *sql.Tx, order *tospb.Order) error {
 	return nil
 }
 
-func submitOrderItemOptions(tx *sql.Tx, item *tospb.Item) error {
+func submitOrderItemOptions(tx *sql.Tx, item *pb.Item) error {
 	for _, option := range item.GetOptions() {
 		if option.GetSelected() {
 			_, err := tx.Exec(
@@ -148,7 +148,7 @@ func submitOrderItemOptions(tx *sql.Tx, item *tospb.Item) error {
 	return nil
 }
 
-func (o *orderDB) GetOrders() ([]*tospb.Order, error) {
+func (o *orderDB) GetOrders() ([]*pb.Order, error) {
 	o.RLock()
 	defer o.RUnlock()
 	orders, err := o.getOrders()
@@ -170,8 +170,8 @@ func (o *orderDB) GetOrders() ([]*tospb.Order, error) {
 	return orders, nil
 }
 
-func (o *orderDB) getOrders() ([]*tospb.Order, error) {
-	var orders []*tospb.Order
+func (o *orderDB) getOrders() ([]*pb.Order, error) {
+	var orders []*pb.Order
 	err := o.db.Select(&orders,
 		"SELECT * FROM orders WHERE status = 'active'")
 	if err != nil {
@@ -180,7 +180,7 @@ func (o *orderDB) getOrders() ([]*tospb.Order, error) {
 	return orders, nil
 }
 
-func (o *orderDB) getOrderItems(order *tospb.Order) error {
+func (o *orderDB) getOrderItems(order *pb.Order) error {
 	err := o.db.Select(&order.Items, fmt.Sprintf(
 		`
 		SELECT name,price,items.id,order_items.id as order_item_id
@@ -193,7 +193,7 @@ func (o *orderDB) getOrderItems(order *tospb.Order) error {
 	return nil
 }
 
-func (o *orderDB) getOrderItemOptions(item *tospb.Item, id int64) error {
+func (o *orderDB) getOrderItemOptions(item *pb.Item, id int64) error {
 	err := o.db.Select(&item.Options, fmt.Sprintf(
 		`
 		SELECT options.name,options.price 
