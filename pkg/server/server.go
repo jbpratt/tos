@@ -2,10 +2,13 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/cskr/pubsub"
@@ -40,7 +43,7 @@ var (
 		Time: 60 * time.Second,
 	}
 	tls      = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
-	prnt     = flag.Bool("print", true, "Use printer for complete orders")
+	prnt     = flag.Bool("print", false, "Use printer for complete orders")
 	promAddr = flag.String("prom", ":9001", "Port to run metrics HTTP server")
 	addr     = flag.String("addr", ":50051", "listen address")
 	dbp      = flag.String("database", "/tmp/tos.db", "database to use")
@@ -183,6 +186,11 @@ func (s *server) SubmitOrder(ctx context.Context, req *pb.Order) (*pb.Response, 
 	}
 
 	publish(s.ps, o, topicOrder)
+
+	if len(s.orders) >= 3 {
+		file, _ := json.MarshalIndent(s.orders, "", "")
+		_ = ioutil.WriteFile("data.json", file, os.ModePerm)
+	}
 
 	return &pb.Response{Response: "Order has been placed.."}, s.loadData()
 }
