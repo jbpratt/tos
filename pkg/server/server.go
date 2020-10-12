@@ -1,13 +1,11 @@
 package server
 
 import (
-	"bufio"
 	"context"
 	"flag"
 	"fmt"
 	"net"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/cskr/pubsub"
@@ -17,7 +15,7 @@ import (
 	"github.com/jbpratt/tos/pkg/db"
 	services "github.com/jbpratt/tos/pkg/db"
 	"github.com/jbpratt/tos/pkg/pb"
-	"github.com/knq/escpos"
+	"github.com/jbpratt/tos/pkg/printer"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -57,6 +55,7 @@ type server struct {
 	menu     *pb.Menu
 	ps       *pubsub.PubSub
 	logger   *logrus.Logger
+	p        *printer.Printer
 }
 
 func (s *server) GetMenu(ctx context.Context, empty *pb.Empty) (*pb.Menu, error) {
@@ -219,11 +218,7 @@ func (s *server) CompleteOrder(ctx context.Context, req *pb.CompleteOrderRequest
 		if req.GetId() == o.GetId() {
 			o.Status = "complete"
 			if *prnt {
-				err := printOrder(o)
-				if err != nil {
-					return nil, status.Errorf(codes.Internal,
-						"printer not established")
-				}
+				s.p.PrintOrder(o)
 			}
 			break
 		}
@@ -298,7 +293,17 @@ func NewServer() (*server, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	server := &server{services: services, ps: pubsub.New(0), logger: logger}
+
+	if *prnt {
+		p, err := printer.NewFromPath(*lpDev)
+		if err != nil {
+			return nil, err
+		}
+		server.p = p
+	}
+
 	if err = server.loadData(); err != nil {
 		return nil, err
 	}
@@ -383,35 +388,4 @@ func (s *server) Run() error {
 		return fmt.Errorf("gRPC server failed to serve: %v", err)
 	}
 	return nil
-}
-
-func printOrder(o *pb.Order) error {
-	f, err := os.OpenFile(*lpDev, os.O_RDWR, 0)
-	if err != nil {
-		return err
-	}
-
-	bw := bufio.NewWriter(f)
-
-	w := bufio.NewReadWriter(nil, bw)
-	p := escpos.New(w)
-	p.Init()
-	p.SetSmooth(1)
-	p.SetFontSize(1, 2)
-	p.SetFont("A")
-	p.Write("TOS")
-	p.Formfeed()
-
-	p.Write(o.GetName())
-	p.Formfeed()
-	p.Write(fmt.Sprintf("%f", o.GetTotal()))
-	p.Formfeed()
-
-	p.Cut()
-	p.End()
-
-	w.Flush()
-	bw.Flush()
-
-	return f.Close()
 }
