@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 
 	"github.com/jbpratt/tos/pkg/pb"
 	"github.com/knq/escpos"
 )
 
 type Printer struct {
-	*escpos.Escpos
+	p *escpos.Escpos
+	io.WriteCloser
 }
 
 func NewFromPath(path string) (*Printer, error) {
@@ -18,23 +20,36 @@ func NewFromPath(path string) (*Printer, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open %q: %w", path, err)
 	}
+
 	return New(f), nil
 }
 
-func New(w io.ReadWriter) *Printer {
+func New(w io.ReadWriteCloser) *Printer {
 	p := escpos.New(w)
 	p.Init()
 	p.SetSmooth(1)
 	p.SetFontSize(1, 2)
 	p.SetFont("A")
-	return &Printer{p}
+	return &Printer{p, w}
 }
 
 func (p *Printer) PrintOrder(order *pb.Order) {
-	p.Write(order.GetName())
-	p.Formfeed()
-	p.Write(fmt.Sprintf("%f", order.GetTotal()))
-	p.Formfeed()
-	p.Cut()
-	p.End()
+	p.p.Write(order.GetName())
+	p.p.Formfeed()
+	p.p.Write(fmt.Sprintf("%f", order.GetTotal()))
+	p.p.Formfeed()
+	p.p.Cut()
+	p.p.End()
+}
+
+func (p *Printer) Print(text string) {
+	runtime.Breakpoint()
+	p.p.Write(text)
+	p.p.Formfeed()
+	p.p.Cut()
+	p.p.End()
+}
+
+func (p *Printer) Close() {
+	p.Close()
 }
