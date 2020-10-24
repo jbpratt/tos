@@ -13,6 +13,9 @@ struct MenuView: View {
                 VStack(alignment: .leading) {
                     ForEach(menuViewModel.menu!.categories, id: \.self) { cat in
                         CategoryView(category: cat, isExpanded: selection.contains(cat), itemSelected: $itemSelected)
+                            .padding()
+                            .overlay(RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.black, lineWidth: 2))
                             .onTapGesture { selectDeselect(cat) }
                             .animation(.linear(duration: 0.2))
                     }.padding()

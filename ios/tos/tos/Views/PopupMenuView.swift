@@ -32,7 +32,7 @@ struct PopupMenu: View {
                         Image(systemName: "plus.circle")
                     }
                     Spacer()
-                    PriceView(price: i.totalPrice())
+                    PriceView(price: item?.totalPrice() ?? 0.00)
                     Spacer()
                     Button(action: {
                         item = nil
@@ -44,7 +44,7 @@ struct PopupMenu: View {
             }
         }
         .padding()
-        .background(RoundedRectangle(cornerRadius: 4)
+        .background(RoundedRectangle(cornerRadius: 16)
             .stroke(Color.black, lineWidth: 2)
             .background(Color.white))
     }

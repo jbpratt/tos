@@ -22,6 +22,8 @@ struct CategoryView: View {
                         }
                 }
             }
-        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+        }
+        .contentShape(Rectangle())
+        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
     }
 }

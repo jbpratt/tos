@@ -13,7 +13,7 @@ struct ContentView: View {
                     OrderView(viewModel: orderViewModel)
                     Divider()
                     Spacer()
-                    MenuView(menuViewModel: menuViewModel, orderViewModel: orderViewModel).frame(minWidth: geo.size.width - (geo.size.width/3), maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                    MenuView(menuViewModel: menuViewModel, orderViewModel: orderViewModel).frame(minWidth: geo.size.width - (geo.size.width / 3), maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                 }
                 .navigationBarHidden(true)
             }

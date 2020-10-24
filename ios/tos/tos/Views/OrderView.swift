@@ -2,7 +2,7 @@ import SwiftUI
 
 struct OrderView: View {
     @ObservedObject var viewModel: OrderViewModel
-    
+
     var body: some View {
         VStack {
             if viewModel.currentOrder != nil {
@@ -31,7 +31,11 @@ struct OrderView: View {
                         Spacer()
                         PriceView(price: viewModel.currentOrder?.totalPrice() ?? 0.00)
                     }
-                }.padding().overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.blue, lineWidth: 2))
+                }
+                .padding()
+                .overlay(RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.black, lineWidth: 2))
+                .animation(.linear(duration: 0.2))
                 HStack {
                     TextField("Enter an order name", text: $viewModel.currentOrderName)
                     Button(action: {

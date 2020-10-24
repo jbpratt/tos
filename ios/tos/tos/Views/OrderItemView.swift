@@ -7,22 +7,22 @@ struct OrderItemView: View {
 
     var body: some View {
         HStack {
-            Text(item.name)
-            Spacer()
-            PriceView(price: item.price)
             Button(action: {
                 viewModel.removeFromOrder(item)
                 StatusBarNotificationBanner(title: "\(item.name) has been removed from the order.", style: .warning).show()
             }) {
                 Image(systemName: "minus")
             }
+            Text(item.name)
             VStack {
                 ForEach(item.options, id: \.self) { opt in
                     if opt.selected {
-                        Text("\(opt.name)")
+                        Text("\(opt.name)").font(.footnote)
                     }
                 }
             }
+            Spacer()
+            PriceView(price: item.totalPrice())
         }
     }
 }
