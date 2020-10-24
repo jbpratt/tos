@@ -2,7 +2,15 @@ import Foundation
 
 extension Tospb_Order {
     func totalPrice() -> Float {
-        0.04 * items.reduce(0) { x, y in x + y.totalPrice() }
+        self.tax() + self.subTotal()
+    }
+    
+    func subTotal() -> Float {
+        items.reduce(0) { x, y in x + y.totalPrice() }
+    }
+    
+    func tax() -> Float {
+        0.04 * self.subTotal()
     }
 }
 

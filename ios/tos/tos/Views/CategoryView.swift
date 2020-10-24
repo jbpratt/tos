@@ -11,21 +11,17 @@ struct CategoryView: View {
     @Binding var itemSelected: Tospb_Item?
 
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(category.name).font(.headline)
-                if isExpanded {
-                    ForEach(category.items, id: \.self) { item in
-                        ItemView(item: item)
-                            .onTapGesture {
-                                itemSelected = item
-                                print(item.name)
-                            }
-                    }
+        VStack {
+            Text(category.name).font(.headline)
+            if isExpanded {
+                ForEach(category.items, id: \.self) { item in
+                    ItemView(item: item)
+                        .onTapGesture {
+                            itemSelected = item
+                            print(item.name)
+                        }
                 }
             }
-            Spacer()
-        }
-        .contentShape(Rectangle())
+        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
     }
 }

@@ -10,12 +10,18 @@ struct OrderItemView: View {
             Text(item.name)
             Spacer()
             PriceView(price: item.price)
-            Spacer()
             Button(action: {
                 viewModel.removeFromOrder(item)
                 StatusBarNotificationBanner(title: "\(item.name) has been removed from the order.", style: .warning).show()
             }) {
                 Image(systemName: "minus")
+            }
+            VStack {
+                ForEach(item.options, id: \.self) { opt in
+                    if opt.selected {
+                        Text("\(opt.name)")
+                    }
+                }
             }
         }
     }

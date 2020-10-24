@@ -7,16 +7,17 @@ struct ContentView: View {
     @ObservedObject var orderViewModel = OrderViewModel()
 
     var body: some View {
-        NavigationView {
-            VStack {
+        GeometryReader { geo in
+            NavigationView {
                 HStack {
                     OrderView(viewModel: orderViewModel)
-                    // Spacer()
+                    Divider()
+                    Spacer()
+                    MenuView(menuViewModel: menuViewModel, orderViewModel: orderViewModel).frame(minWidth: geo.size.width - (geo.size.width/3), maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                 }
-                .padding()
+                .navigationBarHidden(true)
             }
-            .navigationBarHidden(true)
-            MenuView(menuViewModel: menuViewModel, orderViewModel: orderViewModel)
+            .navigationViewStyle(StackNavigationViewStyle())
         }
     }
 }
