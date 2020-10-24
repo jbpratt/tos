@@ -1,3 +1,4 @@
+import NotificationBannerSwift
 import SwiftUI
 
 struct PopupMenu: View {
@@ -26,6 +27,7 @@ struct PopupMenu: View {
                     Button(action: {
                         viewModel.addToOrder(i)
                         item = nil
+                        StatusBarNotificationBanner(title: "\(i.name) has been added to the order.", style: .success).show()
                     }) {
                         Image(systemName: "plus.circle")
                     }
@@ -40,7 +42,7 @@ struct PopupMenu: View {
                 }
                 .padding()
             }
-        } // VStack
+        }
         .padding()
         .background(RoundedRectangle(cornerRadius: 4)
             .stroke(Color.black, lineWidth: 2)

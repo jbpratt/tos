@@ -1,5 +1,5 @@
-import NIO
 import GRPC
+import NIO
 
 class ChannelViewModel {
     private let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)

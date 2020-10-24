@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1E0849572534CBFA00FE6317 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E0849562534CBFA00FE6317 /* Extensions.swift */; };
+		1E1E53A825439CC200E3C55A /* NotificationBannerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 1E1E53A725439CC200E3C55A /* NotificationBannerSwift */; };
 		1E3172182532A7FE0018E279 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3172172532A7FE0018E279 /* MenuView.swift */; };
 		1E31721A2532A8440018E279 /* OrderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3172192532A8440018E279 /* OrderView.swift */; };
 		1E31721C2532A8690018E279 /* OrderItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E31721B2532A8690018E279 /* OrderItemView.swift */; };
@@ -51,6 +53,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1E0849562534CBFA00FE6317 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		1E3172172532A7FE0018E279 /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		1E3172192532A8440018E279 /* OrderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderView.swift; sourceTree = "<group>"; };
 		1E31721B2532A8690018E279 /* OrderItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderItemView.swift; sourceTree = "<group>"; };
@@ -86,6 +89,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1E479F31252B7C9D00E21D20 /* SwiftProtobufPluginLibrary in Frameworks */,
+				1E1E53A825439CC200E3C55A /* NotificationBannerSwift in Frameworks */,
 				1E479F2C252B7A9400E21D20 /* GRPC in Frameworks */,
 				1E479F2F252B7C9D00E21D20 /* SwiftProtobuf in Frameworks */,
 			);
@@ -157,6 +161,7 @@
 				1E4439B325295230002BB81B /* LaunchScreen.storyboard */,
 				1E4439B625295230002BB81B /* Info.plist */,
 				1E4439B025295230002BB81B /* Preview Content */,
+				1E0849562534CBFA00FE6317 /* Extensions.swift */,
 			);
 			path = tos;
 			sourceTree = "<group>";
@@ -217,6 +222,7 @@
 				1E479F2B252B7A9400E21D20 /* GRPC */,
 				1E479F2E252B7C9D00E21D20 /* SwiftProtobuf */,
 				1E479F30252B7C9D00E21D20 /* SwiftProtobufPluginLibrary */,
+				1E1E53A725439CC200E3C55A /* NotificationBannerSwift */,
 			);
 			productName = tos;
 			productReference = 1E4439A52529522F002BB81B /* tos.app */;
@@ -292,6 +298,7 @@
 			packageReferences = (
 				1E479F2A252B7A9300E21D20 /* XCRemoteSwiftPackageReference "grpc-swift" */,
 				1E479F2D252B7C9D00E21D20 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
+				1E1E53A625439CC200E3C55A /* XCRemoteSwiftPackageReference "NotificationBanner" */,
 			);
 			productRefGroup = 1E4439A62529522F002BB81B /* Products */;
 			projectDirPath = "";
@@ -350,6 +357,7 @@
 				1E3172222532A8E40018E279 /* PriceView.swift in Sources */,
 				1E31721C2532A8690018E279 /* OrderItemView.swift in Sources */,
 				1E3172202532A8C40018E279 /* ItemView.swift in Sources */,
+				1E0849572534CBFA00FE6317 /* Extensions.swift in Sources */,
 				1E479F38252B9FF500E21D20 /* ChannelViewModel.swift in Sources */,
 				1E31721A2532A8440018E279 /* OrderView.swift in Sources */,
 			);
@@ -676,6 +684,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		1E1E53A625439CC200E3C55A /* XCRemoteSwiftPackageReference "NotificationBanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Daltron/NotificationBanner.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.4;
+			};
+		};
 		1E479F2A252B7A9300E21D20 /* XCRemoteSwiftPackageReference "grpc-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/grpc/grpc-swift.git";
@@ -695,6 +711,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1E1E53A725439CC200E3C55A /* NotificationBannerSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1E1E53A625439CC200E3C55A /* XCRemoteSwiftPackageReference "NotificationBanner" */;
+			productName = NotificationBannerSwift;
+		};
 		1E479F2B252B7A9400E21D20 /* GRPC */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 1E479F2A252B7A9300E21D20 /* XCRemoteSwiftPackageReference "grpc-swift" */;

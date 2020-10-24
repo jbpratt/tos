@@ -13,9 +13,16 @@ struct OrderView: View {
                 .padding(20)
             }
             Spacer()
-            Button(action: {}) {
-                Text("Submit")
-            }.padding(.bottom, 20)
+            HStack {
+                TextField("Enter an order name", text: $viewModel.currentOrderName)
+                Button(action: {
+                    viewModel.submitOrder()
+                }) {
+                    Text("Submit")
+                }
+                .padding(.bottom, 20)
+                .disabled(viewModel.currentOrderName.isEmpty)
+            }
         }
     }
 }

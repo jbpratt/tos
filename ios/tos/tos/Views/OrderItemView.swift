@@ -1,3 +1,4 @@
+import NotificationBannerSwift
 import SwiftUI
 
 struct OrderItemView: View {
@@ -12,6 +13,7 @@ struct OrderItemView: View {
             Spacer()
             Button(action: {
                 viewModel.removeFromOrder(item)
+                StatusBarNotificationBanner(title: "\(item.name) has been removed from the order.", style: .warning).show()
             }) {
                 Image(systemName: "minus")
             }

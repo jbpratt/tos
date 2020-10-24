@@ -11,6 +11,33 @@
         }
       },
       {
+        "package": "MarqueeLabel",
+        "repositoryURL": "https://github.com/cbpowell/MarqueeLabel",
+        "state": {
+          "branch": null,
+          "revision": "d92fe1583dbf43fa3b70229a49fa7da6b36750d4",
+          "version": "4.0.5"
+        }
+      },
+      {
+        "package": "NotificationBannerSwift",
+        "repositoryURL": "https://github.com/Daltron/NotificationBanner.git",
+        "state": {
+          "branch": null,
+          "revision": "a852488c04c5bfdb32021711b3dde465ad0899ef",
+          "version": "3.0.4"
+        }
+      },
+      {
+        "package": "SnapKit",
+        "repositoryURL": "https://github.com/SnapKit/SnapKit",
+        "state": {
+          "branch": null,
+          "revision": "d458564516e5676af9c70b4f4b2a9178294f1bc6",
+          "version": "5.0.1"
+        }
+      },
+      {
         "package": "swift-log",
         "repositoryURL": "https://github.com/apple/swift-log.git",
         "state": {

@@ -11,7 +11,7 @@ struct MenuView: View {
         ZStack {
             ScrollView {
                 VStack(alignment: .leading) {
-                    ForEach(menuViewModel.getMenu().categories, id: \.self) { cat in
+                    ForEach(menuViewModel.menu!.categories, id: \.self) { cat in
                         CategoryView(category: cat, isExpanded: selection.contains(cat), itemSelected: $itemSelected)
                             .onTapGesture { selectDeselect(cat) }
                             .animation(.linear(duration: 0.2))

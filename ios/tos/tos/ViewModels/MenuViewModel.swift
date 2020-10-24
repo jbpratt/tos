@@ -7,16 +7,17 @@ final class MenuViewModel: ChannelViewModel, ObservableObject, Identifiable {
     override init() {
         super.init()
         client = Tospb_MenuServiceClient(channel: super.channel)
+        getMenu()
     }
 
-    func getMenu() -> Tospb_Menu {
+    func getMenu() {
         #if DEBUG
-            return loadMenu()
+            menu = loadMenu()
         #else
             let request = Tospb_Empty()
-            let call = client.getMenu(request)
+            let call = client!.getMenu(request)
             let response = try? call.response.wait()
-            return response!
+            menu = response!
         #endif
     }
 

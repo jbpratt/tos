@@ -10,25 +10,14 @@ struct ContentView: View {
         NavigationView {
             VStack {
                 HStack {
-                    NavigationLink(destination: OrderView(viewModel: orderViewModel)) {
-                        Text("Order")
-                    }
-                    Spacer()
+                    OrderView(viewModel: orderViewModel)
+                    // Spacer()
                 }
                 .padding()
-                MenuView(menuViewModel: menuViewModel, orderViewModel: orderViewModel)
             }
             .navigationBarHidden(true)
+            MenuView(menuViewModel: menuViewModel, orderViewModel: orderViewModel)
         }
-        .navigationViewStyle(StackNavigationViewStyle())
-    }
-}
-
-extension Tospb_Item {
-    func totalPrice() -> Float {
-        options.filter { $0.selected }.reduce(0) { x, y in
-            x + y.price
-        } + price
     }
 }
 
