@@ -11,16 +11,14 @@ final class MenuViewModel: ChannelViewModel, ObservableObject, Identifiable {
     }
 
     func getMenu() {
-        /*
         #if DEBUG
-            menu = loadMenu()
+        menu = loadMenu()
         #else
-        */
         let request = Tospb_Empty()
         let call = menuClient!.getMenu(request)
         let response = try? call.response.wait()
         menu = response!
-        //#endif
+        #endif
     }
 
     func createItem(_ item: Tospb_Item) {

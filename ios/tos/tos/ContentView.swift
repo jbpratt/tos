@@ -1,5 +1,3 @@
-import GRPC
-import NIO
 import SwiftUI
 
 struct ContentView: View {
@@ -8,14 +6,18 @@ struct ContentView: View {
 
     var body: some View {
         GeometryReader { geo in
-            //NavigationView {
+            // NavigationView {
             HStack {
                 OrderView(viewModel: orderViewModel)
                 Divider()
-                MenuView(menuViewModel: menuViewModel, orderViewModel: orderViewModel).frame(minWidth: geo.size.width - (geo.size.width / 3), maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                MenuView(
+                    menuViewModel: menuViewModel,
+                    orderViewModel: orderViewModel
+                )
+                .frame(minWidth: geo.size.width - (geo.size.width / 3))
             }
-            //}
-            //.navigationViewStyle(StackNavigationViewStyle())
+            // }
+            // .navigationViewStyle(StackNavigationViewStyle())
         }
     }
 }
