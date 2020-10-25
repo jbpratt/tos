@@ -11,19 +11,21 @@ struct MenuView: View {
         ZStack {
             ScrollView {
                 VStack(alignment: .leading) {
-                    ForEach(menuViewModel.menu!.categories, id: \.self) { cat in
-                        CategoryView(category: cat, isExpanded: selection.contains(cat), itemSelected: $itemSelected)
-                            .padding()
-                            .overlay(RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.black, lineWidth: 2))
-                            .onTapGesture { selectDeselect(cat) }
-                            .animation(.linear(duration: 0.2))
-                    }.padding()
+                    Unwrap(menuViewModel.menu) { menu in
+                        ForEach(menu.categories, id: \.self) { cat in
+                            CategoryView(category: cat, isExpanded: selection.contains(cat), itemSelected: $itemSelected)
+                                .padding()
+                                .overlay(RoundedRectangle(cornerRadius: 16)
+                                    .stroke(Color.black, lineWidth: 2))
+                                .onTapGesture { selectDeselect(cat) }
+                                .animation(.linear(duration: 0.2))
+                        }.padding()
+                    }
                 }
             }
 
             if itemSelected != nil {
-                PopupMenu(viewModel: orderViewModel, item: $itemSelected)
+                PopupMenuView(viewModel: orderViewModel, item: $itemSelected)
                     .padding(.horizontal)
             }
         }
@@ -36,5 +38,12 @@ struct MenuView: View {
         } else {
             selection.insert(category)
         }
+    }
+}
+
+struct MenuView_Previews: PreviewProvider {
+    static var previews: some View {
+        MenuView(menuViewModel: MenuViewModel(), orderViewModel: OrderViewModel())
+            .previewLayout(PreviewLayout.sizeThatFits)
     }
 }

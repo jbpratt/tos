@@ -1,13 +1,14 @@
 import NotificationBannerSwift
 import SwiftUI
 
-struct PopupMenu: View {
+struct PopupMenuView: View {
     @ObservedObject var viewModel: OrderViewModel
     @Binding var item: Tospb_Item?
 
     var body: some View {
         VStack {
             Unwrap(item) { i in
+                Text(i.name).font(.headline)
                 ForEach(i.options, id: \.self) { opt in
                     HStack {
                         Text(opt.name)
@@ -17,7 +18,7 @@ struct PopupMenu: View {
                             Image(systemName: "checkmark")
                         }
                     }.onTapGesture {
-                        if let idx = item?.options.firstIndex(of: opt) {
+                        if let idx = i.options.firstIndex(of: opt) {
                             item?.options[idx].selected = !(item?.options[idx].selected)!
                         }
                     }
@@ -32,7 +33,7 @@ struct PopupMenu: View {
                         Image(systemName: "plus.circle")
                     }
                     Spacer()
-                    PriceView(price: item?.totalPrice() ?? 0.00)
+                    PriceView(price: i.totalPrice())
                     Spacer()
                     Button(action: {
                         item = nil

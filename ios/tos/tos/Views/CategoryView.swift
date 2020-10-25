@@ -21,6 +21,11 @@ struct CategoryView: View {
                             print(item.name)
                         }
                 }
+                Button(action: {
+                    // pop up for CRUD on category
+                }) {
+                    Image(systemName: "plus.circle")
+                }
             }
         }
         .contentShape(Rectangle())

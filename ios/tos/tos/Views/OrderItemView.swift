@@ -11,7 +11,7 @@ struct OrderItemView: View {
                 viewModel.removeFromOrder(item)
                 StatusBarNotificationBanner(title: "\(item.name) has been removed from the order.", style: .warning).show()
             }) {
-                Image(systemName: "minus")
+                Image(systemName: "xmark.circle")
             }
             Text(item.name)
             VStack {
