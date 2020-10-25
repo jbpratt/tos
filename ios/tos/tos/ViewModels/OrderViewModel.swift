@@ -1,7 +1,7 @@
 import Combine
 
 final class OrderViewModel: ChannelViewModel, ObservableObject, Identifiable {
-    private var client: Tospb_OrderServiceClient?
+    private var orderClient: Tospb_OrderServiceClient?
     @Published var currentOrder: Tospb_Order? = nil
     @Published var currentOrderName = "" {
         didSet {
@@ -13,7 +13,7 @@ final class OrderViewModel: ChannelViewModel, ObservableObject, Identifiable {
 
     override init() {
         super.init()
-        client = Tospb_OrderServiceClient(channel: super.channel)
+        orderClient = Tospb_OrderServiceClient(channel: super.client)
     }
 
     func submitOrder() {
@@ -35,7 +35,7 @@ final class OrderViewModel: ChannelViewModel, ObservableObject, Identifiable {
         }
 
         do {
-            _ = try client!.submitOrder(order).response.wait()
+            _ = try orderClient!.submitOrder(order).response.wait()
         } catch {
             print("submitOrder failed: \(error)")
         }
@@ -67,7 +67,7 @@ final class OrderViewModel: ChannelViewModel, ObservableObject, Identifiable {
     func activeOrders() -> [Tospb_Order] {
         var orders: [Tospb_Order] = []
         do {
-            let resp = try client!.activeOrders(Tospb_Empty()).response.wait()
+            let resp = try orderClient!.activeOrders(Tospb_Empty()).response.wait()
             orders = resp.orders
         } catch {
             print("failed to get active orders: \(error)")

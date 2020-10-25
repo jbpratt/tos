@@ -24,6 +24,6 @@ struct CategoryView: View {
             }
         }
         .contentShape(Rectangle())
-        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+        .frame(minWidth: 0, maxWidth: .infinity)
     }
 }
