@@ -27,24 +27,7 @@ struct PopupMenuView: View {
                 }
                 HStack {
                     Button(action: {
-                        if editing {
-                            var oldItem: Tospb_Item? = nil
-                            viewModel.currentOrder?.items.forEach { orderItem in
-                                if item?.orderItemID == orderItem.orderItemID {
-                                    oldItem = orderItem
-                                }
-                            }
-                            viewModel.editItemInOrder(oldItem!, i)
-                        } else {
-                            var item = i
-                            if viewModel.currentOrder != nil {
-                                print("\(Int64((viewModel.currentOrder?.items.count)!))")
-                                item.orderItemID = Int64((viewModel.currentOrder?.items.count)!)
-                            } else {
-                                item.orderItemID = 0
-                            }
-                            viewModel.addToOrder(item)
-                        }
+                        viewModel.addToOrder(item)
                         item = nil
                         StatusBarNotificationBanner(title: "\(i.name) has been added to the order.", style: .success).show()
                     }) {
@@ -64,9 +47,9 @@ struct PopupMenuView: View {
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.black, lineWidth: 2)
-                        .background((Color.white)
-                                        .cornerRadius(16)
-                                        .shadow(radius: 8)))
+            .stroke(Color.black, lineWidth: 2)
+            .background(Color.white
+                .cornerRadius(16)
+                .shadow(radius: 8)))
     }
 }

@@ -2,7 +2,6 @@ import SwiftUI
 
 struct OrderView: View {
     @ObservedObject var viewModel: OrderViewModel
-    @Binding var itemSelected: Tospb_Item?
 
     var body: some View {
         VStack {
@@ -10,7 +9,6 @@ struct OrderView: View {
                 if viewModel.currentOrder != nil {
                     ForEach(viewModel.currentOrder!.items, id: \.self) { item in
                         OrderItemView(viewModel: viewModel, item: item)
-                            .onTapGesture { itemSelected = item }
                     }
                     .padding([.top, .bottom], 5)
                 } else {
