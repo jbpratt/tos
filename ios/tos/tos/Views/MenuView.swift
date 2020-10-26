@@ -4,6 +4,7 @@ struct MenuView: View {
     @ObservedObject var menuViewModel: MenuViewModel
     @ObservedObject var orderViewModel: OrderViewModel
 
+    @State private var isPopupActive: Bool = false
     @State private var selection: Set<Tospb_Category> = []
     @State private var itemSelected: Tospb_Item?
 
@@ -13,19 +14,20 @@ struct MenuView: View {
                 VStack {
                     Unwrap(menuViewModel.menu) { menu in
                         ForEach(menu.categories, id: \.self) { cat in
-                            CategoryView(category: cat, isExpanded: selection.contains(cat), itemSelected: $itemSelected)
+                            CategoryView(category: cat, isExpanded: selection.contains(cat), itemSelected: $itemSelected, isPopupActive: $isPopupActive)
                                 .padding()
                                 .overlay(RoundedRectangle(cornerRadius: 16)
                                     .stroke(Color.black, lineWidth: 2))
                                 .onTapGesture { selectDeselect(cat) }
-                                .animation(.linear(duration: 0.2))
+                                .animation(.linear(duration: 0.2)
+                            )
                         }.padding()
                     }
                 }
             }
 
-            if itemSelected != nil {
-                PopupMenuView(viewModel: orderViewModel, item: $itemSelected)
+            if isPopupActive {
+                PopupMenuView(viewModel: orderViewModel, item: Binding($itemSelected)!, isActive: $isPopupActive)
                     .padding(50)
             }
         }

@@ -9,6 +9,7 @@ struct CategoryView: View {
     // binding solves this?
     let isExpanded: Bool
     @Binding var itemSelected: Tospb_Item?
+    @Binding var isPopupActive: Bool
 
     var body: some View {
         VStack {
@@ -18,6 +19,7 @@ struct CategoryView: View {
                     ItemView(item: item)
                         .onTapGesture {
                             itemSelected = item
+                            isPopupActive = !isPopupActive
                             print(item.name)
                         }
                 }
