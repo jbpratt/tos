@@ -52,6 +52,17 @@ final class OrderViewModel: ChannelViewModel, ObservableObject, Identifiable {
         print("added \(item.name) to order")
         currentOrder?.items.append(item)
     }
+    
+    func editItemInOrder(_ item: Tospb_Item, _ newItem: Tospb_Item) {
+        guard currentOrder != nil else {
+            return
+        }
+        
+        if let idx = currentOrder!.items.firstIndex(of: item) {
+            currentOrder?.items[idx] = newItem
+            print("edited \(idx) in order items")
+        }
+    }
 
     func removeFromOrder(_ item: Tospb_Item) {
         guard currentOrder != nil else {

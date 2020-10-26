@@ -25,7 +25,7 @@ struct MenuView: View {
             }
 
             if itemSelected != nil {
-                PopupMenuView(viewModel: orderViewModel, item: $itemSelected)
+                PopupMenuView(viewModel: orderViewModel, item: $itemSelected, editing: Binding.constant(false))
                     .padding(.horizontal)
             }
         }
