@@ -10,7 +10,7 @@ struct MenuView: View {
     var body: some View {
         ZStack {
             ScrollView {
-                VStack(alignment: .leading) {
+                VStack {
                     Unwrap(menuViewModel.menu) { menu in
                         ForEach(menu.categories, id: \.self) { cat in
                             CategoryView(category: cat, isExpanded: selection.contains(cat), itemSelected: $itemSelected)
@@ -25,8 +25,8 @@ struct MenuView: View {
             }
 
             if itemSelected != nil {
-                PopupMenuView(viewModel: orderViewModel, item: $itemSelected, editing: Binding.constant(false))
-                    .padding(.horizontal)
+                PopupMenuView(viewModel: orderViewModel, item: $itemSelected)
+                    .padding(50)
             }
         }
     }

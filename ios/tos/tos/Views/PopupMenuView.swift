@@ -4,7 +4,6 @@ import SwiftUI
 struct PopupMenuView: View {
     @ObservedObject var viewModel: OrderViewModel
     @Binding var item: Tospb_Item?
-    @Binding var editing: Bool
 
     var body: some View {
         VStack {
@@ -23,11 +22,11 @@ struct PopupMenuView: View {
                             item?.options[idx].selected = !(item?.options[idx].selected)!
                         }
                     }
-                    .padding(.top, 10)
+                    //.padding(.top, 10)
                 }
                 HStack {
                     Button(action: {
-                        viewModel.addToOrder(item)
+                        viewModel.addToOrder(i)
                         item = nil
                         StatusBarNotificationBanner(title: "\(i.name) has been added to the order.", style: .success).show()
                     }) {

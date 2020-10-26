@@ -35,8 +35,7 @@ struct OrderView: View {
                     }
                 }
                 .padding()
-                .overlay(RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.black, lineWidth: 2))
+                .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.black, lineWidth: 2))
                 .animation(.linear(duration: 0.2))
                 HStack {
                     TextField("Enter an order name", text: $viewModel.currentOrderName)
