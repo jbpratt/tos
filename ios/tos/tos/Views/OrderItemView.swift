@@ -13,11 +13,11 @@ struct OrderItemView: View {
             }) {
                 Image(systemName: "xmark.circle")
             }
-            Text(item.name)
-            VStack {
+            VStack(alignment: .leading) {
+                Text(item.name)
                 ForEach(item.options, id: \.self) { opt in
                     if opt.selected {
-                        Text("\(opt.name)").font(.footnote)
+                        Text("- \(opt.name)").font(.footnote)
                     }
                 }
             }

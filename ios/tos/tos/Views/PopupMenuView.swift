@@ -4,6 +4,7 @@ import SwiftUI
 struct PopupMenuView: View {
     @ObservedObject var viewModel: OrderViewModel
     @Binding var item: Tospb_Item?
+    @Binding var editing: Bool
 
     var body: some View {
         VStack {
@@ -26,7 +27,7 @@ struct PopupMenuView: View {
                 }
                 HStack {
                     Button(action: {
-                        viewModel.addToOrder(i)
+                        viewModel.addToOrder(item)
                         item = nil
                         StatusBarNotificationBanner(title: "\(i.name) has been added to the order.", style: .success).show()
                     }) {
@@ -47,6 +48,8 @@ struct PopupMenuView: View {
         .padding()
         .background(RoundedRectangle(cornerRadius: 16)
             .stroke(Color.black, lineWidth: 2)
-            .background(Color.white))
+            .background(Color.white
+                .cornerRadius(16)
+                .shadow(radius: 8)))
     }
 }

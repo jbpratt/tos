@@ -33,6 +33,7 @@
 		1E479F34252B9BA500E21D20 /* MenuViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E479F33252B9BA500E21D20 /* MenuViewModel.swift */; };
 		1E479F36252B9C6500E21D20 /* OrderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E479F35252B9C6500E21D20 /* OrderViewModel.swift */; };
 		1E479F38252B9FF500E21D20 /* ChannelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E479F37252B9FF500E21D20 /* ChannelViewModel.swift */; };
+		C14FF08F2546BEAD002B3612 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14FF08E2546BEAD002B3612 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +82,7 @@
 		1E479F33252B9BA500E21D20 /* MenuViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewModel.swift; sourceTree = "<group>"; };
 		1E479F35252B9C6500E21D20 /* OrderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderViewModel.swift; sourceTree = "<group>"; };
 		1E479F37252B9FF500E21D20 /* ChannelViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewModel.swift; sourceTree = "<group>"; };
+		C14FF08E2546BEAD002B3612 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +125,7 @@
 				1E3172212532A8E40018E279 /* PriceView.swift */,
 				1E3172232532A9080018E279 /* PopupMenuView.swift */,
 				1E31722A2532A9AD0018E279 /* UnwrapView.swift */,
+				C14FF08E2546BEAD002B3612 /* SettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -346,6 +349,7 @@
 				1E4439A92529522F002BB81B /* AppDelegate.swift in Sources */,
 				1E3172282532A9960018E279 /* tos.grpc.swift in Sources */,
 				1E3172242532A9080018E279 /* PopupMenuView.swift in Sources */,
+				C14FF08F2546BEAD002B3612 /* SettingsView.swift in Sources */,
 				1E31722B2532A9AD0018E279 /* UnwrapView.swift in Sources */,
 				1E31721E2532A8970018E279 /* CategoryView.swift in Sources */,
 				1E4439AB2529522F002BB81B /* SceneDelegate.swift in Sources */,

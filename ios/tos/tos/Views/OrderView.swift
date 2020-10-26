@@ -5,13 +5,15 @@ struct OrderView: View {
 
     var body: some View {
         VStack {
-            if viewModel.currentOrder != nil {
-                ForEach(viewModel.currentOrder!.items, id: \.self) { item in
-                    OrderItemView(viewModel: viewModel, item: item)
+            ScrollView {
+                if viewModel.currentOrder != nil {
+                    ForEach(viewModel.currentOrder!.items, id: \.self) { item in
+                        OrderItemView(viewModel: viewModel, item: item)
+                    }
+                    .padding([.top, .bottom], 5)
+                } else {
+                    Text("no items").font(.subheadline).foregroundColor(Color.gray)
                 }
-                .padding()
-            } else {
-                Text("no items").font(.subheadline).foregroundColor(Color.gray)
             }
             Spacer()
             VStack(alignment: .leading) {
