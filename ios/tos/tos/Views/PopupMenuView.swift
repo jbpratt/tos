@@ -1,28 +1,6 @@
 import NotificationBannerSwift
 import SwiftUI
 
-
-struct EditItemView: View {
-    @Binding var item: Tospb_Item
-
-    var body: some View {
-        HStack {
-            TextField("Item name", text: $item.name)
-            ForEach(item.options.indices) { idx in
-                HStack {
-                    TextField(
-                        "Option name",
-                        text: $item.options[idx].name,
-                        onEditingChanged: { _ in print("changed") },
-                        onCommit: { print("commit") }
-                    )
-                    Toggle(isOn: $item.options[idx].selected) {}
-                }
-            }
-        }
-    }
-}
-
 struct OptionsListView: View {
     @Binding var item: Tospb_Item
 
@@ -76,35 +54,19 @@ struct PopupMenuView: View {
     @ObservedObject var viewModel: OrderViewModel
     @Binding var item: Tospb_Item
     @Binding var isActive: Bool
-    @State private var editing = false
     @State private var editedItem = Tospb_Item()
 
     var body: some View {
         VStack {
-            if editing {
-                EditItemView(item: $item)
-            } else {
-                OptionsListView(item: $item)
-            }
+            OptionsListView(item: $item)
             Divider()
             // Rather than rendering two bars, just conditionally change the action
             BottomBarView(item.totalPrice(), onSubmit: {
-                if !editing {
-                    viewModel.addToOrder(item)
-                    // item = nil
-                    StatusBarNotificationBanner(title: "\(item.name) has been added to the order.", style: .success).show()
-                } else {
-                    // save
-                    editing = false
-                    item = editedItem
-                }
+                viewModel.addToOrder(item)
+                // item = nil
+                StatusBarNotificationBanner(title: "\(item.name) has been added to the order.", style: .success).show()
             }, onCancel: {
-                if editing {
-                    editing = false
-                } else {
-                    // item = nil
-                    isActive = false
-                }
+                isActive = false
             })
         }
         .padding()

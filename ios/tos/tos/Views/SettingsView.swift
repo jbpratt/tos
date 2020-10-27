@@ -1,20 +1,28 @@
-//
-//  SettingsView.swift
-//  tos
-//
-//  Created by Jack on 26/10/2020.
-//
-
 import SwiftUI
 
 struct SettingsView: View {
+    @ObservedObject var viewModel: MenuViewModel
+    
     var body: some View {
-        Text("Hello, World!")
+        VStack {
+            Unwrap(viewModel.menu) { menu in
+                List {
+                    ForEach(menu.categories, id: \.self) { cat in
+                        Section(header: Text(cat.name)) {
+                            ForEach(cat.items, id: \.self) { item in
+                                Text(item.name)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView()
+        SettingsView(viewModel: MenuViewModel())
+            .previewLayout(PreviewLayout.sizeThatFits)
     }
 }

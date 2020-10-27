@@ -4,18 +4,31 @@ struct ContentView: View {
     @ObservedObject var menuViewModel = MenuViewModel()
     @ObservedObject var orderViewModel = OrderViewModel()
 
+    @State private var isSettingsActive: Bool = false
+
     var body: some View {
-        GeometryReader { geo in
-            HStack {
-                OrderView(viewModel: orderViewModel)
-                Divider()
-                MenuView(
-                    menuViewModel: menuViewModel,
-                    orderViewModel: orderViewModel
-                )
-                .frame(minWidth: geo.size.width - (geo.size.width / 3))
+        NavigationView {
+            GeometryReader { geo in
+                HStack {
+                    OrderView(viewModel: orderViewModel)
+                    Divider()
+                    MenuView(
+                        menuViewModel: menuViewModel,
+                        orderViewModel: orderViewModel)
+                        .frame(minWidth: geo.size.width - (geo.size.width / 3))
+                }
             }
+            .navigationBarTitle("Menu", displayMode: .inline)
+            .navigationBarItems(
+                trailing: NavigationLink(
+                    destination: SettingsView(viewModel: menuViewModel), isActive: $isSettingsActive) {
+                        Button(action: { isSettingsActive = !isSettingsActive }) {
+                            Image(systemName: "gear")
+                        }
+                }
+            )
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
