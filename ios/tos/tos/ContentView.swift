@@ -21,7 +21,8 @@ struct ContentView: View {
             .navigationBarTitle("Menu", displayMode: .inline)
             .navigationBarItems(
                 trailing: NavigationLink(
-                    destination: SettingsView(viewModel: menuViewModel), isActive: $isSettingsActive) {
+                    destination: SettingsView(viewModel: menuViewModel).navigationBarTitle("Settings"),
+                    isActive: $isSettingsActive) {
                         Button(action: { isSettingsActive = !isSettingsActive }) {
                             Image(systemName: "gear")
                         }
