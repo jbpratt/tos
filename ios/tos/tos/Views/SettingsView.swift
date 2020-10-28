@@ -2,7 +2,9 @@ import SwiftUI
 
 struct EditItemView: View {
     @Binding var item: Tospb_Item
-    
+    @Binding var isPresented: Bool
+    var onSave: () -> Void
+
     var body: some View {
         VStack {
             HStack {
@@ -47,17 +49,12 @@ struct SettingsView: View {
                                         Spacer()
                                         PriceView(price: item.price)
                                     }
-                                }.sheet(isPresented: $isSheetActive, onDismiss: {
-                                   // viewmodel.updateItem(editedItem)
-                                }) {
-                                    EditItemView(item: $editedItem)
+                                    .foregroundColor(Color.black)
+                                }.sheet(isPresented: $isSheetActive) {
+                                    EditItemView(item: $editedItem, isPresented: $isSheetActive, onSave: {
+                                        viewModel.updateItem(item)
+                                    })
                                 }
-                                /*
-                                .alert(item: $isSheetActive) {
-                                    Alert(title: Text("Save the update"), message: Text("Are you sure?"), primaryButton: .destructive(Text("Yes"), action: {
-                                    }), secondaryButton: .cancel())
-                                })
-                                */
                             }
                         }
                     }
