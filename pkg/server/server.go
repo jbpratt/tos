@@ -239,16 +239,18 @@ func (s *server) CompleteOrder(ctx context.Context, req *pb.CompleteOrderRequest
 	return &pb.Response{Response: "Order marked as complete"}, s.loadData()
 }
 
-func (s *server) ActiveOrders(
-	ctx context.Context,
-	empty *pb.Empty,
-) (*pb.OrdersResponse, error) {
+func (s *server) ActiveOrders(ctx context.Context, empty *pb.Empty) (*pb.OrdersResponse, error) {
 	if s.orders == nil {
 		return nil, status.Errorf(codes.Internal,
 			"ActiveOrders() failed: server.orders has not been initialized")
 	}
 
 	return &pb.OrdersResponse{Orders: s.orders}, nil
+}
+
+func (s *server) SendPing(ctx context.Context, ping *pb.Ping) (*pb.Pong, error) {
+	// TODO: handle delay
+	return &pb.Pong{Message: "pong"}, nil
 }
 
 func (s *server) loadData() error {
@@ -383,6 +385,7 @@ func (s *server) Run() error {
 
 	pb.RegisterMenuServiceServer(grpcServer, s)
 	pb.RegisterOrderServiceServer(grpcServer, s)
+	pb.RegisterPingServiceServer(grpcServer, s)
 
 	grpcMetrics.InitializeMetrics(grpcServer)
 

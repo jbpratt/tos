@@ -3,7 +3,7 @@
 set -e
 pushd "$(/bin/pwd)" > /dev/null
 
-PROTOFILE="./protofiles/tos.proto"
+PROTOFILE="./schema/tos.proto"
 OUT_DIR="pkg/pb/"
 
 protoc "${PROTOFILE}" \

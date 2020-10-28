@@ -27,5 +27,5 @@ start:
 	./bin/server
 
 gen:
-	@protoc --go_out=plugins=grpc:. protofiles/tos.proto
+	@protoc --go_out=plugins=grpc:. schema/tos.proto
 	@protoc-go-inject-tag -input=protofiles/tos.pb.go > /dev/null 2>&1
