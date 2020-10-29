@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject var menuViewModel = MenuViewModel()
     @ObservedObject var orderViewModel = OrderViewModel()
+    @ObservedObject var pingViewModel = PingViewModel()
 
     @State private var isSettingsActive: Bool = false
 
@@ -20,6 +21,7 @@ struct ContentView: View {
             }
             .navigationBarTitle("Menu", displayMode: .inline)
             .navigationBarItems(
+                leading: Circle().fill(pingViewModel.active ? Color.green : Color.red),
                 trailing: NavigationLink(
                     destination: SettingsView(viewModel: menuViewModel).navigationBarTitle("Settings"),
                     isActive: $isSettingsActive) {

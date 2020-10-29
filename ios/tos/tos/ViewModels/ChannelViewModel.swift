@@ -20,6 +20,6 @@ class ChannelViewModel {
     deinit {
         let _ = client.close()
         // this maybe should be defer'd
-        try? group.syncShutdownGracefully()
+        try! group.syncShutdownGracefully()
     }
 }
