@@ -8,7 +8,7 @@ struct CategoryView: View {
     // MenuView rather than the one changed. Maybe moving it to be a
     // binding solves this?
     let isExpanded: Bool
-    @Binding var itemSelected: Tospb_Item?
+    @Binding var itemSelected: Tospb_Item
     @Binding var isPopupActive: Bool
 
     var body: some View {
@@ -19,7 +19,7 @@ struct CategoryView: View {
                     ItemView(item: item)
                         .onTapGesture {
                             itemSelected = item
-                            isPopupActive = !isPopupActive
+                            isPopupActive.toggle()
                             print(item.name)
                         }
                 }

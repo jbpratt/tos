@@ -3,7 +3,7 @@ import NIO
 
 class ChannelViewModel {
     private let group = MultiThreadedEventLoopGroup(numberOfThreads: 2)
-    let client: ClientConnection
+    let conn: ClientConnection
 
     init() {
         let conf = ClientConnection.Configuration(
@@ -14,11 +14,11 @@ class ChannelViewModel {
                 timeout: .seconds(10)
             )
         )
-        client = ClientConnection(configuration: conf)
+        conn = ClientConnection(configuration: conf)
     }
 
     deinit {
-        let _ = client.close()
+        let _ = conn.close()
         // this maybe should be defer'd
         try! group.syncShutdownGracefully()
     }

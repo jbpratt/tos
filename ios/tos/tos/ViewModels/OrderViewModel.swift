@@ -1,7 +1,7 @@
 import Combine
 
 final class OrderViewModel: ChannelViewModel, ObservableObject, Identifiable {
-    private lazy var orderClient = Tospb_OrderServiceClient(channel: self.client)
+    private lazy var orderClient = Tospb_OrderServiceClient(channel: self.conn)
     @Published var currentOrder: Tospb_Order? = nil
     @Published var currentOrderName = "" {
         didSet {

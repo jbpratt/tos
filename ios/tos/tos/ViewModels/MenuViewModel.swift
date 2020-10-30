@@ -7,7 +7,7 @@ final class MenuViewModel: ChannelViewModel, ObservableObject, Identifiable {
 
     override init() {
         super.init()
-        menuClient = Tospb_MenuServiceClient(channel: super.client)
+        menuClient = Tospb_MenuServiceClient(channel: super.conn)
         getMenu()
     }
 

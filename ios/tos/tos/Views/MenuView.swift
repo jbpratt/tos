@@ -6,7 +6,7 @@ struct MenuView: View {
 
     @State private var isPopupActive: Bool = false
     @State private var selection: Set<Tospb_Category> = []
-    @State private var itemSelected: Tospb_Item?
+    @State private var itemSelected: Tospb_Item = Tospb_Item()
 
     var body: some View {
         ZStack {
@@ -27,7 +27,7 @@ struct MenuView: View {
             }
 
             if isPopupActive {
-                PopupMenuView(viewModel: orderViewModel, item: Binding($itemSelected)!, isActive: $isPopupActive)
+                PopupMenuView(viewModel: orderViewModel, item: $itemSelected, isActive: $isPopupActive)
                     .padding(50)
             }
         }
@@ -36,10 +36,10 @@ struct MenuView: View {
     func selectDeselect(_ category: Tospb_Category) {
         if selection.contains(category) {
             selection.remove(category)
-            itemSelected = nil
         } else {
             selection.insert(category)
         }
+        isPopupActive = false
     }
 }
 
