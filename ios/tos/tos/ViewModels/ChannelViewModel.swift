@@ -10,19 +10,18 @@ class ChannelViewModel {
     let logger: Logger = Logger(label: "TOS")
 
     init() {
-        var conf = ClientConnection.Configuration(
+        let delegate = RecordingDelegate()
+        let conf = ClientConnection.Configuration(
             target: .hostAndPort("localhost", 50051),
             eventLoopGroup: group,
-            connectionBackoff: nil,
-            connectionKeepalive: ClientConnectionKeepalive(
-                interval: .seconds(5),
-                timeout: .seconds(3)
-            ),
+            errorDelegate: delegate,
+            connectivityStateDelegate: delegate,
+            //connectionKeepalive: ClientConnectionKeepalive(
+            //    interval: .seconds(5),
+            //    timeout: .seconds(3)
+            //),
             backgroundActivityLogger: self.logger
         )
-        let delegate = RecordingDelegate()
-        conf.errorDelegate = delegate
-        conf.connectivityStateDelegate = delegate
         conn = ClientConnection(configuration: conf)
     }
 

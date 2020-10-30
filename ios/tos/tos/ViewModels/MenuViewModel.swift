@@ -1,30 +1,25 @@
-import Foundation
-import Combine
+import SwiftUI
 
 final class MenuViewModel: ChannelViewModel, ObservableObject, Identifiable {
-    private var menuClient: Tospb_MenuServiceClient?
+    private lazy var client = Tospb_MenuServiceClient(channel: self.conn)
     @Published private(set) var menu: Tospb_Menu? = nil
 
     override init() {
         super.init()
-        menuClient = Tospb_MenuServiceClient(channel: super.conn)
         getMenu()
     }
 
     func getMenu() {
-        #if DEBUG
-        menu = loadMenu()
-        #else
-        let request = Tospb_Empty()
-        let call = menuClient!.getMenu(request)
-        let response = try? call.response.wait()
-        menu = response!
-        #endif
+        client.getMenu(Tospb_Empty()).response.whenSuccess { res in
+            DispatchQueue.main.async {
+                self.menu = res
+            }
+        }
     }
 
     func createItem(_ item: Tospb_Item) {
         do {
-            _ = try menuClient!.createMenuItem(item).response.wait()
+            _ = try client.createMenuItem(item).response.wait()
         } catch {
             print("createMenuItem failed: \(error)")
             return
@@ -36,7 +31,7 @@ final class MenuViewModel: ChannelViewModel, ObservableObject, Identifiable {
             $0.id = itemID
         }
         do {
-            _ = try menuClient!.deleteMenuItem(req).response.wait()
+            _ = try client.deleteMenuItem(req).response.wait()
         } catch {
             print("deleteMenuItem failed: \(error)")
         }
@@ -44,7 +39,7 @@ final class MenuViewModel: ChannelViewModel, ObservableObject, Identifiable {
 
     func updateItem(_ item: Tospb_Item) {
         do {
-            _ = try menuClient!.updateMenuItem(item).response.wait()
+            _ = try client.updateMenuItem(item).response.wait()
         } catch {
             print("updateMenuItem failed: \(error)")
         }

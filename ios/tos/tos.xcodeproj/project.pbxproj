@@ -31,7 +31,10 @@
 		1E479F34252B9BA500E21D20 /* MenuViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E479F33252B9BA500E21D20 /* MenuViewModel.swift */; };
 		1E479F36252B9C6500E21D20 /* OrderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E479F35252B9C6500E21D20 /* OrderViewModel.swift */; };
 		1E479F38252B9FF500E21D20 /* ChannelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E479F37252B9FF500E21D20 /* ChannelViewModel.swift */; };
-		7F20ED8E254A34A0004B2C91 /* PingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F20ED8D254A34A0004B2C91 /* PingViewModel.swift */; };
+		7F1E0D1D254CAE760015569C /* health.grpc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1E0D1B254CAE760015569C /* health.grpc.swift */; };
+		7F1E0D1E254CAE760015569C /* health.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1E0D1C254CAE760015569C /* health.pb.swift */; };
+		7F1E0D2E254CAF9C0015569C /* HealthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1E0D2D254CAF9C0015569C /* HealthViewModel.swift */; };
+		7F1E0D33254CBC6D0015569C /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1E0D32254CBC6D0015569C /* SettingsViewModel.swift */; };
 		7F20ED9D254A40A6004B2C91 /* tos.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F20ED9B254A40A6004B2C91 /* tos.pb.swift */; };
 		7F20ED9E254A40A6004B2C91 /* tos.grpc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F20ED9C254A40A6004B2C91 /* tos.grpc.swift */; };
 		C14FF08F2546BEAD002B3612 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14FF08E2546BEAD002B3612 /* SettingsView.swift */; };
@@ -81,7 +84,10 @@
 		1E479F33252B9BA500E21D20 /* MenuViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewModel.swift; sourceTree = "<group>"; };
 		1E479F35252B9C6500E21D20 /* OrderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderViewModel.swift; sourceTree = "<group>"; };
 		1E479F37252B9FF500E21D20 /* ChannelViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewModel.swift; sourceTree = "<group>"; };
-		7F20ED8D254A34A0004B2C91 /* PingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingViewModel.swift; sourceTree = "<group>"; };
+		7F1E0D1B254CAE760015569C /* health.grpc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = health.grpc.swift; path = ../../../protofiles/health.grpc.swift; sourceTree = "<group>"; };
+		7F1E0D1C254CAE760015569C /* health.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = health.pb.swift; path = ../../../protofiles/health.pb.swift; sourceTree = "<group>"; };
+		7F1E0D2D254CAF9C0015569C /* HealthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthViewModel.swift; sourceTree = "<group>"; };
+		7F1E0D32254CBC6D0015569C /* SettingsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		7F20ED9B254A40A6004B2C91 /* tos.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = tos.pb.swift; path = ../../../protofiles/tos.pb.swift; sourceTree = "<group>"; };
 		7F20ED9C254A40A6004B2C91 /* tos.grpc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = tos.grpc.swift; path = ../../../protofiles/tos.grpc.swift; sourceTree = "<group>"; };
 		C14FF08E2546BEAD002B3612 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -155,6 +161,8 @@
 		1E4439A72529522F002BB81B /* tos */ = {
 			isa = PBXGroup;
 			children = (
+				7F1E0D1B254CAE760015569C /* health.grpc.swift */,
+				7F1E0D1C254CAE760015569C /* health.pb.swift */,
 				7F20ED9C254A40A6004B2C91 /* tos.grpc.swift */,
 				7F20ED9B254A40A6004B2C91 /* tos.pb.swift */,
 				1E3172132532A7D80018E279 /* Views */,
@@ -200,10 +208,11 @@
 		1E479F32252B9B8B00E21D20 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				7F1E0D32254CBC6D0015569C /* SettingsViewModel.swift */,
 				1E479F33252B9BA500E21D20 /* MenuViewModel.swift */,
 				1E479F35252B9C6500E21D20 /* OrderViewModel.swift */,
 				1E479F37252B9FF500E21D20 /* ChannelViewModel.swift */,
-				7F20ED8D254A34A0004B2C91 /* PingViewModel.swift */,
+				7F1E0D2D254CAF9C0015569C /* HealthViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -349,9 +358,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F1E0D1D254CAE760015569C /* health.grpc.swift in Sources */,
+				7F1E0D2E254CAF9C0015569C /* HealthViewModel.swift in Sources */,
 				1E4439A92529522F002BB81B /* AppDelegate.swift in Sources */,
 				1E3172242532A9080018E279 /* PopupMenuView.swift in Sources */,
 				C14FF08F2546BEAD002B3612 /* SettingsView.swift in Sources */,
+				7F1E0D1E254CAE760015569C /* health.pb.swift in Sources */,
 				7F20ED9D254A40A6004B2C91 /* tos.pb.swift in Sources */,
 				1E31722B2532A9AD0018E279 /* UnwrapView.swift in Sources */,
 				1E31721E2532A8970018E279 /* CategoryView.swift in Sources */,
@@ -360,12 +372,12 @@
 				1E479F34252B9BA500E21D20 /* MenuViewModel.swift in Sources */,
 				1E3172182532A7FE0018E279 /* MenuView.swift in Sources */,
 				1E4439AD2529522F002BB81B /* ContentView.swift in Sources */,
-				7F20ED8E254A34A0004B2C91 /* PingViewModel.swift in Sources */,
 				1E479F36252B9C6500E21D20 /* OrderViewModel.swift in Sources */,
 				1E3172222532A8E40018E279 /* PriceView.swift in Sources */,
 				1E31721C2532A8690018E279 /* OrderItemView.swift in Sources */,
 				1E3172202532A8C40018E279 /* ItemView.swift in Sources */,
 				1E0849572534CBFA00FE6317 /* Extensions.swift in Sources */,
+				7F1E0D33254CBC6D0015569C /* SettingsViewModel.swift in Sources */,
 				1E479F38252B9FF500E21D20 /* ChannelViewModel.swift in Sources */,
 				1E31721A2532A8440018E279 /* OrderView.swift in Sources */,
 			);

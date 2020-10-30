@@ -1,10 +1,3 @@
-//
-//  SettingsViewModel.swift
-//  tos
-//
-//  Created by John Pratt on 10/10/20.
-//
-
 import Foundation
 
 final class SettingsViewModel: ObservableObject, Identifiable {
