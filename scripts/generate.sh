@@ -3,8 +3,10 @@
 set -e
 pushd "$(/bin/pwd)" > /dev/null
 
-PROTOFILE="./schema/tos.proto"
+INPUT_DIR="schema/"
 OUT_DIR="pkg/pb/"
+SOURCES="$(ls $INPUT_DIR | sort)"
+REL_SOURCES="$(find $INPUT_DIR -type f | sort)"
 
 protoc "${PROTOFILE}" \
  # --plugin="protoc-gen-ts=${PROTOC_GEN_TS_PATH}" \

@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/cskr/pubsub"
@@ -27,7 +28,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/grpclog"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/keepalive"
+	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 )
 
@@ -39,20 +43,19 @@ const (
 var (
 	reg         = prometheus.NewRegistry()
 	grpcMetrics = grpc_prometheus.NewServerMetrics()
-	kasp        = keepalive.ServerParameters{
-		Time: 60 * time.Second,
-	}
-	tls      = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
-	prnt     = flag.Bool("print", false, "Use printer for complete orders")
-	promAddr = flag.String("prom", ":9001", "Port to run metrics HTTP server")
-	addr     = flag.String("addr", ":50051", "listen address")
-	dbp      = flag.String("database", "/tmp/tos.db", "database to use")
-	crt      = flag.String("crt", "cert/server.crt", "TLS cert to use")
-	key      = flag.String("key", "cert/server.key", "TLS key to use")
-	lpDev    = flag.String("p", "/dev/usb/lp0", "Printer dev file")
+	kasp        = keepalive.ServerParameters{Time: 60 * time.Second}
+	tls         = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
+	prnt        = flag.Bool("print", false, "Use printer for complete orders")
+	promAddr    = flag.String("prom", ":9001", "Port to run metrics HTTP server")
+	addr        = flag.String("addr", ":50051", "listen address")
+	dbp         = flag.String("database", "/tmp/tos.db", "database to use")
+	crt         = flag.String("crt", "cert/server.crt", "TLS cert to use")
+	key         = flag.String("key", "cert/server.key", "TLS key to use")
+	lpDev       = flag.String("p", "/dev/usb/lp0", "Printer dev file")
 )
 
 type server struct {
+	mu       sync.Mutex
 	services *db.Services
 	orders   []*pb.Order
 	menu     *pb.Menu
@@ -62,6 +65,9 @@ type server struct {
 }
 
 func (s *server) GetMenu(ctx context.Context, empty *pb.Empty) (*pb.Menu, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	if len(s.menu.GetCategories()) == 0 {
 		return nil, status.Error(codes.NotFound, "menu is empty")
 	}
@@ -69,6 +75,9 @@ func (s *server) GetMenu(ctx context.Context, empty *pb.Empty) (*pb.Menu, error)
 }
 
 func (s *server) CreateMenuItem(ctx context.Context, req *pb.Item) (*pb.CreateMenuItemResponse, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "no item provided")
 	}
@@ -106,6 +115,9 @@ func (s *server) CreateMenuItem(ctx context.Context, req *pb.Item) (*pb.CreateMe
 }
 
 func (s *server) UpdateMenuItem(ctx context.Context, req *pb.Item) (*pb.Response, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "item id not provided")
 	}
@@ -123,10 +135,10 @@ func (s *server) UpdateMenuItem(ctx context.Context, req *pb.Item) (*pb.Response
 	return &pb.Response{Response: "success"}, s.loadData()
 }
 
-func (s *server) DeleteMenuItem(
-	ctx context.Context,
-	req *pb.DeleteMenuItemRequest,
-) (*pb.Response, error) {
+func (s *server) DeleteMenuItem(ctx context.Context, req *pb.DeleteMenuItemRequest) (*pb.Response, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
 			"req must not be nil")
@@ -145,10 +157,10 @@ func (s *server) DeleteMenuItem(
 	return &pb.Response{Response: "success"}, s.loadData()
 }
 
-func (s *server) CreateMenuItemOption(
-	ctx context.Context,
-	req *pb.Option,
-) (*pb.Response, error) {
+func (s *server) CreateMenuItemOption(ctx context.Context, req *pb.Option) (*pb.Response, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
 			"item option not provided")
@@ -158,6 +170,9 @@ func (s *server) CreateMenuItemOption(
 }
 
 func (s *server) SubmitOrder(ctx context.Context, req *pb.Order) (*pb.Response, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
 			"order not provided")
@@ -217,6 +232,9 @@ func publish(ps *pubsub.PubSub, order *pb.Order, topic string) {
 }
 
 func (s *server) CompleteOrder(ctx context.Context, req *pb.CompleteOrderRequest) (*pb.Response, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	if req.GetId() == 0 {
 		return nil, status.Errorf(codes.InvalidArgument,
 			"order id must be non zero")
@@ -240,6 +258,9 @@ func (s *server) CompleteOrder(ctx context.Context, req *pb.CompleteOrderRequest
 }
 
 func (s *server) ActiveOrders(ctx context.Context, empty *pb.Empty) (*pb.OrdersResponse, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	if s.orders == nil {
 		return nil, status.Errorf(codes.Internal,
 			"ActiveOrders() failed: server.orders has not been initialized")
@@ -248,12 +269,10 @@ func (s *server) ActiveOrders(ctx context.Context, empty *pb.Empty) (*pb.OrdersR
 	return &pb.OrdersResponse{Orders: s.orders}, nil
 }
 
-func (s *server) SendPing(ctx context.Context, ping *pb.Ping) (*pb.Pong, error) {
-	// TODO: handle delay
-	return &pb.Pong{Message: "pong"}, nil
-}
-
 func (s *server) loadData() error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	menu, err := s.services.Menu.GetMenu()
 	if err != nil {
 		return err
@@ -304,7 +323,11 @@ func NewServer() (*server, error) {
 		return nil, err
 	}
 
-	server := &server{services: services, ps: pubsub.New(0), logger: logger}
+	server := &server{
+		services: services,
+		ps:       pubsub.New(0),
+		logger:   logger,
+	}
 
 	if *prnt {
 		p, err := printer.NewFromPath(*lpDev)
@@ -383,10 +406,10 @@ func (s *server) Run() error {
 
 	grpcServer := grpc.NewServer(opts...)
 
+	reflection.Register(grpcServer)
 	pb.RegisterMenuServiceServer(grpcServer, s)
 	pb.RegisterOrderServiceServer(grpcServer, s)
-	pb.RegisterPingServiceServer(grpcServer, s)
-
+	grpc_health_v1.RegisterHealthServer(grpcServer, health.NewServer())
 	grpcMetrics.InitializeMetrics(grpcServer)
 
 	go func() {
