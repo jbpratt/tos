@@ -36,7 +36,9 @@ import (
 )
 
 const (
-	topicOrder = "orders"
+	orderServiceName = "tospb.OrderService"
+	menuServiceName  = "tospb.MenuService"
+	topicOrder       = "orders"
 	// topicComplete = "complete"
 )
 
@@ -406,10 +408,13 @@ func (s *server) Run() error {
 
 	grpcServer := grpc.NewServer(opts...)
 
+	hs := health.NewServer()
+	hs.SetServingStatus(menuServiceName, grpc_health_v1.HealthCheckResponse_SERVING)
+	hs.SetServingStatus(orderServiceName, grpc_health_v1.HealthCheckResponse_SERVING)
+	grpc_health_v1.RegisterHealthServer(grpcServer, hs)
 	reflection.Register(grpcServer)
 	pb.RegisterMenuServiceServer(grpcServer, s)
 	pb.RegisterOrderServiceServer(grpcServer, s)
-	grpc_health_v1.RegisterHealthServer(grpcServer, health.NewServer())
 	grpcMetrics.InitializeMetrics(grpcServer)
 
 	go func() {
