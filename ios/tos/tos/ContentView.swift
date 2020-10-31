@@ -6,18 +6,17 @@ struct ContentView: View {
     @ObservedObject var healthViewModel: HealthViewModel
 
     @State private var isSettingsActive: Bool = false
-    
+
     var isMenuServing: Bool {
-        get {
-            healthViewModel.serviceStatus("tospb.MenuService") == HealthViewModel.Status.serving
-        }
+        // Is there really no one that exports the service name?
+        healthViewModel.serviceStatus(healthViewModel.menuServiceName) == .serving
     }
 
     var body: some View {
         NavigationView {
             GeometryReader { geo in
                 HStack {
-                    OrderView(viewModel: orderViewModel)
+                    OrderView(vm: orderViewModel)
                     Divider()
                     MenuView(
                         menuViewModel: menuViewModel,
@@ -30,10 +29,11 @@ struct ContentView: View {
             .navigationBarItems(
                 leading: heart,
                 trailing: NavigationLink(
-                    destination: SettingsView(viewModel: menuViewModel).navigationBarTitle("Settings"),
+                    destination: SettingsView(viewModel: menuViewModel)
+                        .navigationBarTitle("Settings"),
                     isActive: $isSettingsActive
                 ) {
-                    Button(action: { isSettingsActive = !isSettingsActive }) {
+                    Button(action: { isSettingsActive.toggle() }) {
                         Image(systemName: "gear")
                     }
                 }
@@ -41,12 +41,11 @@ struct ContentView: View {
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
-    
+
     var heart: some View {
         Image(systemName: isMenuServing ? "heart.fill" : "heart.slash.fill")
             .foregroundColor(.pink)
-            // Is there really no one that exports the service name?
-            //.scaleEffect(isMenuServing ? 1.1 : 0)
+            // .scaleEffect(isMenuServing ? 1.1 : 0)
             .animation(Animation.interactiveSpring().delay(0.2))
     }
 }

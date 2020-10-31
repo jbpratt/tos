@@ -3,6 +3,9 @@ import NIO
 import SwiftUI
 
 final class HealthViewModel: ChannelViewModel, ObservableObject, Identifiable {
+    private(set) var menuServiceName = "tospb.MenuService"
+    private(set) var orderServiceName = ""
+
     public typealias Status = Grpc_Health_V1_HealthCheckResponse.ServingStatus
     private lazy var client = Grpc_Health_V1_HealthClient(channel: self.conn)
     @Published private(set) var services: [String: Status] = [:]
@@ -10,8 +13,12 @@ final class HealthViewModel: ChannelViewModel, ObservableObject, Identifiable {
     override init() {
         super.init()
 
+        for service in [menuServiceName] {
+            check(service)
+        }
+
         _ = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
-            for service in ["tospb.MenuService"] {
+            for service in [self.menuServiceName] {
                 self.check(service)
             }
         }
@@ -27,16 +34,17 @@ final class HealthViewModel: ChannelViewModel, ObservableObject, Identifiable {
                 switch res {
                 case .success(let res):
                     self.services[service] = res.status
+                    self.logger.info("healthCheck: \(service) is \(res.status)")
                 case .failure(let err):
-                    self.services[service] = Grpc_Health_V1_HealthCheckResponse.ServingStatus.unknown
-                    print("check failed: \(err)")
+                    self.services[service] = .unknown
+                    self.logger.error("check failed: \(err)")
                 }
             }
         }
     }
 
     func watch(_ service: String) {}
-    
+
     func serviceStatus(_ service: String) -> Status {
         guard let status = services[service] else {
             return Status.serviceUnknown

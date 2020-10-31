@@ -82,7 +82,7 @@ struct PopupMenuView_Preview: PreviewProvider {
     static var previews: some View {
         PopupMenuView(
             viewModel: OrderViewModel(),
-            item: Binding.constant(loadMenu().categories[0].items[0]),
+            item: Binding.constant(loadStaticMenu().categories[0].items[0]),
             isActive: Binding.constant(false)
         )
         .previewLayout(.sizeThatFits)

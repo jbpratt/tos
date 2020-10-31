@@ -1,50 +1,56 @@
 import SwiftUI
 
 struct OrderView: View {
-    @ObservedObject var viewModel: OrderViewModel
+    @ObservedObject var vm: OrderViewModel
+
+    var pricebar: some View {
+        VStack {
+            HStack {
+                Text("Subtotal:")
+                Spacer()
+                PriceView(price: vm.currentOrder.subTotal())
+            }
+            HStack {
+                Text("Tax:")
+                Spacer()
+                PriceView(price: vm.currentOrder.tax())
+            }
+            HStack {
+                Text("Total:")
+                Spacer()
+                PriceView(price: vm.currentOrder.totalPrice())
+            }
+        }
+        .padding()
+        .overlay(RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.black, lineWidth: 2))
+    }
 
     var body: some View {
         VStack {
             ScrollView {
-                if viewModel.currentOrder != nil {
-                    ForEach(viewModel.currentOrder!.items, id: \.self) { item in
-                        OrderItemView(viewModel: viewModel, item: item)
+                if !vm.currentOrder.items.isEmpty {
+                    ForEach(vm.currentOrder.items, id: \.self) { item in
+                        OrderItemView(viewModel: vm, item: item)
                     }
                     .padding([.top, .bottom], 5)
                 } else {
-                    Text("no items").font(.subheadline).foregroundColor(Color.gray)
+                    Text("no items")
+                        .font(.subheadline)
+                        .foregroundColor(Color.gray)
                 }
             }
             Spacer()
             VStack(alignment: .leading) {
-                VStack {
-                    HStack {
-                        Text("Subtotal:")
-                        Spacer()
-                        PriceView(price: viewModel.currentOrder?.subTotal() ?? 0.00)
-                    }
-                    HStack {
-                        Text("Tax:")
-                        Spacer()
-                        PriceView(price: viewModel.currentOrder?.tax() ?? 0.00)
-                    }
-                    HStack {
-                        Text("Total:")
-                        Spacer()
-                        PriceView(price: viewModel.currentOrder?.totalPrice() ?? 0.00)
-                    }
-                }
-                .padding()
-                .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.black, lineWidth: 2))
-                .animation(.linear(duration: 0.2))
+                pricebar
                 HStack {
-                    TextField("Enter an order name", text: $viewModel.currentOrderName)
+                    TextField("Enter an order name", text: $vm.currentOrderName)
                     Button(action: {
-                        viewModel.submitOrder()
+                        vm.submitOrder()
                     }) {
-                        Text("Submit")
+                        Image(systemName: "arrow.right.circle")
                     }
-                    .disabled(viewModel.currentOrderName.isEmpty)
+                    .disabled(vm.currentOrderName.isEmpty)
                 }
                 .padding(.top, 20)
             }

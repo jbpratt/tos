@@ -2,7 +2,7 @@ import SwiftUI
 
 final class MenuViewModel: ChannelViewModel, ObservableObject, Identifiable {
     private lazy var client = Tospb_MenuServiceClient(channel: self.conn)
-    @Published private(set) var menu: Tospb_Menu? = nil
+    @Published private(set) var menu = Tospb_Menu()
 
     override init() {
         super.init()
@@ -18,35 +18,42 @@ final class MenuViewModel: ChannelViewModel, ObservableObject, Identifiable {
     }
 
     func createItem(_ item: Tospb_Item) {
-        do {
-            _ = try client.createMenuItem(item).response.wait()
-        } catch {
-            print("createMenuItem failed: \(error)")
-            return
+        client.createMenuItem(item).response.whenComplete { res in
+            switch res {
+            case .success:
+                self.logger.info("createMenuItem success")
+            case .failure(let err):
+                self.logger.error("createMenuItem failed: \(err)")
+            }
         }
     }
 
     func deleteItem(_ itemID: Int64) {
-        let req: Tospb_DeleteMenuItemRequest = .with {
+        client.deleteMenuItem(Tospb_DeleteMenuItemRequest.with {
             $0.id = itemID
-        }
-        do {
-            _ = try client.deleteMenuItem(req).response.wait()
-        } catch {
-            print("deleteMenuItem failed: \(error)")
+        }).response.whenComplete { res in
+            switch res {
+            case .success:
+                self.logger.info("deleteMenuItem success")
+            case .failure(let err):
+                self.logger.error("deleteMenuItem failed: \(err)")
+            }
         }
     }
 
     func updateItem(_ item: Tospb_Item) {
-        do {
-            _ = try client.updateMenuItem(item).response.wait()
-        } catch {
-            print("updateMenuItem failed: \(error)")
+        client.updateMenuItem(item).response.whenComplete { res in
+            switch res {
+            case .success:
+                self.logger.info("updateMenuItem success")
+            case .failure(let err):
+                self.logger.error("updateMenuItem failed: \(err)")
+            }
         }
     }
 }
 
-func loadMenu() -> Tospb_Menu {
+func loadStaticMenu() -> Tospb_Menu {
     guard let menu = try? Tospb_Menu(jsonUTF8Data: Data(jsonMenu.utf8)) else {
         fatalError("failed to decode menu")
     }
