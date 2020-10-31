@@ -4,7 +4,7 @@ SERVER_PKG_BUILD := "${PKG}"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
 
-server: dep gen
+server: dep
 	@go build -v -o $(SERVER_OUT) $(SERVER_PKG_BUILD)
 
 dep:
