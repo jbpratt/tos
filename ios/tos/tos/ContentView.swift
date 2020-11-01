@@ -5,6 +5,7 @@ struct ContentView: View {
     @ObservedObject var orderViewModel: OrderViewModel
     @ObservedObject var healthViewModel: HealthViewModel
 
+    @State private var isActiveOrdersActive: Bool = false
     @State private var isSettingsActive: Bool = false
 
     var isMenuServing: Bool {
@@ -16,7 +17,7 @@ struct ContentView: View {
         NavigationView {
             GeometryReader { geo in
                 HStack {
-                    OrderView(vm: orderViewModel)
+                    MenuOrderView(vm: orderViewModel)
                     Divider()
                     MenuView(
                         menuViewModel: menuViewModel,
@@ -28,13 +29,22 @@ struct ContentView: View {
             .navigationBarTitle("Menu", displayMode: .inline)
             .navigationBarItems(
                 leading: heart,
-                trailing: NavigationLink(
-                    destination: SettingsView(viewModel: menuViewModel)
-                        .navigationBarTitle("Settings"),
-                    isActive: $isSettingsActive
-                ) {
-                    Button(action: { isSettingsActive.toggle() }) {
-                        Image(systemName: "gear")
+                trailing: HStack {
+                    NavigationLink(
+                        destination: ActiveOrdersView(vm: orderViewModel),
+                        isActive: $isActiveOrdersActive
+                    ) {
+                        Button(action: { isActiveOrdersActive.toggle() }) {
+                            Image(systemName: "plus")
+                        }
+                    }
+                    NavigationLink(
+                        destination: SettingsView(viewModel: menuViewModel),
+                        isActive: $isSettingsActive
+                    ) {
+                        Button(action: { isSettingsActive.toggle() }) {
+                            Image(systemName: "gear")
+                        }
                     }
                 }
             )

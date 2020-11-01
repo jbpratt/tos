@@ -54,17 +54,18 @@ struct PopupMenuView: View {
     @ObservedObject var viewModel: OrderViewModel
     @Binding var item: Tospb_Item
     @Binding var isActive: Bool
-    @State private var editedItem = Tospb_Item()
 
     var body: some View {
         VStack {
             OptionsListView(item: $item)
             Divider()
-            // Rather than rendering two bars, just conditionally change the action
             BottomBarView(item.totalPrice(), onSubmit: {
                 viewModel.addToOrder(item)
-                // item = nil
-                StatusBarNotificationBanner(title: "\(item.name) has been added to the order.", style: .success).show()
+                StatusBarNotificationBanner(
+                    title: "\(item.name) has been added to the order.",
+                    style: .success
+                ).show()
+                isActive = false
             }, onCancel: {
                 isActive = false
             })
@@ -72,19 +73,6 @@ struct PopupMenuView: View {
         .padding()
         .background(RoundedRectangle(cornerRadius: 16)
             .stroke(Color.black, lineWidth: 2)
-            .background(Color.white
-                .cornerRadius(16)
-                .shadow(radius: 8)))
-    }
-}
-
-struct PopupMenuView_Preview: PreviewProvider {
-    static var previews: some View {
-        PopupMenuView(
-            viewModel: OrderViewModel(),
-            item: Binding.constant(loadStaticMenu().categories[0].items[0]),
-            isActive: Binding.constant(false)
-        )
-        .previewLayout(.sizeThatFits)
+            .background(Color.white.cornerRadius(16).shadow(radius: 8)))
     }
 }

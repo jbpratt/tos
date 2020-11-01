@@ -1,3 +1,5 @@
+import GRPC
+import NIO
 import SwiftUI
 
 final class OrderViewModel: ChannelViewModel, ObservableObject, Identifiable {
@@ -28,7 +30,10 @@ final class OrderViewModel: ChannelViewModel, ObservableObject, Identifiable {
             return
         }
 
-        client.submitOrder(currentOrder).response.whenComplete { res in
+        client.submitOrder(
+            currentOrder
+            //callOptions: CallOptions(timeLimit: .timeout(TimeAmount.seconds(5)))
+        ).response.whenComplete { res in
             DispatchQueue.main.async {
                 switch res {
                 case .success(let res):
@@ -74,5 +79,9 @@ final class OrderViewModel: ChannelViewModel, ObservableObject, Identifiable {
                 }
             }
         }
+    }
+    
+    func cancelOrder(_ order: Tospb_Order) {
+        logger.info("cancelOrder is unimplemented")
     }
 }

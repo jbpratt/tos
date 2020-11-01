@@ -1,8 +1,13 @@
+import GRPC
+import NIO
 import SwiftUI
 
 final class MenuViewModel: ChannelViewModel, ObservableObject, Identifiable {
-    private lazy var client = Tospb_MenuServiceClient(channel: self.conn)
     @Published private(set) var menu = Tospb_Menu()
+    private lazy var client = Tospb_MenuServiceClient(
+        channel: self.conn
+        //defaultCallOptions: CallOptions(timeLimit: .timeout(TimeAmount.seconds(5)))
+    )
 
     override init() {
         super.init()
@@ -10,9 +15,14 @@ final class MenuViewModel: ChannelViewModel, ObservableObject, Identifiable {
     }
 
     func getMenu() {
-        client.getMenu(Tospb_Empty()).response.whenSuccess { res in
+        client.getMenu(Tospb_Empty()).response.whenComplete { res in
             DispatchQueue.main.async {
-                self.menu = res
+                switch res {
+                case .success(let res):
+                    self.menu = res
+                case .failure(let err):
+                    self.logger.error("getMenu failed: \(err)")
+                }
             }
         }
     }

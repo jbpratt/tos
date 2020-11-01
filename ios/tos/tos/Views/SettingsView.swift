@@ -41,7 +41,7 @@ struct EditItemView: View {
                 Text("Save")
             }
             Spacer()
-            Button(action: { isPresented = !isPresented }) {
+            Button(action: { isPresented.toggle() }) {
                 Text("Cancel")
             }
         }
@@ -65,6 +65,7 @@ struct SettingsView: View {
                 .listStyle(GroupedListStyle())
             }
         }
+        .navigationBarTitle("Settings")
     }
 
     func categorySection(_ cat: Tospb_Category) -> some View {

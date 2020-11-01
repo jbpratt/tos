@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct OrderView: View {
+struct MenuOrderView: View {
     @ObservedObject var vm: OrderViewModel
 
     var pricebar: some View {

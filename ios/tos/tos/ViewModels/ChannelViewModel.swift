@@ -16,10 +16,10 @@ class ChannelViewModel {
             eventLoopGroup: group,
             errorDelegate: delegate,
             connectivityStateDelegate: delegate,
-            connectionKeepalive: ClientConnectionKeepalive(
-                interval: .seconds(5),
-                timeout: .seconds(3)
-            ),
+            //connectionKeepalive: ClientConnectionKeepalive(
+            //    interval: .seconds(10),
+            //    timeout: .seconds(3)
+            //),
             backgroundActivityLogger: self.logger
         )
         conn = ClientConnection(configuration: conf)

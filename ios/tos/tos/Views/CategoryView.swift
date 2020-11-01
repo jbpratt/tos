@@ -18,7 +18,7 @@ struct CategoryView: View {
                 ForEach(category.items, id: \.self) { item in
                     ItemView(item: item)
                         .onTapGesture {
-                            itemSelected = item
+                            itemSelected = item.copy()
                             isPopupActive.toggle()
                             print(item.name)
                         }
@@ -27,5 +27,9 @@ struct CategoryView: View {
         }
         .contentShape(Rectangle())
         .frame(minWidth: 0, maxWidth: .infinity)
+        .padding()
+        .overlay(RoundedRectangle(cornerRadius: 16)
+            .stroke(Color.black, lineWidth: 2))
+        .animation(.linear(duration: 0.2))
     }
 }

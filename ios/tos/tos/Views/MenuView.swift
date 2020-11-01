@@ -14,14 +14,15 @@ struct MenuView: View {
                 VStack {
                     Unwrap(menuViewModel.menu) { menu in
                         ForEach(menu.categories, id: \.self) { cat in
-                            CategoryView(category: cat, isExpanded: selection.contains(cat), itemSelected: $itemSelected, isPopupActive: $isPopupActive)
-                                .padding()
-                                .overlay(RoundedRectangle(cornerRadius: 16)
-                                    .stroke(Color.black, lineWidth: 2))
-                                .onTapGesture { selectDeselect(cat) }
-                                .animation(.linear(duration: 0.2)
+                            CategoryView(
+                                category: cat,
+                                isExpanded: selection.contains(cat),
+                                itemSelected: $itemSelected,
+                                isPopupActive: $isPopupActive
                             )
-                        }.padding()
+                            .onTapGesture { selectDeselect(cat) }
+                        }
+                        .padding()
                     }
                 }
             }
