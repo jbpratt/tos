@@ -43,10 +43,19 @@ struct ContentView: View {
     }
 
     var heart: some View {
-        Image(systemName: isMenuServing ? "heart.fill" : "heart.slash.fill")
-            .foregroundColor(.pink)
-            // .scaleEffect(isMenuServing ? 1.1 : 0)
-            .animation(Animation.interactiveSpring().delay(0.2))
+        ZStack {
+            Image(systemName: isMenuServing ? "heart.fill" : "heart.slash.fill")
+                .foregroundColor(.pink)
+                .animation(Animation.interactiveSpring().delay(2.0))
+            Circle()
+                .strokeBorder(lineWidth: isMenuServing ? 1 : 35 / 2, antialiased: false)
+                .opacity(isMenuServing ? 0 : 1)
+                .frame(width: 35, height: 35)
+                .foregroundColor(.pink)
+                .scaleEffect(isMenuServing ? 1 : 0)
+                .animation(isMenuServing ? Animation.easeOut(duration: 1.5)
+                    .repeatForever(autoreverses: false) : Animation.default)
+        }
     }
 }
 
