@@ -7,7 +7,7 @@ import NIOTransportServices
 class ChannelViewModel {
     private let group = NIOTSEventLoopGroup()
     let conn: ClientConnection
-    let logger: Logger = Logger(label: "TOS")
+    let logger = Logger(label: "TOS")
 
     init() {
         let delegate = RecordingDelegate()
@@ -16,17 +16,17 @@ class ChannelViewModel {
             eventLoopGroup: group,
             errorDelegate: delegate,
             connectivityStateDelegate: delegate,
-            //connectionKeepalive: ClientConnectionKeepalive(
+            // connectionKeepalive: ClientConnectionKeepalive(
             //    interval: .seconds(10),
             //    timeout: .seconds(3)
-            //),
-            backgroundActivityLogger: self.logger
+            // ),
+            backgroundActivityLogger: logger
         )
         conn = ClientConnection(configuration: conf)
     }
 
     deinit {
-        let _ = conn.close()
+        _ = conn.close()
         try! group.syncShutdownGracefully()
     }
 }
@@ -34,12 +34,12 @@ class ChannelViewModel {
 class RecordingDelegate: ConnectivityStateDelegate, ClientErrorDelegate {
     var errors: [Error] = []
     var connectivity = CurrentValueSubject<ConnectivityState, Never>(.idle)
-    
-    func connectivityStateDidChange(from oldState: ConnectivityState, to newState: ConnectivityState) {
+
+    func connectivityStateDidChange(from _: ConnectivityState, to newState: ConnectivityState) {
         connectivity.value = newState
     }
-    
-    func didCatchError(_ error: Error, logger: Logger, file: StaticString, line: Int) {
+
+    func didCatchError(_ error: Error, logger _: Logger, file _: StaticString, line _: Int) {
         print(error)
         errors.append(error)
     }

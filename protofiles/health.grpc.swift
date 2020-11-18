@@ -24,106 +24,102 @@ import GRPC
 import NIO
 import SwiftProtobuf
 
-
 /// Usage: instantiate Grpc_Health_V1_HealthClient, then call methods of this protocol to make API calls.
 public protocol Grpc_Health_V1_HealthClientProtocol: GRPCClient {
-  func check(
-    _ request: Grpc_Health_V1_HealthCheckRequest,
-    callOptions: CallOptions?
-  ) -> UnaryCall<Grpc_Health_V1_HealthCheckRequest, Grpc_Health_V1_HealthCheckResponse>
+    func check(
+        _ request: Grpc_Health_V1_HealthCheckRequest,
+        callOptions: CallOptions?
+    ) -> UnaryCall<Grpc_Health_V1_HealthCheckRequest, Grpc_Health_V1_HealthCheckResponse>
 
-  func watch(
-    _ request: Grpc_Health_V1_HealthCheckRequest,
-    callOptions: CallOptions?,
-    handler: @escaping (Grpc_Health_V1_HealthCheckResponse) -> Void
-  ) -> ServerStreamingCall<Grpc_Health_V1_HealthCheckRequest, Grpc_Health_V1_HealthCheckResponse>
-
+    func watch(
+        _ request: Grpc_Health_V1_HealthCheckRequest,
+        callOptions: CallOptions?,
+        handler: @escaping (Grpc_Health_V1_HealthCheckResponse) -> Void
+    ) -> ServerStreamingCall<Grpc_Health_V1_HealthCheckRequest, Grpc_Health_V1_HealthCheckResponse>
 }
 
-extension Grpc_Health_V1_HealthClientProtocol {
+public extension Grpc_Health_V1_HealthClientProtocol {
+    /// Unary call to Check
+    ///
+    /// - Parameters:
+    ///   - request: Request to send to Check.
+    ///   - callOptions: Call options.
+    /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+    func check(
+        _ request: Grpc_Health_V1_HealthCheckRequest,
+        callOptions: CallOptions? = nil
+    ) -> UnaryCall<Grpc_Health_V1_HealthCheckRequest, Grpc_Health_V1_HealthCheckResponse> {
+        return makeUnaryCall(
+            path: "/grpc.health.v1.Health/Check",
+            request: request,
+            callOptions: callOptions ?? defaultCallOptions
+        )
+    }
 
-  /// Unary call to Check
-  ///
-  /// - Parameters:
-  ///   - request: Request to send to Check.
-  ///   - callOptions: Call options.
-  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-  public func check(
-    _ request: Grpc_Health_V1_HealthCheckRequest,
-    callOptions: CallOptions? = nil
-  ) -> UnaryCall<Grpc_Health_V1_HealthCheckRequest, Grpc_Health_V1_HealthCheckResponse> {
-    return self.makeUnaryCall(
-      path: "/grpc.health.v1.Health/Check",
-      request: request,
-      callOptions: callOptions ?? self.defaultCallOptions
-    )
-  }
-
-  /// Server streaming call to Watch
-  ///
-  /// - Parameters:
-  ///   - request: Request to send to Watch.
-  ///   - callOptions: Call options.
-  ///   - handler: A closure called when each response is received from the server.
-  /// - Returns: A `ServerStreamingCall` with futures for the metadata and status.
-  public func watch(
-    _ request: Grpc_Health_V1_HealthCheckRequest,
-    callOptions: CallOptions? = nil,
-    handler: @escaping (Grpc_Health_V1_HealthCheckResponse) -> Void
-  ) -> ServerStreamingCall<Grpc_Health_V1_HealthCheckRequest, Grpc_Health_V1_HealthCheckResponse> {
-    return self.makeServerStreamingCall(
-      path: "/grpc.health.v1.Health/Watch",
-      request: request,
-      callOptions: callOptions ?? self.defaultCallOptions,
-      handler: handler
-    )
-  }
+    /// Server streaming call to Watch
+    ///
+    /// - Parameters:
+    ///   - request: Request to send to Watch.
+    ///   - callOptions: Call options.
+    ///   - handler: A closure called when each response is received from the server.
+    /// - Returns: A `ServerStreamingCall` with futures for the metadata and status.
+    func watch(
+        _ request: Grpc_Health_V1_HealthCheckRequest,
+        callOptions: CallOptions? = nil,
+        handler: @escaping (Grpc_Health_V1_HealthCheckResponse) -> Void
+    ) -> ServerStreamingCall<Grpc_Health_V1_HealthCheckRequest, Grpc_Health_V1_HealthCheckResponse> {
+        return makeServerStreamingCall(
+            path: "/grpc.health.v1.Health/Watch",
+            request: request,
+            callOptions: callOptions ?? defaultCallOptions,
+            handler: handler
+        )
+    }
 }
 
 public final class Grpc_Health_V1_HealthClient: Grpc_Health_V1_HealthClientProtocol {
-  public let channel: GRPCChannel
-  public var defaultCallOptions: CallOptions
+    public let channel: GRPCChannel
+    public var defaultCallOptions: CallOptions
 
-  /// Creates a client for the grpc.health.v1.Health service.
-  ///
-  /// - Parameters:
-  ///   - channel: `GRPCChannel` to the service host.
-  ///   - defaultCallOptions: Options to use for each service call if the user doesn't provide them.
-  public init(channel: GRPCChannel, defaultCallOptions: CallOptions = CallOptions()) {
-    self.channel = channel
-    self.defaultCallOptions = defaultCallOptions
-  }
+    /// Creates a client for the grpc.health.v1.Health service.
+    ///
+    /// - Parameters:
+    ///   - channel: `GRPCChannel` to the service host.
+    ///   - defaultCallOptions: Options to use for each service call if the user doesn't provide them.
+    public init(channel: GRPCChannel, defaultCallOptions: CallOptions = CallOptions()) {
+        self.channel = channel
+        self.defaultCallOptions = defaultCallOptions
+    }
 }
 
 /// To build a server, implement a class that conforms to this protocol.
 public protocol Grpc_Health_V1_HealthProvider: CallHandlerProvider {
-  func check(request: Grpc_Health_V1_HealthCheckRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Grpc_Health_V1_HealthCheckResponse>
-  func watch(request: Grpc_Health_V1_HealthCheckRequest, context: StreamingResponseCallContext<Grpc_Health_V1_HealthCheckResponse>) -> EventLoopFuture<GRPCStatus>
+    func check(request: Grpc_Health_V1_HealthCheckRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Grpc_Health_V1_HealthCheckResponse>
+    func watch(request: Grpc_Health_V1_HealthCheckRequest, context: StreamingResponseCallContext<Grpc_Health_V1_HealthCheckResponse>) -> EventLoopFuture<GRPCStatus>
 }
 
-extension Grpc_Health_V1_HealthProvider {
-  public var serviceName: Substring { return "grpc.health.v1.Health" }
+public extension Grpc_Health_V1_HealthProvider {
+    var serviceName: Substring { return "grpc.health.v1.Health" }
 
-  /// Determines, calls and returns the appropriate request handler, depending on the request's method.
-  /// Returns nil for methods not handled by this service.
-  public func handleMethod(_ methodName: Substring, callHandlerContext: CallHandlerContext) -> GRPCCallHandler? {
-    switch methodName {
-    case "Check":
-      return CallHandlerFactory.makeUnary(callHandlerContext: callHandlerContext) { context in
-        return { request in
-          self.check(request: request, context: context)
+    /// Determines, calls and returns the appropriate request handler, depending on the request's method.
+    /// Returns nil for methods not handled by this service.
+    func handleMethod(_ methodName: Substring, callHandlerContext: CallHandlerContext) -> GRPCCallHandler? {
+        switch methodName {
+        case "Check":
+            return CallHandlerFactory.makeUnary(callHandlerContext: callHandlerContext) { context in
+                { request in
+                    self.check(request: request, context: context)
+                }
+            }
+
+        case "Watch":
+            return CallHandlerFactory.makeServerStreaming(callHandlerContext: callHandlerContext) { context in
+                { request in
+                    self.watch(request: request, context: context)
+                }
+            }
+
+        default: return nil
         }
-      }
-
-    case "Watch":
-      return CallHandlerFactory.makeServerStreaming(callHandlerContext: callHandlerContext) { context in
-        return { request in
-          self.watch(request: request, context: context)
-        }
-      }
-
-    default: return nil
     }
-  }
 }
-

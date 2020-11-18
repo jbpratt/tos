@@ -25,7 +25,7 @@ public struct Tospb_Item {
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
-    public var name: String = String()
+    public var name = String()
 
     public var id: Int64 = 0
 
@@ -49,7 +49,7 @@ public struct Tospb_Option {
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
-    public var name: String = String()
+    public var name = String()
 
     public var id: Int64 = 0
 
@@ -67,7 +67,7 @@ public struct Tospb_Category {
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
-    public var name: String = String()
+    public var name = String()
 
     public var id: Int64 = 0
 
@@ -97,19 +97,19 @@ public struct Tospb_Order {
 
     public var id: Int64 = 0
 
-    public var name: String = String()
+    public var name = String()
 
     public var items: [Tospb_Item] = []
 
     public var total: Float = 0
 
-    public var status: String = String()
+    public var status = String()
 
     /// @inject_tag: db:"time_ordered"
-    public var timeOrdered: String = String()
+    public var timeOrdered = String()
 
     /// @inject_tag: db:"time_complete"
-    public var timeComplete: String = String()
+    public var timeComplete = String()
 
     public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -121,7 +121,7 @@ public struct Tospb_Response {
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
-    public var response: String = String()
+    public var response = String()
 
     public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -157,7 +157,7 @@ public struct Tospb_OrdersRequest {
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
-    public var request: String = String()
+    public var request = String()
 
     public var unknownFields = SwiftProtobuf.UnknownStorage()
 

@@ -23,7 +23,7 @@ struct MenuOrderView: View {
         }
         .padding()
         .overlay(RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.black, lineWidth: 2))
+            .stroke(Color.black, lineWidth: 2))
     }
 
     var body: some View {

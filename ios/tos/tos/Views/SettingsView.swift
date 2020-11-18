@@ -6,17 +6,31 @@ struct EditItemView: View {
     var onSave: (Tospb_Item) -> Void
 
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             HStack {
-                TextField("Name", text: $item.name)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                VStack {
+                    Text("name:")
+                    TextField("Name", text: $item.name)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                }
                 Spacer()
-                TextField("Price", value: $item.price, formatter: NumberFormatter())
-                    .keyboardType(.numberPad)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                VStack {
+                    Text("price:")
+                    TextField("Price", value: $item.price, formatter: NumberFormatter())
+                        .keyboardType(.numberPad)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                }
             }
-            ForEach(item.options.indices) { idx in editItemOption($item.options[idx]) }
+            ForEach(0 ..< item.options.count, id: \.self) { idx in
+                editItemOption($item.options[idx])
+            }
+            Button(action: {
+                item.options.append(Tospb_Option())
+            }) {
+                Text("new item option")
+            }
             buttons
+            Text("Price: 100 = $1.00").bold()
         }
         .padding()
     }
@@ -25,19 +39,28 @@ struct EditItemView: View {
         HStack {
             TextField("Option name", text: option.name)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-            Spacer()
+
             TextField("Price", value: option.price, formatter: NumberFormatter())
                 .keyboardType(.numberPad)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-            Spacer()
-            Toggle(isOn: option.selected) {}
+
+            Toggle(isOn: option.selected) {
+                Text("default")
+            }
+
+            Button(action: {}) {
+                Image(systemName: "xmark.circle")
+            }
         }
-        .padding()
+        // .padding()
     }
 
     var buttons: some View {
         HStack {
-            Button(action: { onSave(item) }) {
+            Button(action: {
+                onSave(item)
+                isPresented.toggle()
+            }) {
                 Text("Save")
             }
             Spacer()

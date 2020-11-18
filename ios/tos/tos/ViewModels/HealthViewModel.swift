@@ -31,10 +31,10 @@ final class HealthViewModel: ChannelViewModel, ObservableObject, Identifiable {
         client.check(Grpc_Health_V1_HealthCheckRequest.with { $0.service = service }).response.whenComplete { res in
             DispatchQueue.main.async {
                 switch res {
-                case .success(let res):
+                case let .success(res):
                     self.services[service] = res.status
                     self.logger.info("healthCheck: \(service) is \(res.status)")
-                case .failure(let err):
+                case let .failure(err):
                     self.services[service] = .unknown
                     self.logger.error("check failed: \(err)")
                 }
@@ -42,7 +42,7 @@ final class HealthViewModel: ChannelViewModel, ObservableObject, Identifiable {
         }
     }
 
-    func watch(_ service: String) {}
+    func watch(_: String) {}
 
     func serviceStatus(_ service: String) -> Status {
         guard let status = services[service] else {

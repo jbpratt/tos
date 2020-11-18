@@ -6,7 +6,7 @@ final class MenuViewModel: ChannelViewModel, ObservableObject, Identifiable {
     @Published private(set) var menu = Tospb_Menu()
     private lazy var client = Tospb_MenuServiceClient(
         channel: self.conn
-        //defaultCallOptions: CallOptions(timeLimit: .timeout(TimeAmount.seconds(5)))
+        // defaultCallOptions: CallOptions(timeLimit: .timeout(TimeAmount.seconds(5)))
     )
 
     override init() {
@@ -18,9 +18,9 @@ final class MenuViewModel: ChannelViewModel, ObservableObject, Identifiable {
         client.getMenu(Tospb_Empty()).response.whenComplete { res in
             DispatchQueue.main.async {
                 switch res {
-                case .success(let res):
+                case let .success(res):
                     self.menu = res
-                case .failure(let err):
+                case let .failure(err):
                     self.logger.error("getMenu failed: \(err)")
                 }
             }
@@ -32,7 +32,7 @@ final class MenuViewModel: ChannelViewModel, ObservableObject, Identifiable {
             switch res {
             case .success:
                 self.logger.info("createMenuItem success")
-            case .failure(let err):
+            case let .failure(err):
                 self.logger.error("createMenuItem failed: \(err)")
             }
         }
@@ -45,7 +45,7 @@ final class MenuViewModel: ChannelViewModel, ObservableObject, Identifiable {
             switch res {
             case .success:
                 self.logger.info("deleteMenuItem success")
-            case .failure(let err):
+            case let .failure(err):
                 self.logger.error("deleteMenuItem failed: \(err)")
             }
         }
@@ -56,7 +56,7 @@ final class MenuViewModel: ChannelViewModel, ObservableObject, Identifiable {
             switch res {
             case .success:
                 self.logger.info("updateMenuItem success")
-            case .failure(let err):
+            case let .failure(err):
                 self.logger.error("updateMenuItem failed: \(err)")
             }
         }

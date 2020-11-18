@@ -4,12 +4,12 @@ struct ActiveOrderView: View {
     var order: Tospb_Order
     var cancelOrder: (Tospb_Order) -> Void
     @State private var isExtended: Bool = false
-    
+
     init(_ order: Tospb_Order, cancel: @escaping (Tospb_Order) -> Void) {
         self.order = order
-        self.cancelOrder = cancel
+        cancelOrder = cancel
     }
-    
+
     var body: some View {
         VStack {
             HStack {
@@ -24,7 +24,7 @@ struct ActiveOrderView: View {
             }.onTapGesture {
                 isExtended.toggle()
             }
-            
+
             if isExtended {
                 Text("meme")
             }

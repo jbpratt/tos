@@ -8,9 +8,7 @@ final class OrderViewModel: ChannelViewModel, ObservableObject, Identifiable {
     @Published private(set) var currentOrder = Tospb_Order()
     @Published var currentOrderName = "" {
         didSet {
-            if currentOrderName.isEmpty {
-                currentOrder.name = currentOrderName
-            }
+            currentOrder.name = currentOrderName
         }
     }
 
@@ -32,13 +30,13 @@ final class OrderViewModel: ChannelViewModel, ObservableObject, Identifiable {
 
         client.submitOrder(
             currentOrder
-            //callOptions: CallOptions(timeLimit: .timeout(TimeAmount.seconds(5)))
+            // callOptions: CallOptions(timeLimit: .timeout(TimeAmount.seconds(5)))
         ).response.whenComplete { res in
             DispatchQueue.main.async {
                 switch res {
-                case .success(let res):
+                case let .success(res):
                     self.logger.info("submitOrder success: \(res)")
-                case .failure(let err):
+                case let .failure(err):
                     self.logger.info("submitOrder failed: \(err)")
                 }
             }
@@ -71,17 +69,17 @@ final class OrderViewModel: ChannelViewModel, ObservableObject, Identifiable {
         client.activeOrders(Tospb_Empty()).response.whenComplete { res in
             DispatchQueue.main.async {
                 switch res {
-                case .success(let res):
+                case let .success(res):
                     self.logger.info("activeOrders success: \(res)")
                     self.activeOrders = res.orders
-                case .failure(let err):
+                case let .failure(err):
                     self.logger.info("activeOrders failed: \(err)")
                 }
             }
         }
     }
-    
-    func cancelOrder(_ order: Tospb_Order) {
+
+    func cancelOrder(_: Tospb_Order) {
         logger.info("cancelOrder is unimplemented")
     }
 }

@@ -52,14 +52,14 @@ public protocol Tospb_MenuServiceClientProtocol: GRPCClient {
     ) -> UnaryCall<Tospb_Option, Tospb_Response>
 }
 
-extension Tospb_MenuServiceClientProtocol {
+public extension Tospb_MenuServiceClientProtocol {
     /// Unary call to GetMenu
     ///
     /// - Parameters:
     ///   - request: Request to send to GetMenu.
     ///   - callOptions: Call options.
     /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-    public func getMenu(
+    func getMenu(
         _ request: Tospb_Empty,
         callOptions: CallOptions? = nil
     ) -> UnaryCall<Tospb_Empty, Tospb_Menu> {
@@ -76,7 +76,7 @@ extension Tospb_MenuServiceClientProtocol {
     ///   - request: Request to send to CreateMenuItem.
     ///   - callOptions: Call options.
     /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-    public func createMenuItem(
+    func createMenuItem(
         _ request: Tospb_Item,
         callOptions: CallOptions? = nil
     ) -> UnaryCall<Tospb_Item, Tospb_CreateMenuItemResponse> {
@@ -93,7 +93,7 @@ extension Tospb_MenuServiceClientProtocol {
     ///   - request: Request to send to UpdateMenuItem.
     ///   - callOptions: Call options.
     /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-    public func updateMenuItem(
+    func updateMenuItem(
         _ request: Tospb_Item,
         callOptions: CallOptions? = nil
     ) -> UnaryCall<Tospb_Item, Tospb_Response> {
@@ -110,7 +110,7 @@ extension Tospb_MenuServiceClientProtocol {
     ///   - request: Request to send to DeleteMenuItem.
     ///   - callOptions: Call options.
     /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-    public func deleteMenuItem(
+    func deleteMenuItem(
         _ request: Tospb_DeleteMenuItemRequest,
         callOptions: CallOptions? = nil
     ) -> UnaryCall<Tospb_DeleteMenuItemRequest, Tospb_Response> {
@@ -127,7 +127,7 @@ extension Tospb_MenuServiceClientProtocol {
     ///   - request: Request to send to CreateMenuItemOption.
     ///   - callOptions: Call options.
     /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-    public func createMenuItemOption(
+    func createMenuItemOption(
         _ request: Tospb_Option,
         callOptions: CallOptions? = nil
     ) -> UnaryCall<Tospb_Option, Tospb_Response> {
@@ -178,14 +178,14 @@ public protocol Tospb_OrderServiceClientProtocol: GRPCClient {
     ) -> ServerStreamingCall<Tospb_Empty, Tospb_Order>
 }
 
-extension Tospb_OrderServiceClientProtocol {
+public extension Tospb_OrderServiceClientProtocol {
     /// Unary
     ///
     /// - Parameters:
     ///   - request: Request to send to SubmitOrder.
     ///   - callOptions: Call options.
     /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-    public func submitOrder(
+    func submitOrder(
         _ request: Tospb_Order,
         callOptions: CallOptions? = nil
     ) -> UnaryCall<Tospb_Order, Tospb_Response> {
@@ -202,7 +202,7 @@ extension Tospb_OrderServiceClientProtocol {
     ///   - request: Request to send to ActiveOrders.
     ///   - callOptions: Call options.
     /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-    public func activeOrders(
+    func activeOrders(
         _ request: Tospb_Empty,
         callOptions: CallOptions? = nil
     ) -> UnaryCall<Tospb_Empty, Tospb_OrdersResponse> {
@@ -219,7 +219,7 @@ extension Tospb_OrderServiceClientProtocol {
     ///   - request: Request to send to CompleteOrder.
     ///   - callOptions: Call options.
     /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-    public func completeOrder(
+    func completeOrder(
         _ request: Tospb_CompleteOrderRequest,
         callOptions: CallOptions? = nil
     ) -> UnaryCall<Tospb_CompleteOrderRequest, Tospb_Response> {
@@ -237,7 +237,7 @@ extension Tospb_OrderServiceClientProtocol {
     ///   - callOptions: Call options.
     ///   - handler: A closure called when each response is received from the server.
     /// - Returns: A `ServerStreamingCall` with futures for the metadata and status.
-    public func subscribeToOrders(
+    func subscribeToOrders(
         _ request: Tospb_Empty,
         callOptions: CallOptions? = nil,
         handler: @escaping (Tospb_Order) -> Void
@@ -275,12 +275,12 @@ public protocol Tospb_MenuServiceProvider: CallHandlerProvider {
     func createMenuItemOption(request: Tospb_Option, context: StatusOnlyCallContext) -> EventLoopFuture<Tospb_Response>
 }
 
-extension Tospb_MenuServiceProvider {
-    public var serviceName: Substring { return "tospb.MenuService" }
+public extension Tospb_MenuServiceProvider {
+    var serviceName: Substring { return "tospb.MenuService" }
 
     /// Determines, calls and returns the appropriate request handler, depending on the request's method.
     /// Returns nil for methods not handled by this service.
-    public func handleMethod(_ methodName: Substring, callHandlerContext: CallHandlerContext) -> GRPCCallHandler? {
+    func handleMethod(_ methodName: Substring, callHandlerContext: CallHandlerContext) -> GRPCCallHandler? {
         switch methodName {
         case "GetMenu":
             return CallHandlerFactory.makeUnary(callHandlerContext: callHandlerContext) { context in
@@ -332,12 +332,12 @@ public protocol Tospb_OrderServiceProvider: CallHandlerProvider {
     func subscribeToOrders(request: Tospb_Empty, context: StreamingResponseCallContext<Tospb_Order>) -> EventLoopFuture<GRPCStatus>
 }
 
-extension Tospb_OrderServiceProvider {
-    public var serviceName: Substring { return "tospb.OrderService" }
+public extension Tospb_OrderServiceProvider {
+    var serviceName: Substring { return "tospb.OrderService" }
 
     /// Determines, calls and returns the appropriate request handler, depending on the request's method.
     /// Returns nil for methods not handled by this service.
-    public func handleMethod(_ methodName: Substring, callHandlerContext: CallHandlerContext) -> GRPCCallHandler? {
+    func handleMethod(_ methodName: Substring, callHandlerContext: CallHandlerContext) -> GRPCCallHandler? {
         switch methodName {
         case "SubmitOrder":
             return CallHandlerFactory.makeUnary(callHandlerContext: callHandlerContext) { context in

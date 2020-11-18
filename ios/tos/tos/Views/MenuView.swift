@@ -6,7 +6,7 @@ struct MenuView: View {
 
     @State private var isPopupActive: Bool = false
     @State private var selection: Set<Tospb_Category> = []
-    @State private var itemSelected: Tospb_Item = Tospb_Item()
+    @State private var itemSelected = Tospb_Item()
 
     var body: some View {
         ZStack {
