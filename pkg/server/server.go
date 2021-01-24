@@ -16,7 +16,6 @@ import (
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/jbpratt/tos/pkg/db"
-	services "github.com/jbpratt/tos/pkg/db"
 	"github.com/jbpratt/tos/pkg/pb"
 	"github.com/jbpratt/tos/pkg/printer"
 	_ "github.com/mattn/go-sqlite3"
@@ -65,7 +64,6 @@ type server struct {
 }
 
 func (s *server) GetMenu(ctx context.Context, empty *pb.Empty) (*pb.Menu, error) {
-
 	if len(s.menu.GetCategories()) == 0 {
 		return nil, status.Error(codes.NotFound, "menu is empty")
 	}
@@ -73,7 +71,6 @@ func (s *server) GetMenu(ctx context.Context, empty *pb.Empty) (*pb.Menu, error)
 }
 
 func (s *server) CreateMenuItem(ctx context.Context, req *pb.Item) (*pb.CreateMenuItemResponse, error) {
-
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "no item provided")
 	}
@@ -111,7 +108,6 @@ func (s *server) CreateMenuItem(ctx context.Context, req *pb.Item) (*pb.CreateMe
 }
 
 func (s *server) UpdateMenuItem(ctx context.Context, req *pb.Item) (*pb.Response, error) {
-
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "item id not provided")
 	}
@@ -130,7 +126,6 @@ func (s *server) UpdateMenuItem(ctx context.Context, req *pb.Item) (*pb.Response
 }
 
 func (s *server) DeleteMenuItem(ctx context.Context, req *pb.DeleteMenuItemRequest) (*pb.Response, error) {
-
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
 			"req must not be nil")
@@ -150,7 +145,6 @@ func (s *server) DeleteMenuItem(ctx context.Context, req *pb.DeleteMenuItemReque
 }
 
 func (s *server) CreateMenuItemOption(ctx context.Context, req *pb.Option) (*pb.Response, error) {
-
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
 			"item option not provided")
@@ -160,7 +154,6 @@ func (s *server) CreateMenuItemOption(ctx context.Context, req *pb.Option) (*pb.
 }
 
 func (s *server) SubmitOrder(ctx context.Context, req *pb.Order) (*pb.Response, error) {
-
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument,
 			"order not provided")
@@ -220,7 +213,6 @@ func publish(ps *pubsub.PubSub, order *pb.Order, topic string) {
 }
 
 func (s *server) CompleteOrder(ctx context.Context, req *pb.CompleteOrderRequest) (*pb.Response, error) {
-
 	if req.GetId() == 0 {
 		return nil, status.Errorf(codes.InvalidArgument,
 			"order id must be non zero")
@@ -244,7 +236,6 @@ func (s *server) CompleteOrder(ctx context.Context, req *pb.CompleteOrderRequest
 }
 
 func (s *server) ActiveOrders(ctx context.Context, empty *pb.Empty) (*pb.OrdersResponse, error) {
-
 	if s.orders == nil {
 		return nil, status.Errorf(codes.Internal,
 			"ActiveOrders() failed: server.orders has not been initialized")
@@ -254,7 +245,6 @@ func (s *server) ActiveOrders(ctx context.Context, empty *pb.Empty) (*pb.OrdersR
 }
 
 func (s *server) loadData() error {
-
 	menu, err := s.services.Menu.GetMenu()
 	if err != nil {
 		return err
@@ -312,7 +302,8 @@ func NewServer() (*server, error) {
 	}
 
 	if *prnt {
-		p, err := printer.NewFromPath(*lpDev)
+		var p *printer.Printer
+		p, err = printer.NewFromPath(*lpDev)
 		if err != nil {
 			return nil, err
 		}
@@ -325,11 +316,11 @@ func NewServer() (*server, error) {
 	return server, nil
 }
 
-func newServices() (*services.Services, error) {
-	services, err := services.NewServices(
-		services.WithSqlite(*dbp),
-		services.WithMenu(),
-		services.WithOrder(),
+func newServices() (*db.Services, error) {
+	services, err := db.NewServices(
+		db.WithSqlite(*dbp),
+		db.WithMenu(),
+		db.WithOrder(),
 	)
 	if err != nil {
 		return nil, err

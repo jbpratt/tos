@@ -1,3 +1,4 @@
+// Package printer ...
 package printer
 
 import (
@@ -51,5 +52,4 @@ func (p *Printer) Print(text string) {
 }
 
 func (p *Printer) Close() {
-	p.Close()
 }
