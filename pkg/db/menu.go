@@ -1,24 +1,30 @@
 package db
 
 import (
+	"context"
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"sync"
 
+	"github.com/jbpratt/tos/internal/models"
 	"github.com/jbpratt/tos/pkg/pb"
-	"github.com/jmoiron/sqlx"
+	"github.com/volatiletech/sqlboiler/v4/boil"
+
+	// db driver
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // MenuDB is everything that interacts with the database
 // involving the menu
 type MenuDB interface {
-	SeedMenu() error
-	CreateMenuItem(*pb.Item) (int64, error)
-	DeleteMenuItem(int64) error
-	UpdateMenuItem(*pb.Item) error
+	SeedMenu(context.Context) error
+	CreateMenuItem(context.Context, *pb.Item) (int64, error)
+	DeleteMenuItem(context.Context, int64) error
+	UpdateMenuItem(context.Context, *pb.Item) error
 	// CreateMenuItemOption() error
-	GetMenu() (*pb.Menu, error)
+	GetMenu(context.Context) (*pb.Menu, error)
 }
 
 // MenuService the the abstraction for the MenuDB
@@ -34,50 +40,15 @@ type menuService struct {
 
 type menuDB struct {
 	sync.RWMutex
-	db *sqlx.DB
+	db *sql.DB
 }
 
-const menuSchema = `
-CREATE TABLE IF NOT EXISTS categories (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS items (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  price DECIMAL NOT NULL,
-  category_id INTEGER NOT NULL, 
-  CONSTRAINT fk_categories
-    FOREIGN KEY (category_id) REFERENCES categories(id)
-);
-
-CREATE TABLE IF NOT EXISTS options (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  price DECIMAL NOT NULL,
-  selected BOOLEAN NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS item_options (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  item_id INTEGER NOT NULL,
-  option_id INTEGER NOT NULL,
-  FOREIGN KEY (item_id) REFERENCES items(id),
-  FOREIGN KEY (option_id) REFERENCES options(id)
-);`
-
 // NewMenuService creates a menu service for interacting with the database
-func NewMenuService(db *sqlx.DB) (MenuService, error) {
-	_, err := db.Exec(menuSchema)
-	if err != nil {
-		return nil, err
-	}
-
+func NewMenuService(db *sql.DB) (MenuService, error) {
 	return &menuService{&menuDB{db: db}}, nil
 }
 
-func (m *menuDB) SeedMenu() error {
+func (m *menuDB) SeedMenu(ctx context.Context) error {
 	m.Lock()
 	defer m.Unlock()
 
@@ -91,21 +62,18 @@ func (m *menuDB) SeedMenu() error {
 		return err
 	}
 
-	for i, category := range menu.GetCategories() {
-		_, err := tx.Exec("INSERT INTO categories (name) VALUES (?)", category.GetName())
-		if err != nil {
+	for _, category := range menu.GetCategories() {
+		c := &models.ItemKind{Name: category.GetName()}
+		if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
 			tx.Rollback()
 			return err
 		}
 		for _, item := range category.GetItems() {
-			result, err := tx.Exec(
-				"INSERT INTO items (name, price, category_id) VALUES (?,?,?)",
-				item.GetName(), item.GetPrice(), i+1)
-			if err != nil {
+			i := &models.Item{Name: item.GetName(), Price: int64(item.GetPrice()), KindID: c.ID.Int64}
+			if err = i.Insert(ctx, tx, boil.Infer()); err != nil {
 				tx.Rollback()
 				return err
 			}
-			itemid, _ := result.LastInsertId()
 			for _, option := range item.GetOptions() {
 				res, err := tx.Exec(
 					"INSERT INTO options (name, price, selected) VALUES (?,?,?)",
@@ -134,9 +102,10 @@ func (m *menuDB) SeedMenu() error {
 }
 
 // TODO: stop using fmt.Sprintf to format queries
-func (m *menuDB) GetMenu() (*pb.Menu, error) {
+func (m *menuDB) GetMenu(ctx context.Context) (*pb.Menu, error) {
 	m.RLock()
 	defer m.RUnlock()
+
 	var categories []*pb.Category
 	menu := &pb.Menu{
 		Categories: categories,
@@ -163,18 +132,20 @@ func (m *menuDB) GetMenu() (*pb.Menu, error) {
 }
 
 // need to reload
-func (m *menuDB) CreateMenuItem(item *pb.Item) (int64, error) {
+func (m *menuDB) CreateMenuItem(ctx context.Context, item *pb.Item) (int64, error) {
 	m.Lock()
 	defer m.Unlock()
 
-	res, err := m.db.Exec(
-		"INSERT INTO items (name, price, category_id) VALUES (?,?,?)",
-		item.GetName(), item.GetPrice(), item.GetCategoryID())
-	if err != nil {
+	i := &models.Item{
+		Name:   item.GetName(),
+		Price:  item.GetPrice(),
+		KindID: item.GetCategoryID(),
+	}
+	if err := i.InsertG(ctx, boil.Infer()); err != nil {
 		return 0, err
 	}
 
-	return res.LastInsertId()
+	return i.ID.Int64, nil
 }
 
 func (m *menuDB) UpdateMenuItem(item *pb.Item) error {
