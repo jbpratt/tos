@@ -71,7 +71,8 @@ CREATE TABLE IF NOT EXISTS item_sides (
 
 CREATE TABLE IF NOT EXISTS orders (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  created_at INTEGER NOT NULL
+  created_at INTEGER NOT NULL,
+  completed_at INTEGER
 );
 
 /*

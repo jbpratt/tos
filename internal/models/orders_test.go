@@ -732,7 +732,7 @@ func testOrdersSelect(t *testing.T) {
 }
 
 var (
-	orderDBTypes = map[string]string{`ID`: `INTEGER`, `CreatedAt`: `INTEGER`}
+	orderDBTypes = map[string]string{`ID`: `INTEGER`, `CreatedAt`: `INTEGER`, `CompletedAt`: `INTEGER`}
 	_            = bytes.MinRead
 )
 

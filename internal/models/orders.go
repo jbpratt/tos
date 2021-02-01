@@ -23,29 +23,34 @@ import (
 
 // Order is an object representing the database table.
 type Order struct {
-	ID        null.Int64 `boil:"id" json:"id,omitempty" toml:"id" yaml:"id,omitempty"`
-	CreatedAt int64      `boil:"created_at" json:"createdAt" toml:"createdAt" yaml:"createdAt"`
+	ID          null.Int64 `boil:"id" json:"id,omitempty" toml:"id" yaml:"id,omitempty"`
+	CreatedAt   int64      `boil:"created_at" json:"createdAt" toml:"createdAt" yaml:"createdAt"`
+	CompletedAt null.Int64 `boil:"completed_at" json:"completedAt,omitempty" toml:"completedAt" yaml:"completedAt,omitempty"`
 
 	R *orderR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L orderL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var OrderColumns = struct {
-	ID        string
-	CreatedAt string
+	ID          string
+	CreatedAt   string
+	CompletedAt string
 }{
-	ID:        "id",
-	CreatedAt: "created_at",
+	ID:          "id",
+	CreatedAt:   "created_at",
+	CompletedAt: "completed_at",
 }
 
 // Generated where
 
 var OrderWhere = struct {
-	ID        whereHelpernull_Int64
-	CreatedAt whereHelperint64
+	ID          whereHelpernull_Int64
+	CreatedAt   whereHelperint64
+	CompletedAt whereHelpernull_Int64
 }{
-	ID:        whereHelpernull_Int64{field: "\"orders\".\"id\""},
-	CreatedAt: whereHelperint64{field: "\"orders\".\"created_at\""},
+	ID:          whereHelpernull_Int64{field: "\"orders\".\"id\""},
+	CreatedAt:   whereHelperint64{field: "\"orders\".\"created_at\""},
+	CompletedAt: whereHelpernull_Int64{field: "\"orders\".\"completed_at\""},
 }
 
 // OrderRels is where relationship names are stored.
@@ -72,9 +77,9 @@ func (*orderR) NewStruct() *orderR {
 type orderL struct{}
 
 var (
-	orderAllColumns            = []string{"id", "created_at"}
+	orderAllColumns            = []string{"id", "created_at", "completed_at"}
 	orderColumnsWithoutDefault = []string{}
-	orderColumnsWithDefault    = []string{"id", "created_at"}
+	orderColumnsWithDefault    = []string{"id", "created_at", "completed_at"}
 	orderPrimaryKeyColumns     = []string{"id"}
 )
 

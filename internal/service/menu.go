@@ -59,7 +59,7 @@ func (m *menuDB) SeedMenu(ctx context.Context) error {
 		return fmt.Errorf("failed to load static menu: %w", err)
 	}
 
-	tx, err := m.db.Begin()
+	tx, err := boil.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
