@@ -1,3 +1,4 @@
+// Package server ...
 package server
 
 import (
@@ -15,10 +16,9 @@ import (
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/jbpratt/tos/pkg/db"
-	"github.com/jbpratt/tos/pkg/pb"
-	"github.com/jbpratt/tos/pkg/printer"
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/jbpratt/tos/internal/pb"
+	"github.com/jbpratt/tos/internal/printer"
+	db "github.com/jbpratt/tos/internal/service"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
@@ -98,13 +98,13 @@ func (s *server) CreateMenuItem(ctx context.Context, req *pb.Item) (*pb.CreateMe
 		}
 	}
 
-	id, err := s.services.Menu.CreateMenuItem(req)
+	id, err := s.services.Menu.CreateMenuItem(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal,
 			"services..CreateMenuItem(%v) returned %v", req, err)
 	}
 
-	return &pb.CreateMenuItemResponse{Id: id}, s.loadData()
+	return &pb.CreateMenuItemResponse{Id: id}, s.loadData(ctx)
 }
 
 func (s *server) UpdateMenuItem(ctx context.Context, req *pb.Item) (*pb.Response, error) {
@@ -117,12 +117,12 @@ func (s *server) UpdateMenuItem(ctx context.Context, req *pb.Item) (*pb.Response
 			"req must have itemid (non 0)")
 	}
 
-	if err := s.services.Menu.UpdateMenuItem(req); err != nil {
+	if err := s.services.Menu.UpdateMenuItem(ctx, req); err != nil {
 		return nil, status.Errorf(codes.Internal,
 			"services..UpdateMenuItem(%v) returned %v", req, err)
 	}
 
-	return &pb.Response{Response: "success"}, s.loadData()
+	return &pb.Response{Response: "success"}, s.loadData(ctx)
 }
 
 func (s *server) DeleteMenuItem(ctx context.Context, req *pb.DeleteMenuItemRequest) (*pb.Response, error) {
@@ -136,12 +136,12 @@ func (s *server) DeleteMenuItem(ctx context.Context, req *pb.DeleteMenuItemReque
 			"req must have itemid (non 0)")
 	}
 
-	if err := s.services.Menu.DeleteMenuItem(req.GetId()); err != nil {
+	if err := s.services.Menu.DeleteMenuItem(ctx, req.GetId()); err != nil {
 		return nil, status.Errorf(codes.Internal,
 			"services..UpdateMenuItem(%v) returned %v", req, err)
 	}
 
-	return &pb.Response{Response: "success"}, s.loadData()
+	return &pb.Response{Response: "success"}, s.loadData(ctx)
 }
 
 func (s *server) CreateMenuItemOption(ctx context.Context, req *pb.Option) (*pb.Response, error) {
@@ -188,7 +188,7 @@ func (s *server) SubmitOrder(ctx context.Context, req *pb.Order) (*pb.Response, 
 		_ = ioutil.WriteFile("data.json", file, os.ModePerm)
 	}
 
-	return &pb.Response{Response: "Order has been placed.."}, s.loadData()
+	return &pb.Response{Response: "Order has been placed.."}, s.loadData(ctx)
 }
 
 func (s *server) SubscribeToOrders(req *pb.Empty, stream pb.OrderService_SubscribeToOrdersServer) error {
@@ -232,7 +232,7 @@ func (s *server) CompleteOrder(ctx context.Context, req *pb.CompleteOrderRequest
 		return nil, err
 	}
 
-	return &pb.Response{Response: "Order marked as complete"}, s.loadData()
+	return &pb.Response{Response: "Order marked as complete"}, s.loadData(ctx)
 }
 
 func (s *server) ActiveOrders(ctx context.Context, empty *pb.Empty) (*pb.OrdersResponse, error) {
@@ -244,18 +244,18 @@ func (s *server) ActiveOrders(ctx context.Context, empty *pb.Empty) (*pb.OrdersR
 	return &pb.OrdersResponse{Orders: s.orders}, nil
 }
 
-func (s *server) loadData() error {
-	menu, err := s.services.Menu.GetMenu()
+func (s *server) loadData(ctx context.Context) error {
+	menu, err := s.services.Menu.GetMenu(ctx)
 	if err != nil {
 		return err
 	}
 
 	if len(menu.GetCategories()) == 0 {
-		if err = s.services.Menu.SeedMenu(); err != nil {
+		if err = s.services.Menu.SeedMenu(ctx); err != nil {
 			return err
 		}
 
-		menu, err = s.services.Menu.GetMenu()
+		menu, err = s.services.Menu.GetMenu(ctx)
 		if err != nil {
 			return err
 		}
@@ -285,8 +285,7 @@ func NewServer() (*server, error) {
 		TimestampFormat: time.RFC3339Nano,
 		DisableSorting:  true,
 	})
-	// maybe not?
-	// Should only be done from init functions
+
 	reg.MustRegister(grpcMetrics)
 	grpclog.SetLoggerV2(grpclog.NewLoggerV2(logger.Out, logger.Out, logger.Out))
 
@@ -310,7 +309,7 @@ func NewServer() (*server, error) {
 		server.p = p
 	}
 
-	if err = server.loadData(); err != nil {
+	if err = server.loadData(context.Background()); err != nil {
 		return nil, err
 	}
 	return server, nil

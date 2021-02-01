@@ -1,15 +1,19 @@
-package db
+package service
 
 import (
+	"context"
+	"database/sql"
 	"testing"
 
-	"github.com/jbpratt/tos/pkg/pb"
-	"github.com/jmoiron/sqlx"
+	"github.com/jbpratt/tos/internal/pb"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func TestSeedMenu(t *testing.T) {
-	db, err := sqlx.Open("sqlite3", ":memory:")
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	db, err := sql.Open("sqlite3", ":memory:")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -19,7 +23,7 @@ func TestSeedMenu(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err = menuService.SeedMenu(); err != nil {
+	if err = menuService.SeedMenu(ctx); err != nil {
 		t.Fatal(err)
 	}
 
@@ -29,7 +33,10 @@ func TestSeedMenu(t *testing.T) {
 }
 
 func TestGetMenu(t *testing.T) {
-	db, err := sqlx.Open("sqlite3", ":memory:")
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	db, err := sql.Open("sqlite3", ":memory:")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -39,11 +46,11 @@ func TestGetMenu(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err = menuService.SeedMenu(); err != nil {
+	if err = menuService.SeedMenu(ctx); err != nil {
 		t.Fatal(err)
 	}
 
-	menu, err := menuService.GetMenu()
+	menu, err := menuService.GetMenu(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -57,7 +64,10 @@ func TestGetMenu(t *testing.T) {
 }
 
 func TestCreateMenuItem(t *testing.T) {
-	db, err := sqlx.Open("sqlite3", ":memory:")
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	db, err := sql.Open("sqlite3", ":memory:")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -73,7 +83,7 @@ func TestCreateMenuItem(t *testing.T) {
 		Price:      399,
 	}
 
-	_, err = menuService.CreateMenuItem(item)
+	_, err = menuService.CreateMenuItem(ctx, item)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -83,7 +93,10 @@ func TestCreateMenuItem(t *testing.T) {
 }
 
 func TestDeleteMenuItem(t *testing.T) {
-	db, err := sqlx.Open("sqlite3", ":memory:")
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	db, err := sql.Open("sqlite3", ":memory:")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -99,12 +112,12 @@ func TestDeleteMenuItem(t *testing.T) {
 		Price:      399,
 	}
 
-	_, err = menuService.CreateMenuItem(item)
+	_, err = menuService.CreateMenuItem(ctx, item)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if err = menuService.DeleteMenuItem(1); err != nil {
+	if err = menuService.DeleteMenuItem(ctx, 1); err != nil {
 		t.Fatal(err)
 	}
 	if err := db.Close(); err != nil {

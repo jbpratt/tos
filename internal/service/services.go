@@ -1,9 +1,9 @@
-package db
+// Package service ...
+package service
 
 import (
+	"database/sql"
 	"log"
-
-	"github.com/jmoiron/sqlx"
 )
 
 // Services is the implementation of both the
@@ -12,7 +12,7 @@ import (
 type Services struct {
 	Order OrderService
 	Menu  MenuService
-	db    *sqlx.DB
+	db    *sql.DB
 }
 
 // Config is used for determing use of which services and db
@@ -33,7 +33,7 @@ func NewServices(cfgs ...Config) (*Services, error) {
 // WithSqlite takes in a path and opens the database
 func WithSqlite(path string) Config {
 	return func(s *Services) error {
-		db, err := sqlx.Open("sqlite3", path)
+		db, err := sql.Open("sqlite3", path)
 		if err != nil {
 			log.Fatalf("Failed to open DB: %v\n", err)
 		}

@@ -1,16 +1,16 @@
-package db
+package service
 
 import (
+	"database/sql"
 	"testing"
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/jbpratt/tos/pkg/pb"
-	"github.com/jmoiron/sqlx"
+	"github.com/jbpratt/tos/internal/pb"
 )
 
 func TestOrderServiceFull(t *testing.T) {
-	db, err := sqlx.Open("sqlite3", ":memory:")
+	db, err := sql.Open("sqlite3", ":memory:")
 	if err != nil {
 		t.Fatal(err)
 	}

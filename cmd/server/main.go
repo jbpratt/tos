@@ -3,7 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/jbpratt/tos/pkg/server"
+	"github.com/jbpratt/tos/internal/server"
+	_ "github.com/mattn/go-sqlite3" // db
 )
 
 func main() {

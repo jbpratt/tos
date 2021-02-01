@@ -7,7 +7,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/jbpratt/tos/pkg/pb"
+	"github.com/jbpratt/tos/internal/pb"
 	"github.com/knq/escpos"
 )
 
@@ -37,7 +37,7 @@ func New(w io.ReadWriteCloser) *Printer {
 func (p *Printer) PrintOrder(order *pb.Order) {
 	p.p.Write(order.GetName())
 	p.p.Formfeed()
-	p.p.Write(fmt.Sprintf("%f", order.GetTotal()))
+	p.p.Write(fmt.Sprintf("%d", order.GetTotal()))
 	p.p.Formfeed()
 	p.p.Cut()
 	p.p.End()

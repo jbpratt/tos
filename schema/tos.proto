@@ -1,12 +1,12 @@
 syntax = "proto3";
 
 package tospb;
-option go_package = "protofiles;pb";
+option go_package = "schema;pb";
 
 message Item {
   string name = 1;
   int64 id = 2;
-  float price = 3;
+  int64 price = 3;
   // @inject_tag: db:"category_id"
   int64 categoryID = 4;
   // @inject_tag: db:"order_item_id"
@@ -17,7 +17,7 @@ message Item {
 message Option {
   string name = 1;
   int64 id = 2;
-  float price = 3;
+  int64 price = 3;
   bool selected = 4;
 }
 
@@ -33,7 +33,7 @@ message Order {
   int64 id = 1;
   string name = 2;
   repeated Item items = 3;
-  float total = 4;
+  int64 total = 4;
   string status = 5;
   // @inject_tag: db:"time_ordered"
   string time_ordered = 6;

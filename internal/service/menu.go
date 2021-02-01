@@ -1,4 +1,4 @@
-package db
+package service
 
 import (
 	"context"
@@ -9,8 +9,10 @@ import (
 	"sync"
 
 	"github.com/jbpratt/tos/internal/models"
-	"github.com/jbpratt/tos/pkg/pb"
+	"github.com/jbpratt/tos/internal/pb"
+	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
+	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
 	// db driver
 	_ "github.com/mattn/go-sqlite3"
@@ -62,37 +64,40 @@ func (m *menuDB) SeedMenu(ctx context.Context) error {
 		return err
 	}
 
-	for _, category := range menu.GetCategories() {
-		c := &models.ItemKind{Name: category.GetName()}
-		if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
-			tx.Rollback()
-			return err
-		}
-		for _, item := range category.GetItems() {
-			i := &models.Item{Name: item.GetName(), Price: int64(item.GetPrice()), KindID: c.ID.Int64}
-			if err = i.Insert(ctx, tx, boil.Infer()); err != nil {
+	_ = menu
+	/*
+		for _, category := range menu.GetCategories() {
+			c := &models.ItemKind{Name: category.GetName()}
+			if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
 				tx.Rollback()
 				return err
 			}
-			for _, option := range item.GetOptions() {
-				res, err := tx.Exec(
-					"INSERT INTO options (name, price, selected) VALUES (?,?,?)",
-					option.GetName(), option.GetPrice(), option.GetSelected())
-				if err != nil {
+			for _, item := range category.GetItems() {
+				i := &models.Item{Name: item.GetName(), Price: int64(item.GetPrice()), KindID: c.ID.Int64}
+				if err = i.Insert(ctx, tx, boil.Infer()); err != nil {
 					tx.Rollback()
 					return err
 				}
-				optionid, _ := res.LastInsertId()
-				_, err = tx.Exec(
-					"INSERT INTO item_options (item_id, option_id) VALUES (?,?)",
-					itemid, optionid)
-				if err != nil {
-					tx.Rollback()
-					return err
+				for _, option := range item.GetOptions() {
+					res, err := tx.Exec(
+						"INSERT INTO options (name, price, selected) VALUES (?,?,?)",
+						option.GetName(), option.GetPrice(), option.GetSelected())
+					if err != nil {
+						tx.Rollback()
+						return err
+					}
+					optionid, _ := res.LastInsertId()
+					_, err = tx.Exec(
+						"INSERT INTO item_options (item_id, option_id) VALUES (?,?)",
+						itemid, optionid)
+					if err != nil {
+						tx.Rollback()
+						return err
+					}
 				}
 			}
 		}
-	}
+	*/
 
 	if err = tx.Commit(); err != nil {
 		return err
@@ -110,24 +115,26 @@ func (m *menuDB) GetMenu(ctx context.Context) (*pb.Menu, error) {
 	menu := &pb.Menu{
 		Categories: categories,
 	}
-	if err := m.db.Select(&menu.Categories, "SELECT * from categories"); err != nil {
-		return nil, err
-	}
-	for _, category := range menu.GetCategories() {
-		if err := m.db.Select(&category.Items,
-			fmt.Sprintf("SELECT * FROM items WHERE category_id = %v", category.GetId())); err != nil {
+	/*
+		if err := m.db.Select(&menu.Categories, "SELECT * from categories"); err != nil {
 			return nil, err
 		}
-		for _, item := range category.GetItems() {
-			if err := m.db.Select(&item.Options, fmt.Sprintf(
-				`
-				SELECT name,price,selected,options.id 
-				FROM options JOIN item_options as io ON options.id = io.option_id 
-				WHERE item_id = %d`, item.GetId())); err != nil {
+		for _, category := range menu.GetCategories() {
+			if err := m.db.Select(&category.Items,
+				fmt.Sprintf("SELECT * FROM items WHERE category_id = %v", category.GetId())); err != nil {
 				return nil, err
 			}
+			for _, item := range category.GetItems() {
+				if err := m.db.Select(&item.Options, fmt.Sprintf(
+					`
+					SELECT name,price,selected,options.id
+					FROM options JOIN item_options as io ON options.id = io.option_id
+					WHERE item_id = %d`, item.GetId())); err != nil {
+					return nil, err
+				}
+			}
 		}
-	}
+	*/
 	return menu, nil
 }
 
@@ -148,32 +155,33 @@ func (m *menuDB) CreateMenuItem(ctx context.Context, item *pb.Item) (int64, erro
 	return i.ID.Int64, nil
 }
 
-func (m *menuDB) UpdateMenuItem(item *pb.Item) error {
+func (m *menuDB) UpdateMenuItem(ctx context.Context, item *pb.Item) error {
 	m.Lock()
 	defer m.Unlock()
 
-	_, err := m.db.Exec(
-		"UPDATE items SET name = ?, price = ?, category_id = ? WHERE id = ?",
-		item.GetName(), item.GetPrice(), item.GetCategoryID(), item.GetId())
+	itm, err := models.FindItemG(ctx, null.Int64From(item.Id))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to find item: %w", err)
 	}
+
+	itm.Name = item.Name
+	itm.Price = item.Price
+
+	_, err = itm.UpdateG(ctx, boil.Infer())
+	if err != nil {
+		return fmt.Errorf("failed to update item: %w", err)
+	}
+
 	return nil
 }
 
-func (m *menuDB) DeleteMenuItem(id int64) error {
+func (m *menuDB) DeleteMenuItem(ctx context.Context, id int64) error {
 	m.Lock()
 	defer m.Unlock()
 
-	res, err := m.db.Exec(
-		"DELETE FROM items WHERE id = ?", id)
+	aff, err := models.Items(qm.Where("id=?", id)).DeleteAllG(ctx)
 	if err != nil {
-		return err
-	}
-
-	aff, err := res.RowsAffected()
-	if err != nil {
-		return err
+		return fmt.Errorf("failed to delete item: %w", err)
 	}
 
 	if aff == 0 {

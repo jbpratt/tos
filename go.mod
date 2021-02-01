@@ -9,7 +9,6 @@ require (
 	github.com/golang/protobuf v1.4.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
-	github.com/jmoiron/sqlx v1.2.0
 	github.com/knq/escpos v0.0.0-20201012084129-81d0344e35fa
 	github.com/mattn/go-sqlite3 v1.14.6
 	github.com/pkg/errors v0.9.1

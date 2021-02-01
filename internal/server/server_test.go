@@ -5,10 +5,13 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/jbpratt/tos/pkg/pb"
+	"github.com/jbpratt/tos/internal/pb"
 )
 
 func TestServer(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	*dbp = ":memory:"
 	*prnt = false
 
@@ -19,18 +22,18 @@ func TestServer(t *testing.T) {
 
 	defer s.services.Close()
 
-	if err = s.loadData(); err != nil {
+	if err = s.loadData(ctx); err != nil {
 		t.Fatalf("server.loadData() failed with %v", err)
 	}
 
-	menu, err := s.GetMenu(context.Background(), &pb.Empty{})
+	menu, err := s.GetMenu(ctx, &pb.Empty{})
 	if err != nil {
 		t.Errorf("server.GetMenu() failed with %v", err)
 	}
 
 	testItem := &pb.Item{Name: "Test item", Price: 495, CategoryID: 1}
 
-	res, err := s.CreateMenuItem(context.Background(), testItem)
+	res, err := s.CreateMenuItem(ctx, testItem)
 	if err != nil {
 		t.Errorf("server.CreateMenuItem(%v) failed with %v", testItem, err)
 	}
@@ -42,7 +45,7 @@ func TestServer(t *testing.T) {
 
 	testItem = &pb.Item{Id: res.GetId(), Name: "New test item", Price: 555, CategoryID: 2}
 
-	_, err = s.UpdateMenuItem(context.Background(), testItem)
+	_, err = s.UpdateMenuItem(ctx, testItem)
 	if err != nil {
 		t.Fatalf("server.UpdateMenuItem(%v) failed with %v", testItem, err)
 	}
@@ -52,8 +55,7 @@ func TestServer(t *testing.T) {
 		t.Error("UpdateMenuItem() failed to update the item")
 	}
 
-	_, err = s.DeleteMenuItem(context.Background(),
-		&pb.DeleteMenuItemRequest{Id: res.GetId()})
+	_, err = s.DeleteMenuItem(ctx, &pb.DeleteMenuItemRequest{Id: res.GetId()})
 	if err != nil {
 		t.Errorf("server.DeleteMenuItem() failed with %v", err)
 	}
@@ -72,7 +74,7 @@ func TestServer(t *testing.T) {
 	}
 
 	for _, o := range testOrders {
-		_, err = s.SubmitOrder(context.Background(), o)
+		_, err = s.SubmitOrder(ctx, o)
 		if err != nil {
 			t.Errorf("server.SubmitOrder() failed with %v", err)
 		}

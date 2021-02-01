@@ -1,13 +1,12 @@
-package db
+package service
 
 import (
 	"database/sql"
-	"fmt"
+	"errors"
 	"sync"
 	"time"
 
-	"github.com/jbpratt/tos/pkg/pb"
-	"github.com/jmoiron/sqlx"
+	"github.com/jbpratt/tos/internal/pb"
 )
 
 // OrderDB is everything that interacts with the database
@@ -30,8 +29,8 @@ type orderService struct {
 }
 
 type orderDB struct {
-	sync.RWMutex
-	db *sqlx.DB
+	rw sync.RWMutex
+	db *sql.DB
 }
 
 const orderSchema = `
@@ -62,7 +61,7 @@ CREATE TABLE IF NOT EXISTS order_item_options (
 
 // NewOrderService creates a new order service for interacting
 // with the database
-func NewOrderService(db *sqlx.DB) (OrderService, error) {
+func NewOrderService(db *sql.DB) (OrderService, error) {
 	_, err := db.Exec(orderSchema)
 	if err != nil {
 		return nil, err
@@ -72,8 +71,9 @@ func NewOrderService(db *sqlx.DB) (OrderService, error) {
 }
 
 func (o *orderDB) SubmitOrder(order *pb.Order) error {
-	o.Lock()
-	defer o.Unlock()
+	o.rw.Lock()
+	defer o.rw.Unlock()
+
 	tx, err := o.db.Begin()
 	if err != nil {
 		return err
@@ -149,8 +149,8 @@ func submitOrderItemOptions(tx *sql.Tx, item *pb.Item) error {
 }
 
 func (o *orderDB) GetOrders() ([]*pb.Order, error) {
-	o.RLock()
-	defer o.RUnlock()
+	o.rw.RLock()
+	defer o.rw.RUnlock()
 	orders, err := o.getOrders()
 	if err != nil {
 		return nil, err
@@ -171,60 +171,69 @@ func (o *orderDB) GetOrders() ([]*pb.Order, error) {
 }
 
 func (o *orderDB) getOrders() ([]*pb.Order, error) {
-	var orders []*pb.Order
-	err := o.db.Select(&orders,
-		"SELECT * FROM orders WHERE status = 'active'")
-	if err != nil {
-		return nil, err
-	}
-	return orders, nil
+	//var orders []*pb.Order
+	/*
+		err := o.db.Select(&orders,
+			"SELECT * FROM orders WHERE status = 'active'")
+		if err != nil {
+			return nil, err
+		}
+		return orders, nil
+	*/
+	return nil, errors.New("unimplemented")
 }
 
 func (o *orderDB) getOrderItems(order *pb.Order) error {
-	err := o.db.Select(&order.Items, fmt.Sprintf(
-		`
-		SELECT name,price,items.id,order_items.id as order_item_id
-		FROM items JOIN order_items ON items.id = order_items.item_id 
-		WHERE order_id = %d`, order.GetId()))
-	if err != nil {
-		return err
-	}
+	/*
+		err := o.db.Select(&order.Items, fmt.Sprintf(
+			`
+			SELECT name,price,items.id,order_items.id as order_item_id
+			FROM items JOIN order_items ON items.id = order_items.item_id
+			WHERE order_id = %d`, order.GetId()))
+		if err != nil {
+			return err
+		}
+	*/
 
-	return nil
+	return errors.New("unimplemented")
 }
 
 func (o *orderDB) getOrderItemOptions(item *pb.Item, id int64) error {
-	err := o.db.Select(&item.Options, fmt.Sprintf(
-		`
-		SELECT options.name,options.price 
-		FROM order_item_options AS oio CROSS JOIN order_items
-		CROSS JOIN options WHERE order_item_id = order_items.id
-		AND oio.option_id = options.id 
-		AND order_id = %d
-		AND item_id = %d
-		AND order_item_id = %d`, id, item.GetId(), item.GetOrderItemID()))
-	if err != nil {
-		return err
-	}
-	for _, option := range item.GetOptions() {
-		option.Selected = true
-	}
+	/*	err := o.db.Select(&item.Options, fmt.Sprintf(
+			`
+			SELECT options.name,options.price
+			FROM order_item_options AS oio CROSS JOIN order_items
+			CROSS JOIN options WHERE order_item_id = order_items.id
+			AND oio.option_id = options.id
+			AND order_id = %d
+			AND item_id = %d
+			AND order_item_id = %d`, id, item.GetId(), item.GetOrderItemID()))
+		if err != nil {
+			return err
+		}
+		for _, option := range item.GetOptions() {
+			option.Selected = true
+		}
 
-	return nil
+	*/
+	return errors.New("unimplemented")
 }
 
 func (o *orderDB) CompleteOrder(id int64) error {
-	o.Lock()
-	defer o.Unlock()
+	o.rw.Lock()
+	defer o.rw.Unlock()
+
 	tx, err := o.db.Begin()
 	if err != nil {
 		return err
 	}
-	if _, err := tx.Exec(
+
+	if _, err = tx.Exec(
 		"UPDATE orders SET status = ? WHERE id = ?", "complete", id); err != nil {
 		tx.Rollback()
 		return err
 	}
+
 	if _, err = tx.Exec(
 		"UPDATE orders SET time_complete = ? WHERE id = ?",
 		time.Now().Format("2006-01-02 15:04:05"), id); err != nil {
