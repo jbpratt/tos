@@ -48,23 +48,14 @@ func (o *orderDB) SubmitOrder(ctx context.Context, order *pb.Order) error {
 	o.rw.Lock()
 	defer o.rw.Unlock()
 
-	tx, err := boil.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-
-	ord := models.Order{CreatedAt: time.Now().UnixNano()}
-
-	if err = ord.Insert(ctx, tx, boil.Infer()); err != nil {
+	ord := models.Order{SubmittedAt: time.Now().UnixNano()}
+	if err := ord.InsertG(ctx, boil.Infer()); err != nil {
 		return fmt.Errorf("failed to insert order: %w", err)
 	}
 
 	for _, item := range order.GetItems() {
 		var itm *models.Item
-		itm, err = models.Items(
-			qm.Where(models.ItemColumns.Name, item.GetName()),
-			//			qm.Load(nil),
-		).One(ctx, tx)
+		itm, err := models.FindItemG(ctx, null.Int64From(item.ItemId))
 		if err != nil {
 			return fmt.Errorf("failed to find item: %w", err)
 		}
@@ -74,18 +65,11 @@ func (o *orderDB) SubmitOrder(ctx context.Context, order *pb.Order) error {
 			ItemID:  itm.ID.Int64,
 			Price:   null.Int64From(item.GetPrice()),
 		}
-		if err = ordItm.Insert(ctx, tx, boil.Infer()); err != nil {
+		if err = ordItm.InsertG(ctx, boil.Infer()); err != nil {
 			return fmt.Errorf("failed to insert order_item: %w", err)
 		}
-
-		for _, opt := range item.GetOptions() {
-			_ = opt
-		}
 	}
 
-	if err = tx.Commit(); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -107,28 +91,17 @@ func (o *orderDB) GetOrders(ctx context.Context) ([]*pb.Order, error) {
 
 	for _, order := range orders {
 		ord := &pb.Order{}
-		_ = order
+		for _, it := range order.R.OrderItems {
+			item := &pb.OrderItem{
+				ItemId: it.ItemID,
+				Price:  it.Price.Int64,
+			}
+			ord.Items = append(ord.Items, item)
+			// options...
+		}
 		output = append(output, ord)
 	}
-	/*
-		orders, err := o.getOrders()
-		if err != nil {
-			return nil, err
-		}
-		for _, order := range orders {
-			err = o.getOrderItems(order)
-			if err != nil {
-				return nil, err
-			}
-			for _, item := range order.GetItems() {
-				err = o.getOrderItemOptions(item, order.GetId())
-				if err != nil {
-					return nil, err
-				}
-			}
-		}
-		return orders, nil
-	*/
+
 	return output, errors.New("unimplemented")
 }
 

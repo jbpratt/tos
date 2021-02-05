@@ -505,6 +505,114 @@ func testOptionKindToManyAddOpKindOptions(t *testing.T) {
 		}
 	}
 }
+func testOptionKindToOneItemKindUsingItemKind(t *testing.T) {
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var local OptionKind
+	var foreign ItemKind
+
+	seed := randomize.NewSeed()
+	if err := randomize.Struct(seed, &local, optionKindDBTypes, false, optionKindColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize OptionKind struct: %s", err)
+	}
+	if err := randomize.Struct(seed, &foreign, itemKindDBTypes, true, itemKindColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ItemKind struct: %s", err)
+	}
+
+	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	queries.Assign(&local.ItemKindID, foreign.ID)
+	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	check, err := local.ItemKind().One(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !queries.Equal(check.ID, foreign.ID) {
+		t.Errorf("want: %v, got %v", foreign.ID, check.ID)
+	}
+
+	slice := OptionKindSlice{&local}
+	if err = local.L.LoadItemKind(ctx, tx, false, (*[]*OptionKind)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.ItemKind == nil {
+		t.Error("struct should have been eager loaded")
+	}
+
+	local.R.ItemKind = nil
+	if err = local.L.LoadItemKind(ctx, tx, true, &local, nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.ItemKind == nil {
+		t.Error("struct should have been eager loaded")
+	}
+}
+
+func testOptionKindToOneSetOpItemKindUsingItemKind(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a OptionKind
+	var b, c ItemKind
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, optionKindDBTypes, false, strmangle.SetComplement(optionKindPrimaryKeyColumns, optionKindColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, itemKindDBTypes, false, strmangle.SetComplement(itemKindPrimaryKeyColumns, itemKindColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, itemKindDBTypes, false, strmangle.SetComplement(itemKindPrimaryKeyColumns, itemKindColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	for i, x := range []*ItemKind{&b, &c} {
+		err = a.SetItemKind(ctx, tx, i != 0, x)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if a.R.ItemKind != x {
+			t.Error("relationship struct not set to correct value")
+		}
+
+		if x.R.OptionKinds[0] != &a {
+			t.Error("failed to append to foreign relationship struct")
+		}
+		if !queries.Equal(a.ItemKindID, x.ID) {
+			t.Error("foreign key was wrong value", a.ItemKindID)
+		}
+
+		zero := reflect.Zero(reflect.TypeOf(a.ItemKindID))
+		reflect.Indirect(reflect.ValueOf(&a.ItemKindID)).Set(zero)
+
+		if err = a.Reload(ctx, tx); err != nil {
+			t.Fatal("failed to reload", err)
+		}
+
+		if !queries.Equal(a.ItemKindID, x.ID) {
+			t.Error("foreign key was wrong value", a.ItemKindID, x.ID)
+		}
+	}
+}
 
 func testOptionKindsReload(t *testing.T) {
 	t.Parallel()
@@ -580,7 +688,7 @@ func testOptionKindsSelect(t *testing.T) {
 }
 
 var (
-	optionKindDBTypes = map[string]string{`ID`: `INTEGER`, `Name`: `TEXT`}
+	optionKindDBTypes = map[string]string{`ID`: `INTEGER`, `ItemKindID`: `INTEGER`, `Name`: `TEXT`}
 	_                 = bytes.MinRead
 )
 

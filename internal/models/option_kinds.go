@@ -23,40 +23,48 @@ import (
 
 // OptionKind is an object representing the database table.
 type OptionKind struct {
-	ID   null.Int64 `boil:"id" json:"id,omitempty" toml:"id" yaml:"id,omitempty"`
-	Name string     `boil:"name" json:"name" toml:"name" yaml:"name"`
+	ID         null.Int64 `boil:"id" json:"id,omitempty" toml:"id" yaml:"id,omitempty"`
+	ItemKindID int64      `boil:"item_kind_id" json:"itemKindID" toml:"itemKindID" yaml:"itemKindID"`
+	Name       string     `boil:"name" json:"name" toml:"name" yaml:"name"`
 
 	R *optionKindR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L optionKindL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var OptionKindColumns = struct {
-	ID   string
-	Name string
+	ID         string
+	ItemKindID string
+	Name       string
 }{
-	ID:   "id",
-	Name: "name",
+	ID:         "id",
+	ItemKindID: "item_kind_id",
+	Name:       "name",
 }
 
 // Generated where
 
 var OptionKindWhere = struct {
-	ID   whereHelpernull_Int64
-	Name whereHelperstring
+	ID         whereHelpernull_Int64
+	ItemKindID whereHelperint64
+	Name       whereHelperstring
 }{
-	ID:   whereHelpernull_Int64{field: "\"option_kinds\".\"id\""},
-	Name: whereHelperstring{field: "\"option_kinds\".\"name\""},
+	ID:         whereHelpernull_Int64{field: "\"option_kinds\".\"id\""},
+	ItemKindID: whereHelperint64{field: "\"option_kinds\".\"item_kind_id\""},
+	Name:       whereHelperstring{field: "\"option_kinds\".\"name\""},
 }
 
 // OptionKindRels is where relationship names are stored.
 var OptionKindRels = struct {
+	ItemKind    string
 	KindOptions string
 }{
+	ItemKind:    "ItemKind",
 	KindOptions: "KindOptions",
 }
 
 // optionKindR is where relationships are stored.
 type optionKindR struct {
+	ItemKind    *ItemKind   `boil:"ItemKind" json:"ItemKind" toml:"ItemKind" yaml:"ItemKind"`
 	KindOptions OptionSlice `boil:"KindOptions" json:"KindOptions" toml:"KindOptions" yaml:"KindOptions"`
 }
 
@@ -69,9 +77,9 @@ func (*optionKindR) NewStruct() *optionKindR {
 type optionKindL struct{}
 
 var (
-	optionKindAllColumns            = []string{"id", "name"}
+	optionKindAllColumns            = []string{"id", "item_kind_id", "name"}
 	optionKindColumnsWithoutDefault = []string{}
-	optionKindColumnsWithDefault    = []string{"id", "name"}
+	optionKindColumnsWithDefault    = []string{"id", "item_kind_id", "name"}
 	optionKindPrimaryKeyColumns     = []string{"id"}
 )
 
@@ -186,6 +194,20 @@ func (q optionKindQuery) Exists(ctx context.Context, exec boil.ContextExecutor) 
 	return count > 0, nil
 }
 
+// ItemKind pointed to by the foreign key.
+func (o *OptionKind) ItemKind(mods ...qm.QueryMod) itemKindQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("\"id\" = ?", o.ItemKindID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	query := ItemKinds(queryMods...)
+	queries.SetFrom(query.Query, "\"item_kinds\"")
+
+	return query
+}
+
 // KindOptions retrieves all the option's Options with an executor via kind_id column.
 func (o *OptionKind) KindOptions(mods ...qm.QueryMod) optionQuery {
 	var queryMods []qm.QueryMod
@@ -205,6 +227,106 @@ func (o *OptionKind) KindOptions(mods ...qm.QueryMod) optionQuery {
 	}
 
 	return query
+}
+
+// LoadItemKind allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (optionKindL) LoadItemKind(ctx context.Context, e boil.ContextExecutor, singular bool, maybeOptionKind interface{}, mods queries.Applicator) error {
+	var slice []*OptionKind
+	var object *OptionKind
+
+	if singular {
+		object = maybeOptionKind.(*OptionKind)
+	} else {
+		slice = *maybeOptionKind.(*[]*OptionKind)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &optionKindR{}
+		}
+		if !queries.IsNil(object.ItemKindID) {
+			args = append(args, object.ItemKindID)
+		}
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &optionKindR{}
+			}
+
+			for _, a := range args {
+				if queries.Equal(a, obj.ItemKindID) {
+					continue Outer
+				}
+			}
+
+			if !queries.IsNil(obj.ItemKindID) {
+				args = append(args, obj.ItemKindID)
+			}
+
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`item_kinds`),
+		qm.WhereIn(`item_kinds.id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load ItemKind")
+	}
+
+	var resultSlice []*ItemKind
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice ItemKind")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for item_kinds")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for item_kinds")
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.ItemKind = foreign
+		if foreign.R == nil {
+			foreign.R = &itemKindR{}
+		}
+		foreign.R.OptionKinds = append(foreign.R.OptionKinds, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if queries.Equal(local.ItemKindID, foreign.ID) {
+				local.R.ItemKind = foreign
+				if foreign.R == nil {
+					foreign.R = &itemKindR{}
+				}
+				foreign.R.OptionKinds = append(foreign.R.OptionKinds, local)
+				break
+			}
+		}
+	}
+
+	return nil
 }
 
 // LoadKindOptions allows an eager lookup of values, cached into the
@@ -293,6 +415,61 @@ func (optionKindL) LoadKindOptions(ctx context.Context, e boil.ContextExecutor, 
 				break
 			}
 		}
+	}
+
+	return nil
+}
+
+// SetItemKindG of the optionKind to the related item.
+// Sets o.R.ItemKind to related.
+// Adds o to related.R.OptionKinds.
+// Uses the global database handle.
+func (o *OptionKind) SetItemKindG(ctx context.Context, insert bool, related *ItemKind) error {
+	return o.SetItemKind(ctx, boil.GetContextDB(), insert, related)
+}
+
+// SetItemKind of the optionKind to the related item.
+// Sets o.R.ItemKind to related.
+// Adds o to related.R.OptionKinds.
+func (o *OptionKind) SetItemKind(ctx context.Context, exec boil.ContextExecutor, insert bool, related *ItemKind) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE \"option_kinds\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 0, []string{"item_kind_id"}),
+		strmangle.WhereClause("\"", "\"", 0, optionKindPrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.IsDebug(ctx) {
+		writer := boil.DebugWriterFrom(ctx)
+		fmt.Fprintln(writer, updateQuery)
+		fmt.Fprintln(writer, values)
+	}
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	queries.Assign(&o.ItemKindID, related.ID)
+	if o.R == nil {
+		o.R = &optionKindR{
+			ItemKind: related,
+		}
+	} else {
+		o.R.ItemKind = related
+	}
+
+	if related.R == nil {
+		related.R = &itemKindR{
+			OptionKinds: OptionKindSlice{o},
+		}
+	} else {
+		related.R.OptionKinds = append(related.R.OptionKinds, o)
 	}
 
 	return nil

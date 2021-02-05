@@ -64,13 +64,13 @@ type server struct {
 }
 
 func (s *server) GetMenu(ctx context.Context, empty *pb.Empty) (*pb.Menu, error) {
-	if len(s.menu.GetCategories()) == 0 {
+	if len(s.menu.GetItemKinds()) == 0 {
 		return nil, status.Error(codes.NotFound, "menu is empty")
 	}
 	return s.menu, nil
 }
 
-func (s *server) CreateMenuItem(ctx context.Context, req *pb.Item) (*pb.CreateMenuItemResponse, error) {
+func (s *server) CreateMenuItem(ctx context.Context, req *pb.MenuItem) (*pb.CreateMenuItemResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "no item provided")
 	}
@@ -79,16 +79,15 @@ func (s *server) CreateMenuItem(ctx context.Context, req *pb.Item) (*pb.CreateMe
 		return nil, status.Error(codes.InvalidArgument, "item must have a name")
 	}
 
-	if req.GetCategoryID() == 0 {
-		return nil, status.Error(codes.InvalidArgument,
-			"item must have a categoryID (non 0)")
+	if req.GetItemKindId() == 0 {
+		return nil, status.Error(codes.InvalidArgument, "item must have a categoryID (non 0)")
 	}
 
 	// ignoring price in case of $0 item?
 
 	// check if item aleady exists
-	for _, c := range s.menu.GetCategories() {
-		if c.GetId() == req.GetCategoryID() {
+	for _, c := range s.menu.GetItemKinds() {
+		if c.GetId() == req.ItemKindId {
 			for _, i := range c.GetItems() {
 				if i.GetName() == req.GetName() {
 					return nil, status.Error(codes.FailedPrecondition,
@@ -107,19 +106,17 @@ func (s *server) CreateMenuItem(ctx context.Context, req *pb.Item) (*pb.CreateMe
 	return &pb.CreateMenuItemResponse{Id: id}, s.loadData(ctx)
 }
 
-func (s *server) UpdateMenuItem(ctx context.Context, req *pb.Item) (*pb.Response, error) {
+func (s *server) UpdateMenuItem(ctx context.Context, req *pb.MenuItem) (*pb.Response, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "item id not provided")
 	}
 
 	if req.GetId() == 0 {
-		return nil, status.Error(codes.InvalidArgument,
-			"req must have itemid (non 0)")
+		return nil, status.Error(codes.InvalidArgument, "req must have itemid (non 0)")
 	}
 
 	if err := s.services.Menu.UpdateMenuItem(ctx, req); err != nil {
-		return nil, status.Errorf(codes.Internal,
-			"services..UpdateMenuItem(%v) returned %v", req, err)
+		return nil, status.Errorf(codes.Internal, "services..UpdateMenuItem(%v) returned %v", req, err)
 	}
 
 	return &pb.Response{Response: "success"}, s.loadData(ctx)
@@ -127,27 +124,23 @@ func (s *server) UpdateMenuItem(ctx context.Context, req *pb.Item) (*pb.Response
 
 func (s *server) DeleteMenuItem(ctx context.Context, req *pb.DeleteMenuItemRequest) (*pb.Response, error) {
 	if req == nil {
-		return nil, status.Error(codes.InvalidArgument,
-			"req must not be nil")
+		return nil, status.Error(codes.InvalidArgument, "req must not be nil")
 	}
 
 	if req.GetId() == 0 {
-		return nil, status.Error(codes.InvalidArgument,
-			"req must have itemid (non 0)")
+		return nil, status.Error(codes.InvalidArgument, "req must have itemid (non 0)")
 	}
 
 	if err := s.services.Menu.DeleteMenuItem(ctx, req.GetId()); err != nil {
-		return nil, status.Errorf(codes.Internal,
-			"services..UpdateMenuItem(%v) returned %v", req, err)
+		return nil, status.Errorf(codes.Internal, "services..UpdateMenuItem(%v) returned %v", req, err)
 	}
 
 	return &pb.Response{Response: "success"}, s.loadData(ctx)
 }
 
-func (s *server) CreateMenuItemOption(ctx context.Context, req *pb.Option) (*pb.Response, error) {
+func (s *server) CreateMenuItemOption(ctx context.Context, req *pb.MenuOption) (*pb.Response, error) {
 	if req == nil {
-		return nil, status.Error(codes.InvalidArgument,
-			"item option not provided")
+		return nil, status.Error(codes.InvalidArgument, "item option not provided")
 	}
 
 	return nil, status.Error(codes.Unimplemented, "not implemented")
@@ -155,29 +148,25 @@ func (s *server) CreateMenuItemOption(ctx context.Context, req *pb.Option) (*pb.
 
 func (s *server) SubmitOrder(ctx context.Context, req *pb.Order) (*pb.Response, error) {
 	if req == nil {
-		return nil, status.Error(codes.InvalidArgument,
-			"order not provided")
+		return nil, status.Error(codes.InvalidArgument, "order not provided")
 	}
 
 	if req.GetItems() == nil {
-		return nil, status.Error(codes.InvalidArgument,
-			"order items not provided")
+		return nil, status.Error(codes.InvalidArgument, "order items not provided")
 	}
 
 	if req.GetTotal() == 0 {
-		return nil, status.Error(codes.InvalidArgument,
-			"order price not provided")
+		return nil, status.Error(codes.InvalidArgument, "order price not provided")
 	}
 
 	if req.GetName() == "" || req.GetName() == " " {
-		return nil, status.Error(codes.InvalidArgument,
-			"order name not provided")
+		return nil, status.Error(codes.InvalidArgument, "order name not provided")
 	}
 
 	o := req
 	o.Status = "active"
 
-	if err := s.services.Order.SubmitOrder(o); err != nil {
+	if err := s.services.Order.SubmitOrder(ctx, o); err != nil {
 		return nil, status.Errorf(codes.Internal, "internal err: %v", err)
 	}
 
@@ -214,8 +203,7 @@ func publish(ps *pubsub.PubSub, order *pb.Order, topic string) {
 
 func (s *server) CompleteOrder(ctx context.Context, req *pb.CompleteOrderRequest) (*pb.Response, error) {
 	if req.GetId() == 0 {
-		return nil, status.Errorf(codes.InvalidArgument,
-			"order id must be non zero")
+		return nil, status.Errorf(codes.InvalidArgument, "order id must be non zero")
 	}
 
 	for _, o := range s.orders {
@@ -228,7 +216,7 @@ func (s *server) CompleteOrder(ctx context.Context, req *pb.CompleteOrderRequest
 		}
 	}
 
-	if err := s.services.Order.CompleteOrder(req.GetId()); err != nil {
+	if err := s.services.Order.CompleteOrder(ctx, req.GetId()); err != nil {
 		return nil, err
 	}
 
@@ -237,8 +225,7 @@ func (s *server) CompleteOrder(ctx context.Context, req *pb.CompleteOrderRequest
 
 func (s *server) ActiveOrders(ctx context.Context, empty *pb.Empty) (*pb.OrdersResponse, error) {
 	if s.orders == nil {
-		return nil, status.Errorf(codes.Internal,
-			"ActiveOrders() failed: server.orders has not been initialized")
+		return nil, status.Errorf(codes.Internal, "ActiveOrders() failed: server.orders has not been initialized")
 	}
 
 	return &pb.OrdersResponse{Orders: s.orders}, nil
@@ -250,7 +237,7 @@ func (s *server) loadData(ctx context.Context) error {
 		return err
 	}
 
-	if len(menu.GetCategories()) == 0 {
+	if len(menu.GetItemKinds()) == 0 {
 		if err = s.services.Menu.SeedMenu(ctx); err != nil {
 			return err
 		}
@@ -263,7 +250,7 @@ func (s *server) loadData(ctx context.Context) error {
 
 	s.menu = menu
 
-	orders, err := s.services.Order.GetOrders()
+	orders, err := s.services.Order.GetOrders(ctx)
 	if err != nil {
 		return err
 	}

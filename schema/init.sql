@@ -22,7 +22,9 @@ meats, cheeses, sauces, breads, dressings, prep instruction
 */
 CREATE TABLE IF NOT EXISTS option_kinds (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL
+  item_kind_id INTEGER NOT NULL,
+  name TEXT NOT NULL,
+  FOREIGN KEY (item_kind_id) REFERENCES item_kinds(id)
 );
 
 /* 
@@ -71,7 +73,7 @@ CREATE TABLE IF NOT EXISTS item_sides (
 
 CREATE TABLE IF NOT EXISTS orders (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  created_at INTEGER NOT NULL,
+  submitted_at INTEGER NOT NULL,
   completed_at INTEGER
 );
 

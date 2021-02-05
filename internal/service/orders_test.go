@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"database/sql"
 	"testing"
 	"time"
@@ -10,6 +11,9 @@ import (
 )
 
 func TestOrderServiceFull(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	db, err := sql.Open("sqlite3", ":memory:")
 	if err != nil {
 		t.Fatal(err)
@@ -42,14 +46,13 @@ func TestOrderServiceFull(t *testing.T) {
 	}
 
 	for _, order := range testCases {
-		err = orderService.SubmitOrder(order)
-		if err != nil {
+		if err = orderService.SubmitOrder(ctx, order); err != nil {
 			spew.Dump(order)
 			t.Errorf("SubmitOrder(%q) = %q", order.Name, err)
 		}
 	}
 
-	got, err := orderService.GetOrders()
+	got, err := orderService.GetOrders(ctx)
 	if err != nil {
 		spew.Dump(got)
 		t.Fatalf("GetOrders() = %q; want nil", err)

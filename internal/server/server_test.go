@@ -31,7 +31,7 @@ func TestServer(t *testing.T) {
 		t.Errorf("server.GetMenu() failed with %v", err)
 	}
 
-	testItem := &pb.Item{Name: "Test item", Price: 495, CategoryID: 1}
+	testItem := &pb.MenuItem{Name: "Test item", Price: 495, ItemKindId: 1}
 
 	res, err := s.CreateMenuItem(ctx, testItem)
 	if err != nil {

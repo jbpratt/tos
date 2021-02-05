@@ -160,6 +160,7 @@ func TestToOne(t *testing.T) {
 	t.Run("ItemSideToItemUsingSideItem", testItemSideToOneItemUsingSideItem)
 	t.Run("ItemSideToItemUsingItem", testItemSideToOneItemUsingItem)
 	t.Run("ItemToItemKindUsingKind", testItemToOneItemKindUsingKind)
+	t.Run("OptionKindToItemKindUsingItemKind", testOptionKindToOneItemKindUsingItemKind)
 	t.Run("OptionToOptionKindUsingKind", testOptionToOneOptionKindUsingKind)
 	t.Run("OrderItemOptionToOrderItemUsingOrderItem", testOrderItemOptionToOneOrderItemUsingOrderItem)
 	t.Run("OrderItemOptionToOptionUsingOption", testOrderItemOptionToOneOptionUsingOption)
@@ -182,6 +183,7 @@ func TestOneToOne(t *testing.T) {
 // or deadlocks can occur.
 func TestToMany(t *testing.T) {
 	t.Run("ItemKindToKindItems", testItemKindToManyKindItems)
+	t.Run("ItemKindToOptionKinds", testItemKindToManyOptionKinds)
 	t.Run("ItemToOrderItems", testItemToManyOrderItems)
 	t.Run("OptionKindToKindOptions", testOptionKindToManyKindOptions)
 	t.Run("OptionToOrderItemOptions", testOptionToManyOrderItemOptions)
@@ -199,6 +201,7 @@ func TestToOneSet(t *testing.T) {
 	t.Run("ItemSideToItemUsingSideItemItemSide", testItemSideToOneSetOpItemUsingSideItem)
 	t.Run("ItemSideToItemUsingItemSide", testItemSideToOneSetOpItemUsingItem)
 	t.Run("ItemToItemKindUsingKindItems", testItemToOneSetOpItemKindUsingKind)
+	t.Run("OptionKindToItemKindUsingOptionKinds", testOptionKindToOneSetOpItemKindUsingItemKind)
 	t.Run("OptionToOptionKindUsingKindOptions", testOptionToOneSetOpOptionKindUsingKind)
 	t.Run("OrderItemOptionToOrderItemUsingOrderItemOptions", testOrderItemOptionToOneSetOpOrderItemUsingOrderItem)
 	t.Run("OrderItemOptionToOptionUsingOrderItemOptions", testOrderItemOptionToOneSetOpOptionUsingOption)
@@ -231,6 +234,7 @@ func TestOneToOneRemove(t *testing.T) {}
 // or deadlocks can occur.
 func TestToManyAdd(t *testing.T) {
 	t.Run("ItemKindToKindItems", testItemKindToManyAddOpKindItems)
+	t.Run("ItemKindToOptionKinds", testItemKindToManyAddOpOptionKinds)
 	t.Run("ItemToOrderItems", testItemToManyAddOpOrderItems)
 	t.Run("OptionKindToKindOptions", testOptionKindToManyAddOpKindOptions)
 	t.Run("OptionToOrderItemOptions", testOptionToManyAddOpOrderItemOptions)

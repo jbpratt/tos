@@ -1,11 +1,8 @@
 package cmd
 
 import (
-	"context"
-	"fmt"
 	"log"
 
-	"github.com/jbpratt/tos/internal/pb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
@@ -23,32 +20,7 @@ var orderCmd = &cobra.Command{
 		}
 
 		defer cc.Close()
-
-		res, err := doSubmitOrderRequest(pb.NewOrderServiceClient(cc))
-		if err != nil {
-			log.Fatalf("Failed to submit order: %v", err)
-		}
-		fmt.Println(res)
 	},
-}
-
-func doSubmitOrderRequest(c pb.OrderServiceClient) (string, error) {
-	go fmt.Println("Starting order request")
-	req := &pb.Order{
-		Name: name,
-		Items: []*pb.Item{
-			{Name: "Large Smoked Pulled Pork", Id: 1, Price: 495, Options: []*pb.Option{
-				{Name: "pickles", Price: 0, Selected: true, Id: 1},
-			}},
-		},
-		Total: 495,
-	}
-
-	res, err := c.SubmitOrder(context.Background(), req)
-	if err != nil {
-		return "", err
-	}
-	return res.GetResponse(), nil
 }
 
 func init() {

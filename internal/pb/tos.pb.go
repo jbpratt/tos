@@ -29,241 +29,18 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-type Item struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Name  string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Id    int64  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	Price int64  `protobuf:"varint,3,opt,name=price,proto3" json:"price,omitempty"`
-	// @inject_tag: db:"category_id"
-	CategoryID int64 `protobuf:"varint,4,opt,name=categoryID,proto3" json:"categoryID,omitempty" db:"category_id"`
-	// @inject_tag: db:"order_item_id"
-	OrderItemID int64     `protobuf:"varint,5,opt,name=orderItemID,proto3" json:"orderItemID,omitempty" db:"order_item_id"`
-	Options     []*Option `protobuf:"bytes,6,rep,name=options,proto3" json:"options,omitempty"`
-}
-
-func (x *Item) Reset() {
-	*x = Item{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_schema_tos_proto_msgTypes[0]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *Item) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Item) ProtoMessage() {}
-
-func (x *Item) ProtoReflect() protoreflect.Message {
-	mi := &file_schema_tos_proto_msgTypes[0]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Item.ProtoReflect.Descriptor instead.
-func (*Item) Descriptor() ([]byte, []int) {
-	return file_schema_tos_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *Item) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *Item) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *Item) GetPrice() int64 {
-	if x != nil {
-		return x.Price
-	}
-	return 0
-}
-
-func (x *Item) GetCategoryID() int64 {
-	if x != nil {
-		return x.CategoryID
-	}
-	return 0
-}
-
-func (x *Item) GetOrderItemID() int64 {
-	if x != nil {
-		return x.OrderItemID
-	}
-	return 0
-}
-
-func (x *Item) GetOptions() []*Option {
-	if x != nil {
-		return x.Options
-	}
-	return nil
-}
-
-type Option struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Name     string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Id       int64  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	Price    int64  `protobuf:"varint,3,opt,name=price,proto3" json:"price,omitempty"`
-	Selected bool   `protobuf:"varint,4,opt,name=selected,proto3" json:"selected,omitempty"`
-}
-
-func (x *Option) Reset() {
-	*x = Option{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_schema_tos_proto_msgTypes[1]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *Option) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Option) ProtoMessage() {}
-
-func (x *Option) ProtoReflect() protoreflect.Message {
-	mi := &file_schema_tos_proto_msgTypes[1]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Option.ProtoReflect.Descriptor instead.
-func (*Option) Descriptor() ([]byte, []int) {
-	return file_schema_tos_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *Option) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *Option) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *Option) GetPrice() int64 {
-	if x != nil {
-		return x.Price
-	}
-	return 0
-}
-
-func (x *Option) GetSelected() bool {
-	if x != nil {
-		return x.Selected
-	}
-	return false
-}
-
-type Category struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Name  string  `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Id    int64   `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	Items []*Item `protobuf:"bytes,3,rep,name=items,proto3" json:"items,omitempty"`
-}
-
-func (x *Category) Reset() {
-	*x = Category{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_schema_tos_proto_msgTypes[2]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *Category) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Category) ProtoMessage() {}
-
-func (x *Category) ProtoReflect() protoreflect.Message {
-	mi := &file_schema_tos_proto_msgTypes[2]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Category.ProtoReflect.Descriptor instead.
-func (*Category) Descriptor() ([]byte, []int) {
-	return file_schema_tos_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *Category) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *Category) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *Category) GetItems() []*Item {
-	if x != nil {
-		return x.Items
-	}
-	return nil
-}
-
 type Menu struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Categories []*Category `protobuf:"bytes,1,rep,name=categories,proto3" json:"categories,omitempty"`
+	ItemKinds []*MenuItemKind `protobuf:"bytes,1,rep,name=item_kinds,json=itemKinds,proto3" json:"item_kinds,omitempty"`
 }
 
 func (x *Menu) Reset() {
 	*x = Menu{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_schema_tos_proto_msgTypes[3]
+		mi := &file_schema_tos_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -276,7 +53,7 @@ func (x *Menu) String() string {
 func (*Menu) ProtoMessage() {}
 
 func (x *Menu) ProtoReflect() protoreflect.Message {
-	mi := &file_schema_tos_proto_msgTypes[3]
+	mi := &file_schema_tos_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -289,14 +66,298 @@ func (x *Menu) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Menu.ProtoReflect.Descriptor instead.
 func (*Menu) Descriptor() ([]byte, []int) {
+	return file_schema_tos_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Menu) GetItemKinds() []*MenuItemKind {
+	if x != nil {
+		return x.ItemKinds
+	}
+	return nil
+}
+
+type MenuItemKind struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id          int64             `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name        string            `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Items       []*MenuItem       `protobuf:"bytes,3,rep,name=items,proto3" json:"items,omitempty"`
+	OptionKinds []*MenuOptionKind `protobuf:"bytes,4,rep,name=option_kinds,json=optionKinds,proto3" json:"option_kinds,omitempty"`
+}
+
+func (x *MenuItemKind) Reset() {
+	*x = MenuItemKind{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_schema_tos_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MenuItemKind) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MenuItemKind) ProtoMessage() {}
+
+func (x *MenuItemKind) ProtoReflect() protoreflect.Message {
+	mi := &file_schema_tos_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MenuItemKind.ProtoReflect.Descriptor instead.
+func (*MenuItemKind) Descriptor() ([]byte, []int) {
+	return file_schema_tos_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *MenuItemKind) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *MenuItemKind) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *MenuItemKind) GetItems() []*MenuItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *MenuItemKind) GetOptionKinds() []*MenuOptionKind {
+	if x != nil {
+		return x.OptionKinds
+	}
+	return nil
+}
+
+type MenuItem struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id         int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name       string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Price      int64  `protobuf:"varint,3,opt,name=price,proto3" json:"price,omitempty"`
+	ItemKindId int64  `protobuf:"varint,4,opt,name=item_kind_id,json=itemKindId,proto3" json:"item_kind_id,omitempty"`
+}
+
+func (x *MenuItem) Reset() {
+	*x = MenuItem{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_schema_tos_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MenuItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MenuItem) ProtoMessage() {}
+
+func (x *MenuItem) ProtoReflect() protoreflect.Message {
+	mi := &file_schema_tos_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MenuItem.ProtoReflect.Descriptor instead.
+func (*MenuItem) Descriptor() ([]byte, []int) {
+	return file_schema_tos_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *MenuItem) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *MenuItem) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *MenuItem) GetPrice() int64 {
+	if x != nil {
+		return x.Price
+	}
+	return 0
+}
+
+func (x *MenuItem) GetItemKindId() int64 {
+	if x != nil {
+		return x.ItemKindId
+	}
+	return 0
+}
+
+type MenuOptionKind struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id         int64         `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name       string        `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	ItemKindId int64         `protobuf:"varint,3,opt,name=item_kind_id,json=itemKindId,proto3" json:"item_kind_id,omitempty"`
+	Options    []*MenuOption `protobuf:"bytes,4,rep,name=options,proto3" json:"options,omitempty"`
+}
+
+func (x *MenuOptionKind) Reset() {
+	*x = MenuOptionKind{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_schema_tos_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MenuOptionKind) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MenuOptionKind) ProtoMessage() {}
+
+func (x *MenuOptionKind) ProtoReflect() protoreflect.Message {
+	mi := &file_schema_tos_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MenuOptionKind.ProtoReflect.Descriptor instead.
+func (*MenuOptionKind) Descriptor() ([]byte, []int) {
 	return file_schema_tos_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *Menu) GetCategories() []*Category {
+func (x *MenuOptionKind) GetId() int64 {
 	if x != nil {
-		return x.Categories
+		return x.Id
+	}
+	return 0
+}
+
+func (x *MenuOptionKind) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *MenuOptionKind) GetItemKindId() int64 {
+	if x != nil {
+		return x.ItemKindId
+	}
+	return 0
+}
+
+func (x *MenuOptionKind) GetOptions() []*MenuOption {
+	if x != nil {
+		return x.Options
 	}
 	return nil
+}
+
+type MenuOption struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id           int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name         string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Price        int64  `protobuf:"varint,3,opt,name=price,proto3" json:"price,omitempty"`
+	OptionKindId int64  `protobuf:"varint,4,opt,name=option_kind_id,json=optionKindId,proto3" json:"option_kind_id,omitempty"`
+}
+
+func (x *MenuOption) Reset() {
+	*x = MenuOption{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_schema_tos_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MenuOption) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MenuOption) ProtoMessage() {}
+
+func (x *MenuOption) ProtoReflect() protoreflect.Message {
+	mi := &file_schema_tos_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MenuOption.ProtoReflect.Descriptor instead.
+func (*MenuOption) Descriptor() ([]byte, []int) {
+	return file_schema_tos_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *MenuOption) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *MenuOption) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *MenuOption) GetPrice() int64 {
+	if x != nil {
+		return x.Price
+	}
+	return 0
+}
+
+func (x *MenuOption) GetOptionKindId() int64 {
+	if x != nil {
+		return x.OptionKindId
+	}
+	return 0
 }
 
 type Order struct {
@@ -304,11 +365,11 @@ type Order struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id     int64   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name   string  `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Items  []*Item `protobuf:"bytes,3,rep,name=items,proto3" json:"items,omitempty"`
-	Total  int64   `protobuf:"varint,4,opt,name=total,proto3" json:"total,omitempty"`
-	Status string  `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	Id     int64        `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name   string       `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Items  []*OrderItem `protobuf:"bytes,3,rep,name=items,proto3" json:"items,omitempty"`
+	Total  int64        `protobuf:"varint,4,opt,name=total,proto3" json:"total,omitempty"`
+	Status string       `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
 	// @inject_tag: db:"time_ordered"
 	TimeOrdered string `protobuf:"bytes,6,opt,name=time_ordered,json=timeOrdered,proto3" json:"time_ordered,omitempty" db:"time_ordered"`
 	// @inject_tag: db:"time_complete"
@@ -318,7 +379,7 @@ type Order struct {
 func (x *Order) Reset() {
 	*x = Order{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_schema_tos_proto_msgTypes[4]
+		mi := &file_schema_tos_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -331,7 +392,7 @@ func (x *Order) String() string {
 func (*Order) ProtoMessage() {}
 
 func (x *Order) ProtoReflect() protoreflect.Message {
-	mi := &file_schema_tos_proto_msgTypes[4]
+	mi := &file_schema_tos_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -344,7 +405,7 @@ func (x *Order) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Order.ProtoReflect.Descriptor instead.
 func (*Order) Descriptor() ([]byte, []int) {
-	return file_schema_tos_proto_rawDescGZIP(), []int{4}
+	return file_schema_tos_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Order) GetId() int64 {
@@ -361,7 +422,7 @@ func (x *Order) GetName() string {
 	return ""
 }
 
-func (x *Order) GetItems() []*Item {
+func (x *Order) GetItems() []*OrderItem {
 	if x != nil {
 		return x.Items
 	}
@@ -396,6 +457,148 @@ func (x *Order) GetTimeComplete() string {
 	return ""
 }
 
+type OrderItem struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ItemId  int64          `protobuf:"varint,1,opt,name=item_id,json=itemId,proto3" json:"item_id,omitempty"`
+	Price   int64          `protobuf:"varint,2,opt,name=price,proto3" json:"price,omitempty"`
+	Options []*OrderOption `protobuf:"bytes,3,rep,name=options,proto3" json:"options,omitempty"`
+}
+
+func (x *OrderItem) Reset() {
+	*x = OrderItem{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_schema_tos_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OrderItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderItem) ProtoMessage() {}
+
+func (x *OrderItem) ProtoReflect() protoreflect.Message {
+	mi := &file_schema_tos_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderItem.ProtoReflect.Descriptor instead.
+func (*OrderItem) Descriptor() ([]byte, []int) {
+	return file_schema_tos_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *OrderItem) GetItemId() int64 {
+	if x != nil {
+		return x.ItemId
+	}
+	return 0
+}
+
+func (x *OrderItem) GetPrice() int64 {
+	if x != nil {
+		return x.Price
+	}
+	return 0
+}
+
+func (x *OrderItem) GetOptions() []*OrderOption {
+	if x != nil {
+		return x.Options
+	}
+	return nil
+}
+
+type OrderOption struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id          int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	OrderId     int64 `protobuf:"varint,2,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	OptionId    int64 `protobuf:"varint,3,opt,name=option_id,json=optionId,proto3" json:"option_id,omitempty"`
+	OrderItemId int64 `protobuf:"varint,4,opt,name=order_item_id,json=orderItemId,proto3" json:"order_item_id,omitempty"`
+	Price       int64 `protobuf:"varint,5,opt,name=price,proto3" json:"price,omitempty"`
+}
+
+func (x *OrderOption) Reset() {
+	*x = OrderOption{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_schema_tos_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OrderOption) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderOption) ProtoMessage() {}
+
+func (x *OrderOption) ProtoReflect() protoreflect.Message {
+	mi := &file_schema_tos_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderOption.ProtoReflect.Descriptor instead.
+func (*OrderOption) Descriptor() ([]byte, []int) {
+	return file_schema_tos_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *OrderOption) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *OrderOption) GetOrderId() int64 {
+	if x != nil {
+		return x.OrderId
+	}
+	return 0
+}
+
+func (x *OrderOption) GetOptionId() int64 {
+	if x != nil {
+		return x.OptionId
+	}
+	return 0
+}
+
+func (x *OrderOption) GetOrderItemId() int64 {
+	if x != nil {
+		return x.OrderItemId
+	}
+	return 0
+}
+
+func (x *OrderOption) GetPrice() int64 {
+	if x != nil {
+		return x.Price
+	}
+	return 0
+}
+
 type Response struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -407,7 +610,7 @@ type Response struct {
 func (x *Response) Reset() {
 	*x = Response{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_schema_tos_proto_msgTypes[5]
+		mi := &file_schema_tos_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -420,7 +623,7 @@ func (x *Response) String() string {
 func (*Response) ProtoMessage() {}
 
 func (x *Response) ProtoReflect() protoreflect.Message {
-	mi := &file_schema_tos_proto_msgTypes[5]
+	mi := &file_schema_tos_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -433,7 +636,7 @@ func (x *Response) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Response.ProtoReflect.Descriptor instead.
 func (*Response) Descriptor() ([]byte, []int) {
-	return file_schema_tos_proto_rawDescGZIP(), []int{5}
+	return file_schema_tos_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *Response) GetResponse() string {
@@ -454,7 +657,7 @@ type CreateMenuItemResponse struct {
 func (x *CreateMenuItemResponse) Reset() {
 	*x = CreateMenuItemResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_schema_tos_proto_msgTypes[6]
+		mi := &file_schema_tos_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -467,7 +670,7 @@ func (x *CreateMenuItemResponse) String() string {
 func (*CreateMenuItemResponse) ProtoMessage() {}
 
 func (x *CreateMenuItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_schema_tos_proto_msgTypes[6]
+	mi := &file_schema_tos_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -480,7 +683,7 @@ func (x *CreateMenuItemResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateMenuItemResponse.ProtoReflect.Descriptor instead.
 func (*CreateMenuItemResponse) Descriptor() ([]byte, []int) {
-	return file_schema_tos_proto_rawDescGZIP(), []int{6}
+	return file_schema_tos_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CreateMenuItemResponse) GetId() int64 {
@@ -501,7 +704,7 @@ type CompleteOrderRequest struct {
 func (x *CompleteOrderRequest) Reset() {
 	*x = CompleteOrderRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_schema_tos_proto_msgTypes[7]
+		mi := &file_schema_tos_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -514,7 +717,7 @@ func (x *CompleteOrderRequest) String() string {
 func (*CompleteOrderRequest) ProtoMessage() {}
 
 func (x *CompleteOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_schema_tos_proto_msgTypes[7]
+	mi := &file_schema_tos_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -527,7 +730,7 @@ func (x *CompleteOrderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CompleteOrderRequest.ProtoReflect.Descriptor instead.
 func (*CompleteOrderRequest) Descriptor() ([]byte, []int) {
-	return file_schema_tos_proto_rawDescGZIP(), []int{7}
+	return file_schema_tos_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *CompleteOrderRequest) GetId() int64 {
@@ -548,7 +751,7 @@ type OrdersRequest struct {
 func (x *OrdersRequest) Reset() {
 	*x = OrdersRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_schema_tos_proto_msgTypes[8]
+		mi := &file_schema_tos_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -561,7 +764,7 @@ func (x *OrdersRequest) String() string {
 func (*OrdersRequest) ProtoMessage() {}
 
 func (x *OrdersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_schema_tos_proto_msgTypes[8]
+	mi := &file_schema_tos_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -574,7 +777,7 @@ func (x *OrdersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrdersRequest.ProtoReflect.Descriptor instead.
 func (*OrdersRequest) Descriptor() ([]byte, []int) {
-	return file_schema_tos_proto_rawDescGZIP(), []int{8}
+	return file_schema_tos_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *OrdersRequest) GetRequest() string {
@@ -595,7 +798,7 @@ type OrdersResponse struct {
 func (x *OrdersResponse) Reset() {
 	*x = OrdersResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_schema_tos_proto_msgTypes[9]
+		mi := &file_schema_tos_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -608,7 +811,7 @@ func (x *OrdersResponse) String() string {
 func (*OrdersResponse) ProtoMessage() {}
 
 func (x *OrdersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_schema_tos_proto_msgTypes[9]
+	mi := &file_schema_tos_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -621,7 +824,7 @@ func (x *OrdersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrdersResponse.ProtoReflect.Descriptor instead.
 func (*OrdersResponse) Descriptor() ([]byte, []int) {
-	return file_schema_tos_proto_rawDescGZIP(), []int{9}
+	return file_schema_tos_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *OrdersResponse) GetOrders() []*Order {
@@ -640,7 +843,7 @@ type Empty struct {
 func (x *Empty) Reset() {
 	*x = Empty{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_schema_tos_proto_msgTypes[10]
+		mi := &file_schema_tos_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -653,7 +856,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_schema_tos_proto_msgTypes[10]
+	mi := &file_schema_tos_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -666,7 +869,7 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_schema_tos_proto_rawDescGZIP(), []int{10}
+	return file_schema_tos_proto_rawDescGZIP(), []int{13}
 }
 
 type DeleteMenuItemRequest struct {
@@ -680,7 +883,7 @@ type DeleteMenuItemRequest struct {
 func (x *DeleteMenuItemRequest) Reset() {
 	*x = DeleteMenuItemRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_schema_tos_proto_msgTypes[11]
+		mi := &file_schema_tos_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -693,7 +896,7 @@ func (x *DeleteMenuItemRequest) String() string {
 func (*DeleteMenuItemRequest) ProtoMessage() {}
 
 func (x *DeleteMenuItemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_schema_tos_proto_msgTypes[11]
+	mi := &file_schema_tos_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -706,7 +909,7 @@ func (x *DeleteMenuItemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteMenuItemRequest.ProtoReflect.Descriptor instead.
 func (*DeleteMenuItemRequest) Descriptor() ([]byte, []int) {
-	return file_schema_tos_proto_rawDescGZIP(), []int{11}
+	return file_schema_tos_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *DeleteMenuItemRequest) GetId() int64 {
@@ -728,7 +931,7 @@ type Ping struct {
 func (x *Ping) Reset() {
 	*x = Ping{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_schema_tos_proto_msgTypes[12]
+		mi := &file_schema_tos_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -741,7 +944,7 @@ func (x *Ping) String() string {
 func (*Ping) ProtoMessage() {}
 
 func (x *Ping) ProtoReflect() protoreflect.Message {
-	mi := &file_schema_tos_proto_msgTypes[12]
+	mi := &file_schema_tos_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -754,7 +957,7 @@ func (x *Ping) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Ping.ProtoReflect.Descriptor instead.
 func (*Ping) Descriptor() ([]byte, []int) {
-	return file_schema_tos_proto_rawDescGZIP(), []int{12}
+	return file_schema_tos_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *Ping) GetMessage() string {
@@ -782,7 +985,7 @@ type Pong struct {
 func (x *Pong) Reset() {
 	*x = Pong{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_schema_tos_proto_msgTypes[13]
+		mi := &file_schema_tos_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -795,7 +998,7 @@ func (x *Pong) String() string {
 func (*Pong) ProtoMessage() {}
 
 func (x *Pong) ProtoReflect() protoreflect.Message {
-	mi := &file_schema_tos_proto_msgTypes[13]
+	mi := &file_schema_tos_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -808,7 +1011,7 @@ func (x *Pong) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Pong.ProtoReflect.Descriptor instead.
 func (*Pong) Descriptor() ([]byte, []int) {
-	return file_schema_tos_proto_rawDescGZIP(), []int{13}
+	return file_schema_tos_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *Pong) GetMessage() string {
@@ -822,107 +1025,133 @@ var File_schema_tos_proto protoreflect.FileDescriptor
 
 var file_schema_tos_proto_rawDesc = []byte{
 	0x0a, 0x10, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x2f, 0x74, 0x6f, 0x73, 0x2e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x12, 0x05, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x22, 0xab, 0x01, 0x0a, 0x04, 0x49, 0x74,
-	0x65, 0x6d, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01,
-	0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x70, 0x72, 0x69, 0x63, 0x65, 0x18,
-	0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x70, 0x72, 0x69, 0x63, 0x65, 0x12, 0x1e, 0x0a, 0x0a,
-	0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x49, 0x44, 0x18, 0x04, 0x20, 0x01, 0x28, 0x03,
-	0x52, 0x0a, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x49, 0x44, 0x12, 0x20, 0x0a, 0x0b,
-	0x6f, 0x72, 0x64, 0x65, 0x72, 0x49, 0x74, 0x65, 0x6d, 0x49, 0x44, 0x18, 0x05, 0x20, 0x01, 0x28,
-	0x03, 0x52, 0x0b, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x49, 0x74, 0x65, 0x6d, 0x49, 0x44, 0x12, 0x27,
-	0x0a, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x06, 0x20, 0x03, 0x28, 0x0b, 0x32,
-	0x0d, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x07,
-	0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x22, 0x5e, 0x0a, 0x06, 0x4f, 0x70, 0x74, 0x69, 0x6f,
-	0x6e, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x70, 0x72, 0x69, 0x63, 0x65, 0x18, 0x03,
-	0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x70, 0x72, 0x69, 0x63, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x73,
-	0x65, 0x6c, 0x65, 0x63, 0x74, 0x65, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52, 0x08, 0x73,
-	0x65, 0x6c, 0x65, 0x63, 0x74, 0x65, 0x64, 0x22, 0x51, 0x0a, 0x08, 0x43, 0x61, 0x74, 0x65, 0x67,
-	0x6f, 0x72, 0x79, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x21, 0x0a, 0x05, 0x69, 0x74, 0x65, 0x6d, 0x73,
-	0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x49,
-	0x74, 0x65, 0x6d, 0x52, 0x05, 0x69, 0x74, 0x65, 0x6d, 0x73, 0x22, 0x37, 0x0a, 0x04, 0x4d, 0x65,
-	0x6e, 0x75, 0x12, 0x2f, 0x0a, 0x0a, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73,
-	0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x43,
-	0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x52, 0x0a, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72,
-	0x69, 0x65, 0x73, 0x22, 0xc4, 0x01, 0x0a, 0x05, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x12, 0x0e, 0x0a,
-	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a,
-	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d,
-	0x65, 0x12, 0x21, 0x0a, 0x05, 0x69, 0x74, 0x65, 0x6d, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b,
-	0x32, 0x0b, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x49, 0x74, 0x65, 0x6d, 0x52, 0x05, 0x69,
-	0x74, 0x65, 0x6d, 0x73, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x18, 0x04, 0x20,
-	0x01, 0x28, 0x03, 0x52, 0x05, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74,
-	0x61, 0x74, 0x75, 0x73, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74,
-	0x75, 0x73, 0x12, 0x21, 0x0a, 0x0c, 0x74, 0x69, 0x6d, 0x65, 0x5f, 0x6f, 0x72, 0x64, 0x65, 0x72,
-	0x65, 0x64, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x74, 0x69, 0x6d, 0x65, 0x4f, 0x72,
-	0x64, 0x65, 0x72, 0x65, 0x64, 0x12, 0x23, 0x0a, 0x0d, 0x74, 0x69, 0x6d, 0x65, 0x5f, 0x63, 0x6f,
-	0x6d, 0x70, 0x6c, 0x65, 0x74, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x74, 0x69,
-	0x6d, 0x65, 0x43, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74, 0x65, 0x22, 0x26, 0x0a, 0x08, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0x28, 0x0a, 0x16, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4d, 0x65, 0x6e, 0x75,
-	0x49, 0x74, 0x65, 0x6d, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x0e, 0x0a, 0x02,
-	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x22, 0x26, 0x0a, 0x14,
-	0x43, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03,
-	0x52, 0x02, 0x69, 0x64, 0x22, 0x29, 0x0a, 0x0d, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22,
-	0x36, 0x0a, 0x0e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x12, 0x24, 0x0a, 0x06, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28,
-	0x0b, 0x32, 0x0c, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52,
-	0x06, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x22, 0x07, 0x0a, 0x05, 0x45, 0x6d, 0x70, 0x74, 0x79,
-	0x22, 0x27, 0x0a, 0x15, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x4d, 0x65, 0x6e, 0x75, 0x49, 0x74,
-	0x65, 0x6d, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x22, 0x44, 0x0a, 0x04, 0x50, 0x69, 0x6e,
-	0x67, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x22, 0x0a, 0x0c, 0x64,
-	0x65, 0x6c, 0x61, 0x79, 0x53, 0x65, 0x63, 0x6f, 0x6e, 0x64, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x02, 0x52, 0x0c, 0x64, 0x65, 0x6c, 0x61, 0x79, 0x53, 0x65, 0x63, 0x6f, 0x6e, 0x64, 0x73, 0x22,
-	0x20, 0x0a, 0x04, 0x50, 0x6f, 0x6e, 0x67, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61,
-	0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67,
-	0x65, 0x32, 0xa4, 0x02, 0x0a, 0x0b, 0x4d, 0x65, 0x6e, 0x75, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63,
-	0x65, 0x12, 0x26, 0x0a, 0x07, 0x47, 0x65, 0x74, 0x4d, 0x65, 0x6e, 0x75, 0x12, 0x0c, 0x2e, 0x74,
-	0x6f, 0x73, 0x70, 0x62, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x0b, 0x2e, 0x74, 0x6f, 0x73,
-	0x70, 0x62, 0x2e, 0x4d, 0x65, 0x6e, 0x75, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x0e, 0x43, 0x72, 0x65,
-	0x61, 0x74, 0x65, 0x4d, 0x65, 0x6e, 0x75, 0x49, 0x74, 0x65, 0x6d, 0x12, 0x0b, 0x2e, 0x74, 0x6f,
-	0x73, 0x70, 0x62, 0x2e, 0x49, 0x74, 0x65, 0x6d, 0x1a, 0x1d, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62,
-	0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4d, 0x65, 0x6e, 0x75, 0x49, 0x74, 0x65, 0x6d, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x30, 0x0a, 0x0e, 0x55, 0x70, 0x64,
-	0x61, 0x74, 0x65, 0x4d, 0x65, 0x6e, 0x75, 0x49, 0x74, 0x65, 0x6d, 0x12, 0x0b, 0x2e, 0x74, 0x6f,
-	0x73, 0x70, 0x62, 0x2e, 0x49, 0x74, 0x65, 0x6d, 0x1a, 0x0f, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62,
-	0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0e, 0x44,
-	0x65, 0x6c, 0x65, 0x74, 0x65, 0x4d, 0x65, 0x6e, 0x75, 0x49, 0x74, 0x65, 0x6d, 0x12, 0x1c, 0x2e,
-	0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x4d, 0x65, 0x6e, 0x75,
-	0x49, 0x74, 0x65, 0x6d, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0f, 0x2e, 0x74, 0x6f,
-	0x73, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x38,
-	0x0a, 0x14, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4d, 0x65, 0x6e, 0x75, 0x49, 0x74, 0x65, 0x6d,
-	0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x0d, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x4f,
-	0x70, 0x74, 0x69, 0x6f, 0x6e, 0x1a, 0x0f, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x32, 0xeb, 0x01, 0x0a, 0x0c, 0x4f, 0x72, 0x64,
-	0x65, 0x72, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2e, 0x0a, 0x0b, 0x53, 0x75, 0x62,
-	0x6d, 0x69, 0x74, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x12, 0x0c, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62,
-	0x2e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x1a, 0x0f, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x0c, 0x41, 0x63, 0x74,
-	0x69, 0x76, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x12, 0x0c, 0x2e, 0x74, 0x6f, 0x73, 0x70,
-	0x62, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x15, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e,
-	0x4f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00,
-	0x12, 0x3f, 0x0a, 0x0d, 0x43, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65,
-	0x72, 0x12, 0x1b, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x70, 0x6c, 0x65,
-	0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0f,
-	0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
-	0x00, 0x12, 0x33, 0x0a, 0x11, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x62, 0x65, 0x54, 0x6f,
-	0x4f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x12, 0x0c, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x45,
-	0x6d, 0x70, 0x74, 0x79, 0x1a, 0x0c, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x4f, 0x72, 0x64,
-	0x65, 0x72, 0x22, 0x00, 0x30, 0x01, 0x32, 0x35, 0x0a, 0x0b, 0x50, 0x69, 0x6e, 0x67, 0x53, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x26, 0x0a, 0x08, 0x53, 0x65, 0x6e, 0x64, 0x50, 0x69, 0x6e,
-	0x67, 0x12, 0x0b, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x50, 0x69, 0x6e, 0x67, 0x1a, 0x0b,
-	0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x50, 0x6f, 0x6e, 0x67, 0x22, 0x00, 0x42, 0x0b, 0x5a,
-	0x09, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x3b, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x33,
+	0x74, 0x6f, 0x12, 0x05, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x22, 0x3a, 0x0a, 0x04, 0x4d, 0x65, 0x6e,
+	0x75, 0x12, 0x32, 0x0a, 0x0a, 0x69, 0x74, 0x65, 0x6d, 0x5f, 0x6b, 0x69, 0x6e, 0x64, 0x73, 0x18,
+	0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x4d, 0x65,
+	0x6e, 0x75, 0x49, 0x74, 0x65, 0x6d, 0x4b, 0x69, 0x6e, 0x64, 0x52, 0x09, 0x69, 0x74, 0x65, 0x6d,
+	0x4b, 0x69, 0x6e, 0x64, 0x73, 0x22, 0x93, 0x01, 0x0a, 0x0c, 0x4d, 0x65, 0x6e, 0x75, 0x49, 0x74,
+	0x65, 0x6d, 0x4b, 0x69, 0x6e, 0x64, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x25, 0x0a, 0x05, 0x69, 0x74,
+	0x65, 0x6d, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x74, 0x6f, 0x73, 0x70,
+	0x62, 0x2e, 0x4d, 0x65, 0x6e, 0x75, 0x49, 0x74, 0x65, 0x6d, 0x52, 0x05, 0x69, 0x74, 0x65, 0x6d,
+	0x73, 0x12, 0x38, 0x0a, 0x0c, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x6b, 0x69, 0x6e, 0x64,
+	0x73, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e,
+	0x4d, 0x65, 0x6e, 0x75, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x4b, 0x69, 0x6e, 0x64, 0x52, 0x0b,
+	0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x4b, 0x69, 0x6e, 0x64, 0x73, 0x22, 0x66, 0x0a, 0x08, 0x4d,
+	0x65, 0x6e, 0x75, 0x49, 0x74, 0x65, 0x6d, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x70,
+	0x72, 0x69, 0x63, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x70, 0x72, 0x69, 0x63,
+	0x65, 0x12, 0x20, 0x0a, 0x0c, 0x69, 0x74, 0x65, 0x6d, 0x5f, 0x6b, 0x69, 0x6e, 0x64, 0x5f, 0x69,
+	0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0a, 0x69, 0x74, 0x65, 0x6d, 0x4b, 0x69, 0x6e,
+	0x64, 0x49, 0x64, 0x22, 0x83, 0x01, 0x0a, 0x0e, 0x4d, 0x65, 0x6e, 0x75, 0x4f, 0x70, 0x74, 0x69,
+	0x6f, 0x6e, 0x4b, 0x69, 0x6e, 0x64, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x20, 0x0a, 0x0c, 0x69, 0x74,
+	0x65, 0x6d, 0x5f, 0x6b, 0x69, 0x6e, 0x64, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03,
+	0x52, 0x0a, 0x69, 0x74, 0x65, 0x6d, 0x4b, 0x69, 0x6e, 0x64, 0x49, 0x64, 0x12, 0x2b, 0x0a, 0x07,
+	0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x11, 0x2e,
+	0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x4d, 0x65, 0x6e, 0x75, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e,
+	0x52, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x22, 0x6c, 0x0a, 0x0a, 0x4d, 0x65, 0x6e,
+	0x75, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x70,
+	0x72, 0x69, 0x63, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x70, 0x72, 0x69, 0x63,
+	0x65, 0x12, 0x24, 0x0a, 0x0e, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x6b, 0x69, 0x6e, 0x64,
+	0x5f, 0x69, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0c, 0x6f, 0x70, 0x74, 0x69, 0x6f,
+	0x6e, 0x4b, 0x69, 0x6e, 0x64, 0x49, 0x64, 0x22, 0xc9, 0x01, 0x0a, 0x05, 0x4f, 0x72, 0x64, 0x65,
+	0x72, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69,
+	0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x26, 0x0a, 0x05, 0x69, 0x74, 0x65, 0x6d, 0x73, 0x18, 0x03,
+	0x20, 0x03, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x4f, 0x72, 0x64,
+	0x65, 0x72, 0x49, 0x74, 0x65, 0x6d, 0x52, 0x05, 0x69, 0x74, 0x65, 0x6d, 0x73, 0x12, 0x14, 0x0a,
+	0x05, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x18, 0x04, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x74, 0x6f,
+	0x74, 0x61, 0x6c, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x05, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x21, 0x0a, 0x0c, 0x74,
+	0x69, 0x6d, 0x65, 0x5f, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x65, 0x64, 0x18, 0x06, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0b, 0x74, 0x69, 0x6d, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x65, 0x64, 0x12, 0x23,
+	0x0a, 0x0d, 0x74, 0x69, 0x6d, 0x65, 0x5f, 0x63, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74, 0x65, 0x18,
+	0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x74, 0x69, 0x6d, 0x65, 0x43, 0x6f, 0x6d, 0x70, 0x6c,
+	0x65, 0x74, 0x65, 0x22, 0x68, 0x0a, 0x09, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x49, 0x74, 0x65, 0x6d,
+	0x12, 0x17, 0x0a, 0x07, 0x69, 0x74, 0x65, 0x6d, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x03, 0x52, 0x06, 0x69, 0x74, 0x65, 0x6d, 0x49, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x70, 0x72, 0x69,
+	0x63, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x70, 0x72, 0x69, 0x63, 0x65, 0x12,
+	0x2c, 0x0a, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b,
+	0x32, 0x12, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x4f, 0x70,
+	0x74, 0x69, 0x6f, 0x6e, 0x52, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x22, 0x8f, 0x01,
+	0x0a, 0x0b, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x0e, 0x0a,
+	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x19, 0x0a,
+	0x08, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x07, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x49, 0x64, 0x12, 0x1b, 0x0a, 0x09, 0x6f, 0x70, 0x74, 0x69,
+	0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x08, 0x6f, 0x70, 0x74,
+	0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12, 0x22, 0x0a, 0x0d, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x5f, 0x69,
+	0x74, 0x65, 0x6d, 0x5f, 0x69, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0b, 0x6f, 0x72,
+	0x64, 0x65, 0x72, 0x49, 0x74, 0x65, 0x6d, 0x49, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x70, 0x72, 0x69,
+	0x63, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x70, 0x72, 0x69, 0x63, 0x65, 0x22,
+	0x26, 0x0a, 0x08, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x72,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x72,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x28, 0x0a, 0x16, 0x43, 0x72, 0x65, 0x61, 0x74,
+	0x65, 0x4d, 0x65, 0x6e, 0x75, 0x49, 0x74, 0x65, 0x6d, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69,
+	0x64, 0x22, 0x26, 0x0a, 0x14, 0x43, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74, 0x65, 0x4f, 0x72, 0x64,
+	0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x22, 0x29, 0x0a, 0x0d, 0x4f, 0x72, 0x64,
+	0x65, 0x72, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x72, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x72, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x22, 0x36, 0x0a, 0x0e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x24, 0x0a, 0x06, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x73,
+	0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0c, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x4f,
+	0x72, 0x64, 0x65, 0x72, 0x52, 0x06, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x22, 0x07, 0x0a, 0x05,
+	0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x27, 0x0a, 0x15, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x4d,
+	0x65, 0x6e, 0x75, 0x49, 0x74, 0x65, 0x6d, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e,
+	0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x22, 0x44,
+	0x0a, 0x04, 0x50, 0x69, 0x6e, 0x67, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67,
+	0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
+	0x12, 0x22, 0x0a, 0x0c, 0x64, 0x65, 0x6c, 0x61, 0x79, 0x53, 0x65, 0x63, 0x6f, 0x6e, 0x64, 0x73,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x02, 0x52, 0x0c, 0x64, 0x65, 0x6c, 0x61, 0x79, 0x53, 0x65, 0x63,
+	0x6f, 0x6e, 0x64, 0x73, 0x22, 0x20, 0x0a, 0x04, 0x50, 0x6f, 0x6e, 0x67, 0x12, 0x18, 0x0a, 0x07,
+	0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d,
+	0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x32, 0xb0, 0x02, 0x0a, 0x0b, 0x4d, 0x65, 0x6e, 0x75, 0x53,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x26, 0x0a, 0x07, 0x47, 0x65, 0x74, 0x4d, 0x65, 0x6e,
+	0x75, 0x12, 0x0c, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a,
+	0x0b, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x4d, 0x65, 0x6e, 0x75, 0x22, 0x00, 0x12, 0x42,
+	0x0a, 0x0e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4d, 0x65, 0x6e, 0x75, 0x49, 0x74, 0x65, 0x6d,
+	0x12, 0x0f, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x4d, 0x65, 0x6e, 0x75, 0x49, 0x74, 0x65,
+	0x6d, 0x1a, 0x1d, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
+	0x4d, 0x65, 0x6e, 0x75, 0x49, 0x74, 0x65, 0x6d, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x00, 0x12, 0x34, 0x0a, 0x0e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4d, 0x65, 0x6e, 0x75,
+	0x49, 0x74, 0x65, 0x6d, 0x12, 0x0f, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x4d, 0x65, 0x6e,
+	0x75, 0x49, 0x74, 0x65, 0x6d, 0x1a, 0x0f, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0e, 0x44, 0x65, 0x6c, 0x65,
+	0x74, 0x65, 0x4d, 0x65, 0x6e, 0x75, 0x49, 0x74, 0x65, 0x6d, 0x12, 0x1c, 0x2e, 0x74, 0x6f, 0x73,
+	0x70, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x4d, 0x65, 0x6e, 0x75, 0x49, 0x74, 0x65,
+	0x6d, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0f, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62,
+	0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x3c, 0x0a, 0x14, 0x43,
+	0x72, 0x65, 0x61, 0x74, 0x65, 0x4d, 0x65, 0x6e, 0x75, 0x49, 0x74, 0x65, 0x6d, 0x4f, 0x70, 0x74,
+	0x69, 0x6f, 0x6e, 0x12, 0x11, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x4d, 0x65, 0x6e, 0x75,
+	0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x1a, 0x0f, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x32, 0xeb, 0x01, 0x0a, 0x0c, 0x4f, 0x72,
+	0x64, 0x65, 0x72, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2e, 0x0a, 0x0b, 0x53, 0x75,
+	0x62, 0x6d, 0x69, 0x74, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x12, 0x0c, 0x2e, 0x74, 0x6f, 0x73, 0x70,
+	0x62, 0x2e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x1a, 0x0f, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x0c, 0x41, 0x63,
+	0x74, 0x69, 0x76, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x12, 0x0c, 0x2e, 0x74, 0x6f, 0x73,
+	0x70, 0x62, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x15, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62,
+	0x2e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x00, 0x12, 0x3f, 0x0a, 0x0d, 0x43, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74, 0x65, 0x4f, 0x72, 0x64,
+	0x65, 0x72, 0x12, 0x1b, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x70, 0x6c,
+	0x65, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x0f, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x00, 0x12, 0x33, 0x0a, 0x11, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x62, 0x65, 0x54,
+	0x6f, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x12, 0x0c, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e,
+	0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x0c, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x4f, 0x72,
+	0x64, 0x65, 0x72, 0x22, 0x00, 0x30, 0x01, 0x32, 0x35, 0x0a, 0x0b, 0x50, 0x69, 0x6e, 0x67, 0x53,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x26, 0x0a, 0x08, 0x53, 0x65, 0x6e, 0x64, 0x50, 0x69,
+	0x6e, 0x67, 0x12, 0x0b, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x50, 0x69, 0x6e, 0x67, 0x1a,
+	0x0b, 0x2e, 0x74, 0x6f, 0x73, 0x70, 0x62, 0x2e, 0x50, 0x6f, 0x6e, 0x67, 0x22, 0x00, 0x42, 0x0b,
+	0x5a, 0x09, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x3b, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -937,54 +1166,59 @@ func file_schema_tos_proto_rawDescGZIP() []byte {
 	return file_schema_tos_proto_rawDescData
 }
 
-var file_schema_tos_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_schema_tos_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_schema_tos_proto_goTypes = []interface{}{
-	(*Item)(nil),                   // 0: tospb.Item
-	(*Option)(nil),                 // 1: tospb.Option
-	(*Category)(nil),               // 2: tospb.Category
-	(*Menu)(nil),                   // 3: tospb.Menu
-	(*Order)(nil),                  // 4: tospb.Order
-	(*Response)(nil),               // 5: tospb.Response
-	(*CreateMenuItemResponse)(nil), // 6: tospb.CreateMenuItemResponse
-	(*CompleteOrderRequest)(nil),   // 7: tospb.CompleteOrderRequest
-	(*OrdersRequest)(nil),          // 8: tospb.OrdersRequest
-	(*OrdersResponse)(nil),         // 9: tospb.OrdersResponse
-	(*Empty)(nil),                  // 10: tospb.Empty
-	(*DeleteMenuItemRequest)(nil),  // 11: tospb.DeleteMenuItemRequest
-	(*Ping)(nil),                   // 12: tospb.Ping
-	(*Pong)(nil),                   // 13: tospb.Pong
+	(*Menu)(nil),                   // 0: tospb.Menu
+	(*MenuItemKind)(nil),           // 1: tospb.MenuItemKind
+	(*MenuItem)(nil),               // 2: tospb.MenuItem
+	(*MenuOptionKind)(nil),         // 3: tospb.MenuOptionKind
+	(*MenuOption)(nil),             // 4: tospb.MenuOption
+	(*Order)(nil),                  // 5: tospb.Order
+	(*OrderItem)(nil),              // 6: tospb.OrderItem
+	(*OrderOption)(nil),            // 7: tospb.OrderOption
+	(*Response)(nil),               // 8: tospb.Response
+	(*CreateMenuItemResponse)(nil), // 9: tospb.CreateMenuItemResponse
+	(*CompleteOrderRequest)(nil),   // 10: tospb.CompleteOrderRequest
+	(*OrdersRequest)(nil),          // 11: tospb.OrdersRequest
+	(*OrdersResponse)(nil),         // 12: tospb.OrdersResponse
+	(*Empty)(nil),                  // 13: tospb.Empty
+	(*DeleteMenuItemRequest)(nil),  // 14: tospb.DeleteMenuItemRequest
+	(*Ping)(nil),                   // 15: tospb.Ping
+	(*Pong)(nil),                   // 16: tospb.Pong
 }
 var file_schema_tos_proto_depIdxs = []int32{
-	1,  // 0: tospb.Item.options:type_name -> tospb.Option
-	0,  // 1: tospb.Category.items:type_name -> tospb.Item
-	2,  // 2: tospb.Menu.categories:type_name -> tospb.Category
-	0,  // 3: tospb.Order.items:type_name -> tospb.Item
-	4,  // 4: tospb.OrdersResponse.orders:type_name -> tospb.Order
-	10, // 5: tospb.MenuService.GetMenu:input_type -> tospb.Empty
-	0,  // 6: tospb.MenuService.CreateMenuItem:input_type -> tospb.Item
-	0,  // 7: tospb.MenuService.UpdateMenuItem:input_type -> tospb.Item
-	11, // 8: tospb.MenuService.DeleteMenuItem:input_type -> tospb.DeleteMenuItemRequest
-	1,  // 9: tospb.MenuService.CreateMenuItemOption:input_type -> tospb.Option
-	4,  // 10: tospb.OrderService.SubmitOrder:input_type -> tospb.Order
-	10, // 11: tospb.OrderService.ActiveOrders:input_type -> tospb.Empty
-	7,  // 12: tospb.OrderService.CompleteOrder:input_type -> tospb.CompleteOrderRequest
-	10, // 13: tospb.OrderService.SubscribeToOrders:input_type -> tospb.Empty
-	12, // 14: tospb.PingService.SendPing:input_type -> tospb.Ping
-	3,  // 15: tospb.MenuService.GetMenu:output_type -> tospb.Menu
-	6,  // 16: tospb.MenuService.CreateMenuItem:output_type -> tospb.CreateMenuItemResponse
-	5,  // 17: tospb.MenuService.UpdateMenuItem:output_type -> tospb.Response
-	5,  // 18: tospb.MenuService.DeleteMenuItem:output_type -> tospb.Response
-	5,  // 19: tospb.MenuService.CreateMenuItemOption:output_type -> tospb.Response
-	5,  // 20: tospb.OrderService.SubmitOrder:output_type -> tospb.Response
-	9,  // 21: tospb.OrderService.ActiveOrders:output_type -> tospb.OrdersResponse
-	5,  // 22: tospb.OrderService.CompleteOrder:output_type -> tospb.Response
-	4,  // 23: tospb.OrderService.SubscribeToOrders:output_type -> tospb.Order
-	13, // 24: tospb.PingService.SendPing:output_type -> tospb.Pong
-	15, // [15:25] is the sub-list for method output_type
-	5,  // [5:15] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	1,  // 0: tospb.Menu.item_kinds:type_name -> tospb.MenuItemKind
+	2,  // 1: tospb.MenuItemKind.items:type_name -> tospb.MenuItem
+	3,  // 2: tospb.MenuItemKind.option_kinds:type_name -> tospb.MenuOptionKind
+	4,  // 3: tospb.MenuOptionKind.options:type_name -> tospb.MenuOption
+	6,  // 4: tospb.Order.items:type_name -> tospb.OrderItem
+	7,  // 5: tospb.OrderItem.options:type_name -> tospb.OrderOption
+	5,  // 6: tospb.OrdersResponse.orders:type_name -> tospb.Order
+	13, // 7: tospb.MenuService.GetMenu:input_type -> tospb.Empty
+	2,  // 8: tospb.MenuService.CreateMenuItem:input_type -> tospb.MenuItem
+	2,  // 9: tospb.MenuService.UpdateMenuItem:input_type -> tospb.MenuItem
+	14, // 10: tospb.MenuService.DeleteMenuItem:input_type -> tospb.DeleteMenuItemRequest
+	4,  // 11: tospb.MenuService.CreateMenuItemOption:input_type -> tospb.MenuOption
+	5,  // 12: tospb.OrderService.SubmitOrder:input_type -> tospb.Order
+	13, // 13: tospb.OrderService.ActiveOrders:input_type -> tospb.Empty
+	10, // 14: tospb.OrderService.CompleteOrder:input_type -> tospb.CompleteOrderRequest
+	13, // 15: tospb.OrderService.SubscribeToOrders:input_type -> tospb.Empty
+	15, // 16: tospb.PingService.SendPing:input_type -> tospb.Ping
+	0,  // 17: tospb.MenuService.GetMenu:output_type -> tospb.Menu
+	9,  // 18: tospb.MenuService.CreateMenuItem:output_type -> tospb.CreateMenuItemResponse
+	8,  // 19: tospb.MenuService.UpdateMenuItem:output_type -> tospb.Response
+	8,  // 20: tospb.MenuService.DeleteMenuItem:output_type -> tospb.Response
+	8,  // 21: tospb.MenuService.CreateMenuItemOption:output_type -> tospb.Response
+	8,  // 22: tospb.OrderService.SubmitOrder:output_type -> tospb.Response
+	12, // 23: tospb.OrderService.ActiveOrders:output_type -> tospb.OrdersResponse
+	8,  // 24: tospb.OrderService.CompleteOrder:output_type -> tospb.Response
+	5,  // 25: tospb.OrderService.SubscribeToOrders:output_type -> tospb.Order
+	16, // 26: tospb.PingService.SendPing:output_type -> tospb.Pong
+	17, // [17:27] is the sub-list for method output_type
+	7,  // [7:17] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_schema_tos_proto_init() }
@@ -994,42 +1228,6 @@ func file_schema_tos_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_schema_tos_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Item); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_schema_tos_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Option); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_schema_tos_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Category); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_schema_tos_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Menu); i {
 			case 0:
 				return &v.state
@@ -1041,8 +1239,44 @@ func file_schema_tos_proto_init() {
 				return nil
 			}
 		}
+		file_schema_tos_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MenuItemKind); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_schema_tos_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MenuItem); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_schema_tos_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MenuOptionKind); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 		file_schema_tos_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Order); i {
+			switch v := v.(*MenuOption); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1054,7 +1288,7 @@ func file_schema_tos_proto_init() {
 			}
 		}
 		file_schema_tos_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Response); i {
+			switch v := v.(*Order); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1066,7 +1300,7 @@ func file_schema_tos_proto_init() {
 			}
 		}
 		file_schema_tos_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateMenuItemResponse); i {
+			switch v := v.(*OrderItem); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1078,7 +1312,7 @@ func file_schema_tos_proto_init() {
 			}
 		}
 		file_schema_tos_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CompleteOrderRequest); i {
+			switch v := v.(*OrderOption); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1090,7 +1324,7 @@ func file_schema_tos_proto_init() {
 			}
 		}
 		file_schema_tos_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*OrdersRequest); i {
+			switch v := v.(*Response); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1102,7 +1336,7 @@ func file_schema_tos_proto_init() {
 			}
 		}
 		file_schema_tos_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*OrdersResponse); i {
+			switch v := v.(*CreateMenuItemResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1114,7 +1348,7 @@ func file_schema_tos_proto_init() {
 			}
 		}
 		file_schema_tos_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Empty); i {
+			switch v := v.(*CompleteOrderRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1126,7 +1360,7 @@ func file_schema_tos_proto_init() {
 			}
 		}
 		file_schema_tos_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteMenuItemRequest); i {
+			switch v := v.(*OrdersRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1138,7 +1372,7 @@ func file_schema_tos_proto_init() {
 			}
 		}
 		file_schema_tos_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Ping); i {
+			switch v := v.(*OrdersResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1150,6 +1384,42 @@ func file_schema_tos_proto_init() {
 			}
 		}
 		file_schema_tos_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Empty); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_schema_tos_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteMenuItemRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_schema_tos_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Ping); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_schema_tos_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Pong); i {
 			case 0:
 				return &v.state
@@ -1168,7 +1438,7 @@ func file_schema_tos_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_schema_tos_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   3,
 		},
@@ -1195,10 +1465,10 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MenuServiceClient interface {
 	GetMenu(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Menu, error)
-	CreateMenuItem(ctx context.Context, in *Item, opts ...grpc.CallOption) (*CreateMenuItemResponse, error)
-	UpdateMenuItem(ctx context.Context, in *Item, opts ...grpc.CallOption) (*Response, error)
+	CreateMenuItem(ctx context.Context, in *MenuItem, opts ...grpc.CallOption) (*CreateMenuItemResponse, error)
+	UpdateMenuItem(ctx context.Context, in *MenuItem, opts ...grpc.CallOption) (*Response, error)
 	DeleteMenuItem(ctx context.Context, in *DeleteMenuItemRequest, opts ...grpc.CallOption) (*Response, error)
-	CreateMenuItemOption(ctx context.Context, in *Option, opts ...grpc.CallOption) (*Response, error)
+	CreateMenuItemOption(ctx context.Context, in *MenuOption, opts ...grpc.CallOption) (*Response, error)
 }
 
 type menuServiceClient struct {
@@ -1218,7 +1488,7 @@ func (c *menuServiceClient) GetMenu(ctx context.Context, in *Empty, opts ...grpc
 	return out, nil
 }
 
-func (c *menuServiceClient) CreateMenuItem(ctx context.Context, in *Item, opts ...grpc.CallOption) (*CreateMenuItemResponse, error) {
+func (c *menuServiceClient) CreateMenuItem(ctx context.Context, in *MenuItem, opts ...grpc.CallOption) (*CreateMenuItemResponse, error) {
 	out := new(CreateMenuItemResponse)
 	err := c.cc.Invoke(ctx, "/tospb.MenuService/CreateMenuItem", in, out, opts...)
 	if err != nil {
@@ -1227,7 +1497,7 @@ func (c *menuServiceClient) CreateMenuItem(ctx context.Context, in *Item, opts .
 	return out, nil
 }
 
-func (c *menuServiceClient) UpdateMenuItem(ctx context.Context, in *Item, opts ...grpc.CallOption) (*Response, error) {
+func (c *menuServiceClient) UpdateMenuItem(ctx context.Context, in *MenuItem, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
 	err := c.cc.Invoke(ctx, "/tospb.MenuService/UpdateMenuItem", in, out, opts...)
 	if err != nil {
@@ -1245,7 +1515,7 @@ func (c *menuServiceClient) DeleteMenuItem(ctx context.Context, in *DeleteMenuIt
 	return out, nil
 }
 
-func (c *menuServiceClient) CreateMenuItemOption(ctx context.Context, in *Option, opts ...grpc.CallOption) (*Response, error) {
+func (c *menuServiceClient) CreateMenuItemOption(ctx context.Context, in *MenuOption, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
 	err := c.cc.Invoke(ctx, "/tospb.MenuService/CreateMenuItemOption", in, out, opts...)
 	if err != nil {
@@ -1257,10 +1527,10 @@ func (c *menuServiceClient) CreateMenuItemOption(ctx context.Context, in *Option
 // MenuServiceServer is the server API for MenuService service.
 type MenuServiceServer interface {
 	GetMenu(context.Context, *Empty) (*Menu, error)
-	CreateMenuItem(context.Context, *Item) (*CreateMenuItemResponse, error)
-	UpdateMenuItem(context.Context, *Item) (*Response, error)
+	CreateMenuItem(context.Context, *MenuItem) (*CreateMenuItemResponse, error)
+	UpdateMenuItem(context.Context, *MenuItem) (*Response, error)
 	DeleteMenuItem(context.Context, *DeleteMenuItemRequest) (*Response, error)
-	CreateMenuItemOption(context.Context, *Option) (*Response, error)
+	CreateMenuItemOption(context.Context, *MenuOption) (*Response, error)
 }
 
 // UnimplementedMenuServiceServer can be embedded to have forward compatible implementations.
@@ -1270,16 +1540,16 @@ type UnimplementedMenuServiceServer struct {
 func (*UnimplementedMenuServiceServer) GetMenu(context.Context, *Empty) (*Menu, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMenu not implemented")
 }
-func (*UnimplementedMenuServiceServer) CreateMenuItem(context.Context, *Item) (*CreateMenuItemResponse, error) {
+func (*UnimplementedMenuServiceServer) CreateMenuItem(context.Context, *MenuItem) (*CreateMenuItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateMenuItem not implemented")
 }
-func (*UnimplementedMenuServiceServer) UpdateMenuItem(context.Context, *Item) (*Response, error) {
+func (*UnimplementedMenuServiceServer) UpdateMenuItem(context.Context, *MenuItem) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateMenuItem not implemented")
 }
 func (*UnimplementedMenuServiceServer) DeleteMenuItem(context.Context, *DeleteMenuItemRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMenuItem not implemented")
 }
-func (*UnimplementedMenuServiceServer) CreateMenuItemOption(context.Context, *Option) (*Response, error) {
+func (*UnimplementedMenuServiceServer) CreateMenuItemOption(context.Context, *MenuOption) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateMenuItemOption not implemented")
 }
 
@@ -1306,7 +1576,7 @@ func _MenuService_GetMenu_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _MenuService_CreateMenuItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Item)
+	in := new(MenuItem)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1318,13 +1588,13 @@ func _MenuService_CreateMenuItem_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/tospb.MenuService/CreateMenuItem",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MenuServiceServer).CreateMenuItem(ctx, req.(*Item))
+		return srv.(MenuServiceServer).CreateMenuItem(ctx, req.(*MenuItem))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _MenuService_UpdateMenuItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Item)
+	in := new(MenuItem)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1336,7 +1606,7 @@ func _MenuService_UpdateMenuItem_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/tospb.MenuService/UpdateMenuItem",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MenuServiceServer).UpdateMenuItem(ctx, req.(*Item))
+		return srv.(MenuServiceServer).UpdateMenuItem(ctx, req.(*MenuItem))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1360,7 +1630,7 @@ func _MenuService_DeleteMenuItem_Handler(srv interface{}, ctx context.Context, d
 }
 
 func _MenuService_CreateMenuItemOption_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Option)
+	in := new(MenuOption)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1372,7 +1642,7 @@ func _MenuService_CreateMenuItemOption_Handler(srv interface{}, ctx context.Cont
 		FullMethod: "/tospb.MenuService/CreateMenuItemOption",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MenuServiceServer).CreateMenuItemOption(ctx, req.(*Option))
+		return srv.(MenuServiceServer).CreateMenuItemOption(ctx, req.(*MenuOption))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1410,11 +1680,9 @@ var _MenuService_serviceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type OrderServiceClient interface {
-	// Unary
 	SubmitOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Response, error)
 	ActiveOrders(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*OrdersResponse, error)
 	CompleteOrder(ctx context.Context, in *CompleteOrderRequest, opts ...grpc.CallOption) (*Response, error)
-	// server streaming
 	SubscribeToOrders(ctx context.Context, in *Empty, opts ...grpc.CallOption) (OrderService_SubscribeToOrdersClient, error)
 }
 
@@ -1487,11 +1755,9 @@ func (x *orderServiceSubscribeToOrdersClient) Recv() (*Order, error) {
 
 // OrderServiceServer is the server API for OrderService service.
 type OrderServiceServer interface {
-	// Unary
 	SubmitOrder(context.Context, *Order) (*Response, error)
 	ActiveOrders(context.Context, *Empty) (*OrdersResponse, error)
 	CompleteOrder(context.Context, *CompleteOrderRequest) (*Response, error)
-	// server streaming
 	SubscribeToOrders(*Empty, OrderService_SubscribeToOrdersServer) error
 }
 

@@ -22,9 +22,9 @@ import (
 // involving the menu
 type MenuDB interface {
 	SeedMenu(context.Context) error
-	CreateMenuItem(context.Context, *pb.Item) (int64, error)
+	CreateMenuItem(context.Context, *pb.MenuItem) (int64, error)
 	DeleteMenuItem(context.Context, int64) error
-	UpdateMenuItem(context.Context, *pb.Item) error
+	UpdateMenuItem(context.Context, *pb.MenuItem) error
 	// CreateMenuItemOption() error
 	GetMenu(context.Context) (*pb.Menu, error)
 }
@@ -59,94 +59,108 @@ func (m *menuDB) SeedMenu(ctx context.Context) error {
 		return fmt.Errorf("failed to load static menu: %w", err)
 	}
 
-	tx, err := boil.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-
-	_ = menu
-	/*
-		for _, category := range menu.GetCategories() {
-			c := &models.ItemKind{Name: category.GetName()}
-			if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
-				tx.Rollback()
-				return err
-			}
-			for _, item := range category.GetItems() {
-				i := &models.Item{Name: item.GetName(), Price: int64(item.GetPrice()), KindID: c.ID.Int64}
-				if err = i.Insert(ctx, tx, boil.Infer()); err != nil {
-					tx.Rollback()
-					return err
-				}
-				for _, option := range item.GetOptions() {
-					res, err := tx.Exec(
-						"INSERT INTO options (name, price, selected) VALUES (?,?,?)",
-						option.GetName(), option.GetPrice(), option.GetSelected())
-					if err != nil {
-						tx.Rollback()
-						return err
-					}
-					optionid, _ := res.LastInsertId()
-					_, err = tx.Exec(
-						"INSERT INTO item_options (item_id, option_id) VALUES (?,?)",
-						itemid, optionid)
-					if err != nil {
-						tx.Rollback()
-						return err
-					}
-				}
-			}
+	for _, itemKind := range menu.ItemKinds {
+		ik := &models.ItemKind{Name: itemKind.Name}
+		if err = ik.InsertG(ctx, boil.Infer()); err != nil {
+			return fmt.Errorf("err inserting item(%q): %w", ik.Name, err)
 		}
-	*/
 
-	if err = tx.Commit(); err != nil {
-		return err
+		items := []*models.Item{}
+		for _, it := range itemKind.Items {
+			items = append(items, &models.Item{
+				KindID: ik.ID.Int64,
+				Name:   it.Name,
+				Price:  it.Price,
+			})
+		}
+
+		if err = ik.AddKindItemsG(ctx, true, items...); err != nil {
+			return fmt.Errorf("failed to add item kinds: %w", err)
+		}
+
+		optks := []*models.OptionKind{}
+		for _, optk := range itemKind.OptionKinds {
+			optks = append(optks, &models.OptionKind{
+				ItemKindID: itemKind.Id,
+				Name:       optk.Name,
+			})
+			//for _, opt := range optk.Options {
+			//}
+		}
+		if err = ik.AddOptionKindsG(ctx, true, optks...); err != nil {
+			return fmt.Errorf("failed to add option kinds: %w", err)
+		}
 	}
 
 	return nil
 }
 
-// TODO: stop using fmt.Sprintf to format queries
 func (m *menuDB) GetMenu(ctx context.Context) (*pb.Menu, error) {
 	m.RLock()
 	defer m.RUnlock()
 
-	var categories []*pb.Category
-	menu := &pb.Menu{
-		Categories: categories,
+	menu := &pb.Menu{}
+	itemKinds, err := models.ItemKinds(
+		qm.Load(models.ItemKindRels.KindItems),
+	).AllG(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load item kinds: %w", err)
 	}
-	/*
-		if err := m.db.Select(&menu.Categories, "SELECT * from categories"); err != nil {
-			return nil, err
+
+	for _, ik := range itemKinds {
+		pbik := &pb.MenuItemKind{
+			Id:   ik.ID.Int64,
+			Name: ik.Name,
 		}
-		for _, category := range menu.GetCategories() {
-			if err := m.db.Select(&category.Items,
-				fmt.Sprintf("SELECT * FROM items WHERE category_id = %v", category.GetId())); err != nil {
-				return nil, err
-			}
-			for _, item := range category.GetItems() {
-				if err := m.db.Select(&item.Options, fmt.Sprintf(
-					`
-					SELECT name,price,selected,options.id
-					FROM options JOIN item_options as io ON options.id = io.option_id
-					WHERE item_id = %d`, item.GetId())); err != nil {
-					return nil, err
-				}
-			}
+
+		for _, item := range ik.R.KindItems {
+			pbik.Items = append(pbik.Items, &pb.MenuItem{
+				Id:         item.ID.Int64,
+				Name:       item.Name,
+				Price:      item.Price,
+				ItemKindId: item.KindID,
+			})
 		}
-	*/
+
+		opks, err := models.OptionKinds(
+			qm.Load(models.OptionKindRels.KindOptions),
+			models.OptionKindWhere.ItemKindID.EQ(ik.ID.Int64),
+		).AllG(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get option kinds: %w", err)
+		}
+
+		for _, ok := range opks {
+			pboptk := &pb.MenuOptionKind{
+				Id:         ok.ID.Int64,
+				Name:       ok.Name,
+				ItemKindId: ok.ItemKindID,
+			}
+
+			for _, opt := range ok.R.KindOptions {
+				pboptk.Options = append(pboptk.Options, &pb.MenuOption{
+					Id:           opt.ID.Int64,
+					Name:         opt.Name,
+					Price:        opt.Price,
+					OptionKindId: opt.KindID,
+				})
+			}
+			pbik.OptionKinds = append(pbik.OptionKinds, pboptk)
+		}
+	}
+
 	return menu, nil
 }
 
 // need to reload
-func (m *menuDB) CreateMenuItem(ctx context.Context, item *pb.Item) (int64, error) {
+func (m *menuDB) CreateMenuItem(ctx context.Context, item *pb.MenuItem) (int64, error) {
 	m.Lock()
 	defer m.Unlock()
 
 	i := &models.Item{
 		Name:   item.GetName(),
 		Price:  item.GetPrice(),
-		KindID: item.GetCategoryID(),
+		KindID: item.GetItemKindId(),
 	}
 	if err := i.InsertG(ctx, boil.Infer()); err != nil {
 		return 0, err
@@ -155,7 +169,7 @@ func (m *menuDB) CreateMenuItem(ctx context.Context, item *pb.Item) (int64, erro
 	return i.ID.Int64, nil
 }
 
-func (m *menuDB) UpdateMenuItem(ctx context.Context, item *pb.Item) error {
+func (m *menuDB) UpdateMenuItem(ctx context.Context, item *pb.MenuItem) error {
 	m.Lock()
 	defer m.Unlock()
 
@@ -179,7 +193,9 @@ func (m *menuDB) DeleteMenuItem(ctx context.Context, id int64) error {
 	m.Lock()
 	defer m.Unlock()
 
-	aff, err := models.Items(qm.Where("id=?", id)).DeleteAllG(ctx)
+	aff, err := models.Items(
+		models.ItemKindWhere.ID.EQ(null.Int64From(id)),
+	).DeleteAllG(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to delete item: %w", err)
 	}
@@ -192,7 +208,7 @@ func (m *menuDB) DeleteMenuItem(ctx context.Context, id int64) error {
 }
 
 func loadStaticMenu() (*pb.Menu, error) {
-	var menu *pb.Menu = &pb.Menu{}
+	menu := &pb.Menu{}
 	if err := json.Unmarshal([]byte(staticMenu), menu); err != nil {
 		return nil, err
 	}

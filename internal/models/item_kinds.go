@@ -101,14 +101,17 @@ var ItemKindWhere = struct {
 
 // ItemKindRels is where relationship names are stored.
 var ItemKindRels = struct {
-	KindItems string
+	KindItems   string
+	OptionKinds string
 }{
-	KindItems: "KindItems",
+	KindItems:   "KindItems",
+	OptionKinds: "OptionKinds",
 }
 
 // itemKindR is where relationships are stored.
 type itemKindR struct {
-	KindItems ItemSlice `boil:"KindItems" json:"KindItems" toml:"KindItems" yaml:"KindItems"`
+	KindItems   ItemSlice       `boil:"KindItems" json:"KindItems" toml:"KindItems" yaml:"KindItems"`
+	OptionKinds OptionKindSlice `boil:"OptionKinds" json:"OptionKinds" toml:"OptionKinds" yaml:"OptionKinds"`
 }
 
 // NewStruct creates a new relationship struct
@@ -258,6 +261,27 @@ func (o *ItemKind) KindItems(mods ...qm.QueryMod) itemQuery {
 	return query
 }
 
+// OptionKinds retrieves all the option_kind's OptionKinds with an executor.
+func (o *ItemKind) OptionKinds(mods ...qm.QueryMod) optionKindQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"option_kinds\".\"item_kind_id\"=?", o.ID),
+	)
+
+	query := OptionKinds(queryMods...)
+	queries.SetFrom(query.Query, "\"option_kinds\"")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"\"option_kinds\".*"})
+	}
+
+	return query
+}
+
 // LoadKindItems allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
 func (itemKindL) LoadKindItems(ctx context.Context, e boil.ContextExecutor, singular bool, maybeItemKind interface{}, mods queries.Applicator) error {
@@ -349,6 +373,97 @@ func (itemKindL) LoadKindItems(ctx context.Context, e boil.ContextExecutor, sing
 	return nil
 }
 
+// LoadOptionKinds allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (itemKindL) LoadOptionKinds(ctx context.Context, e boil.ContextExecutor, singular bool, maybeItemKind interface{}, mods queries.Applicator) error {
+	var slice []*ItemKind
+	var object *ItemKind
+
+	if singular {
+		object = maybeItemKind.(*ItemKind)
+	} else {
+		slice = *maybeItemKind.(*[]*ItemKind)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &itemKindR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &itemKindR{}
+			}
+
+			for _, a := range args {
+				if queries.Equal(a, obj.ID) {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`option_kinds`),
+		qm.WhereIn(`option_kinds.item_kind_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load option_kinds")
+	}
+
+	var resultSlice []*OptionKind
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice option_kinds")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on option_kinds")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for option_kinds")
+	}
+
+	if singular {
+		object.R.OptionKinds = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &optionKindR{}
+			}
+			foreign.R.ItemKind = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if queries.Equal(local.ID, foreign.ItemKindID) {
+				local.R.OptionKinds = append(local.R.OptionKinds, foreign)
+				if foreign.R == nil {
+					foreign.R = &optionKindR{}
+				}
+				foreign.R.ItemKind = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
 // AddKindItemsG adds the given related objects to the existing relationships
 // of the item_kind, optionally inserting them as new records.
 // Appends related to o.R.KindItems.
@@ -406,6 +521,68 @@ func (o *ItemKind) AddKindItems(ctx context.Context, exec boil.ContextExecutor, 
 			}
 		} else {
 			rel.R.Kind = o
+		}
+	}
+	return nil
+}
+
+// AddOptionKindsG adds the given related objects to the existing relationships
+// of the item_kind, optionally inserting them as new records.
+// Appends related to o.R.OptionKinds.
+// Sets related.R.ItemKind appropriately.
+// Uses the global database handle.
+func (o *ItemKind) AddOptionKindsG(ctx context.Context, insert bool, related ...*OptionKind) error {
+	return o.AddOptionKinds(ctx, boil.GetContextDB(), insert, related...)
+}
+
+// AddOptionKinds adds the given related objects to the existing relationships
+// of the item_kind, optionally inserting them as new records.
+// Appends related to o.R.OptionKinds.
+// Sets related.R.ItemKind appropriately.
+func (o *ItemKind) AddOptionKinds(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*OptionKind) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			queries.Assign(&rel.ItemKindID, o.ID)
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"option_kinds\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 0, []string{"item_kind_id"}),
+				strmangle.WhereClause("\"", "\"", 0, optionKindPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			queries.Assign(&rel.ItemKindID, o.ID)
+		}
+	}
+
+	if o.R == nil {
+		o.R = &itemKindR{
+			OptionKinds: related,
+		}
+	} else {
+		o.R.OptionKinds = append(o.R.OptionKinds, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &optionKindR{
+				ItemKind: o,
+			}
+		} else {
+			rel.R.ItemKind = o
 		}
 	}
 	return nil

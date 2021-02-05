@@ -24,7 +24,7 @@ import (
 // Order is an object representing the database table.
 type Order struct {
 	ID          null.Int64 `boil:"id" json:"id,omitempty" toml:"id" yaml:"id,omitempty"`
-	CreatedAt   int64      `boil:"created_at" json:"createdAt" toml:"createdAt" yaml:"createdAt"`
+	SubmittedAt int64      `boil:"submitted_at" json:"submittedAt" toml:"submittedAt" yaml:"submittedAt"`
 	CompletedAt null.Int64 `boil:"completed_at" json:"completedAt,omitempty" toml:"completedAt" yaml:"completedAt,omitempty"`
 
 	R *orderR `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -33,11 +33,11 @@ type Order struct {
 
 var OrderColumns = struct {
 	ID          string
-	CreatedAt   string
+	SubmittedAt string
 	CompletedAt string
 }{
 	ID:          "id",
-	CreatedAt:   "created_at",
+	SubmittedAt: "submitted_at",
 	CompletedAt: "completed_at",
 }
 
@@ -45,11 +45,11 @@ var OrderColumns = struct {
 
 var OrderWhere = struct {
 	ID          whereHelpernull_Int64
-	CreatedAt   whereHelperint64
+	SubmittedAt whereHelperint64
 	CompletedAt whereHelpernull_Int64
 }{
 	ID:          whereHelpernull_Int64{field: "\"orders\".\"id\""},
-	CreatedAt:   whereHelperint64{field: "\"orders\".\"created_at\""},
+	SubmittedAt: whereHelperint64{field: "\"orders\".\"submitted_at\""},
 	CompletedAt: whereHelpernull_Int64{field: "\"orders\".\"completed_at\""},
 }
 
@@ -77,9 +77,9 @@ func (*orderR) NewStruct() *orderR {
 type orderL struct{}
 
 var (
-	orderAllColumns            = []string{"id", "created_at", "completed_at"}
+	orderAllColumns            = []string{"id", "submitted_at", "completed_at"}
 	orderColumnsWithoutDefault = []string{}
-	orderColumnsWithDefault    = []string{"id", "created_at", "completed_at"}
+	orderColumnsWithDefault    = []string{"id", "submitted_at", "completed_at"}
 	orderPrimaryKeyColumns     = []string{"id"}
 )
 
@@ -592,13 +592,6 @@ func (o *Order) Insert(ctx context.Context, exec boil.ContextExecutor, columns b
 	}
 
 	var err error
-	if !boil.TimestampsAreSkipped(ctx) {
-		currTime := time.Now().In(boil.GetLocation())
-
-		if queries.MustTime(o.CreatedAt).IsZero() {
-			queries.SetScanner(&o.CreatedAt, currTime)
-		}
-	}
 
 	nzDefaults := queries.NonZeroDefaultSet(orderColumnsWithDefault, o)
 
