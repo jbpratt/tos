@@ -1,11 +1,8 @@
 package cmd
 
 import (
-	"context"
-	"fmt"
 	"log"
 
-	"github.com/jbpratt/tos/pkg/pb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
@@ -20,15 +17,10 @@ var menuCmd = &cobra.Command{
 			log.Fatalf("Failed to dial: %v", err)
 		}
 		defer cc.Close()
-
-		categories, err := doMenuRequest(pb.NewMenuServiceClient(cc))
-		if err != nil {
-			log.Fatalf("Failed to get menu: %v", err)
-		}
-		fmt.Println(categories)
 	},
 }
 
+/*
 func doMenuRequest(c pb.MenuServiceClient) ([]*pb.Category, error) {
 	fmt.Println("Starting to request menu...")
 	res, err := c.GetMenu(context.Background(), &pb.Empty{})
@@ -37,6 +29,7 @@ func doMenuRequest(c pb.MenuServiceClient) ([]*pb.Category, error) {
 	}
 	return res.GetCategories(), nil
 }
+*/
 
 func init() {
 	rootCmd.AddCommand(menuCmd)

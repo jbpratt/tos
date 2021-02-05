@@ -1,3 +1,4 @@
+// Package cmd implements a CLI for debugging
 package cmd
 
 import (

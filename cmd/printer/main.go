@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/jbpratt/tos/pkg/printer"
+	"github.com/jbpratt/tos/internal/printer"
 )
 
 func main() {

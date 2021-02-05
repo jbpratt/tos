@@ -3,7 +3,7 @@ SERVER_OUT := "bin/server"
 SERVER_PKG_BUILD := "${PKG}"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
-PB_OUT := "pkg/pb"
+PB_OUT := "internal/pb"
 
 server: dep
 	@go build -v -o $(SERVER_OUT) $(SERVER_PKG_BUILD)
@@ -26,5 +26,5 @@ start:
 
 gen:
 	@protoc --go_out=plugins=grpc:. schema/tos.proto
-	@protoc-go-inject-tag -input=protofiles/tos.pb.go > /dev/null 2>&1
-	@mv protofiles/tos.pb.go $(PB_OUT)
+	@protoc-go-inject-tag -input=schema/tos.pb.go > /dev/null 2>&1
+	@mv schema/tos.pb.go $(PB_OUT)

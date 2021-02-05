@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/jbpratt/tos/pkg/pb"
+	"github.com/jbpratt/tos/internal/pb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
